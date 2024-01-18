@@ -5,6 +5,10 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.DrivetrainConstants.DrivetrainLimits;
+import static frc.robot.Constants.DrivetrainConstants.LeftBackMotor;
+import static frc.robot.Constants.DrivetrainConstants.LeftFrontMotor;
+import static frc.robot.Constants.DrivetrainConstants.RightBackMotor;
+import static frc.robot.Constants.DrivetrainConstants.RightFrontMotor;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -18,10 +22,10 @@ public class Drivetrain extends SubsystemBase {
 
   public Drivetrain(){
     // The CANSparkMax motors are being initalized.
-    CANSparkMax rightFront = new CANSparkMax(1, MotorType.kBrushed);
-    CANSparkMax rightBack = new CANSparkMax(2, MotorType.kBrushed);
-    CANSparkMax leftFront = new CANSparkMax(3, MotorType.kBrushed);
-    CANSparkMax leftBack = new CANSparkMax(4, MotorType.kBrushed);
+    CANSparkMax rightFront = new CANSparkMax(RightFrontMotor, MotorType.kBrushless);
+    CANSparkMax rightBack = new CANSparkMax(RightBackMotor, MotorType.kBrushless);
+    CANSparkMax leftFront = new CANSparkMax(LeftFrontMotor, MotorType.kBrushless);
+    CANSparkMax leftBack = new CANSparkMax(LeftBackMotor, MotorType.kBrushless);
 
     leftFront.setSmartCurrentLimit(DrivetrainLimits);
     leftBack.setSmartCurrentLimit(DrivetrainLimits);

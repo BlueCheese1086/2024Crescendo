@@ -4,26 +4,31 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import static frc.robot.Constants.DrivetrainConstants.DrivetrainLimits;
+
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
   /** Creates a new Drivetrain. */
-  public Drivetrain() {}
+    DifferentialDrive m_drivetrain;
 
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public Command exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
-        });
+  public Drivetrain(){
+    // The CANSparkMax motors are being initalized.
+    CANSparkMax rightFront = new CANSparkMax(1, MotorType.kBrushed);
+    CANSparkMax rightBack = new CANSparkMax(2, MotorType.kBrushed);
+    CANSparkMax leftFront = new CANSparkMax(3, MotorType.kBrushed);
+    CANSparkMax leftBack = new CANSparkMax(4, MotorType.kBrushed);
+
+    leftFront.setSmartCurrentLimit(DrivetrainLimits);
+    leftBack.setSmartCurrentLimit(DrivetrainLimits);
+    rightFront.setSmartCurrentLimit(DrivetrainLimits);
+    rightBack.setSmartCurrentLimit(DrivetrainLimits);
   }
+
 
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).

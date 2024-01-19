@@ -18,10 +18,10 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
   public static class DrivetrainConstants {
-    public static final int LeftBackMotor = 4;
-    public static final int LeftFrontMotor = 3;
-    public static final int RightBackMotor = 2;
-    public static final int RightFrontMotor = 1;
+    public static final int LeftBackMotor = 2;
+    public static final int LeftFrontMotor = 1;
+    public static final int RightBackMotor = 4;
+    public static final int RightFrontMotor = 3;
     public static final int DrivetrainLimits = 60;
   }
 

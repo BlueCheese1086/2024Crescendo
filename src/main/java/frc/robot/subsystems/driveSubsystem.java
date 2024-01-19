@@ -57,12 +57,12 @@ public class driveSubsystem extends SubsystemBase {
     return encoderFR;
   }
 
-  public void driveAlign(double pitch){
-      if(pitch > 0){
-        leftLeader.set(controller.calculate(encoderFL.getPosition(), Math.abs(pitch)));
+  public void driveAlign(double yaw){
+      if(yaw > 0){
+        leftLeader.set(controller.calculate(encoderFL.getPosition(), Math.abs(yaw)));
       }
       else {
-        rightLeader.set(controller.calculate(encoderFR.getPosition(), Math.abs(pitch)));
+        rightLeader.set(controller.calculate(encoderFR.getPosition(), Math.abs(yaw)));
       }
   }
   

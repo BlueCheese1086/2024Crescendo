@@ -44,7 +44,6 @@ public class Align extends Command{
       
       public void execute() {
         result = camera.getLatestResult();
-        target = result.getBestTarget();
 
         if(result.hasTargets()){
             target = result.getBestTarget();
@@ -52,6 +51,10 @@ public class Align extends Command{
             yaw = target.getYaw();
             pitch = target.getPitch();
             Transform3d camToTarget = target.getBestCameraToTarget();
+            SmartDashboard.putNumber("Yaw value", yaw);
+            SmartDashboard.putNumber("X distance", camToTarget.getX());
+            SmartDashboard.putNumber("Y distance", camToTarget.getY());
+            SmartDashboard.putNumber("Z distance", camToTarget.getZ());
         }
 
         if (alignDo.getAsBoolean()){

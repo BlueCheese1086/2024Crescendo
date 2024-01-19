@@ -19,4 +19,8 @@ public final class Constants {
     public static final int BACK_LEFT_ID = 3;
     public static final int BACK_RIGHT_ID = 4;
   }
+  public static class ShooterConstants {
+    public static final int UPPER_SHOOTER_ID = 22;
+    public static final int LOWER_SHOOTER_ID = 21;
+  }
 }

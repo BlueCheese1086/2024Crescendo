@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.subsystems.*;
 
-public class Shoot extends CommandBase{
+public class Shoot extends Command{
  
     private final shooterSubystem m_subsystem;
     private final BooleanSupplier shootDo;

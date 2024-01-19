@@ -5,18 +5,18 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.revrobotics.*;
-import com.revrobotics.CANSparkMaxLowLevel.*;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj2.command.*;
-
+import frc.robot.Constants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Transform3d;
 
 public class shooterSubystem extends SubsystemBase {
 
-  static CANSparkMax shooterU = new CANSparkMax(22, MotorType.kBrushless); //need actual value and motor type
-  static CANSparkMax shooterL = new CANSparkMax(21, MotorType.kBrushless); //need actual value and motor type
+  static CANSparkMax shooterU = new CANSparkMax(Constants.ShooterConstants.UPPER_SHOOTER_ID, MotorType.kBrushless); //need actual value and motor type
+  static CANSparkMax shooterL = new CANSparkMax(Constants.ShooterConstants.LOWER_SHOOTER_ID, MotorType.kBrushless); //need actual value and motor type
 
 
   static PhotonCamera camera = new PhotonCamera("photon vision");

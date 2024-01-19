@@ -13,11 +13,11 @@ import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.driveSubsystem;
 import frc.robot.subsystems.*;
 
-public class Align extends CommandBase{
+public class Align extends Command{
 
     private final driveSubsystem m_subsystem;
     private final BooleanSupplier alignDo;

@@ -12,18 +12,18 @@ import java.util.function.Supplier;
 public class Drive extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Drivetrain m_drivetrain;
-  private final Supplier<Double> m_xAxisSpeedSupplier;
-  private final Supplier<Double> m_zAxisRotateSupplier;
+  private final Supplier<Double> m_speedSupplier;
+  private final Supplier<Double> m_rotateSupplier;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Drive(Drivetrain drivetrain, Supplier<Double> xAxisSpeedSupplier, Supplier<Double> zAxisRotateSupplier) {
+  public Drive(Drivetrain drivetrain, Supplier<Double> speedSupplier, Supplier<Double> rotateSupplier) {
     m_drivetrain = drivetrain;
-    m_xAxisSpeedSupplier = xAxisSpeedSupplier;
-    m_zAxisRotateSupplier = zAxisRotateSupplier;
+    m_speedSupplier = speedSupplier;
+    m_rotateSupplier = rotateSupplier;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
@@ -34,7 +34,9 @@ public class Drive extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    m_drivetrain.arcadeDrive(m_speedSupplier.get(), m_rotateSupplier.get());
+  }
 
   // Called once the command ends or is interrupted.
   @Override

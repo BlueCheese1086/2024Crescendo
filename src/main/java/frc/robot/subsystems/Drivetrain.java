@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
   /** Creates a new Drivetrain. */
-    DifferentialDrive m_drivetrain;
+  DifferentialDrive m_diffDrive;
 
   public Drivetrain(){
     // The CANSparkMax motors are being initalized.
@@ -38,7 +38,7 @@ public class Drivetrain extends SubsystemBase {
     rightBack.follow(rightFront);
     leftBack.follow(leftFront);
 
-    DifferentialDrive m_diffdrivetrain = new DifferentialDrive(leftFront, rightFront);
+    m_diffDrive = new DifferentialDrive(leftFront, rightFront);
   }
 
 
@@ -60,5 +60,9 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+  }
+
+  public void arcadeDrive(double speed, double rotate) {
+    m_diffDrive.arcadeDrive(speed, rotate);
   }
 }

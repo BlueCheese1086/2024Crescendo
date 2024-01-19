@@ -15,12 +15,12 @@ package frc.robot;
 public final class Constants {
   public static class DriveConstants {
     public static final int FRONT_LEFT_ID = 1;
-    public static final int FRONT_RIGHT_ID = 2;
-    public static final int BACK_LEFT_ID = 3;
+    public static final int BACK_LEFT_ID = 2;
+    public static final int FRONT_RIGHT_ID = 3;
     public static final int BACK_RIGHT_ID = 4;
   }
   public static class ShooterConstants {
-    public static final int UPPER_SHOOTER_ID = 22;
-    public static final int LOWER_SHOOTER_ID = 21;
+    public static final int UPPER_SHOOTER_ID = 11;
+    public static final int LOWER_SHOOTER_ID = 12;
   }
 }

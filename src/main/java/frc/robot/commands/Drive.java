@@ -12,18 +12,18 @@ import java.util.function.Supplier;
 public class Drive extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Drivetrain m_drivetrain;
-  private final Supplier<Double> m_leftSpeedSupplier;
-  private final Supplier<Double> m_rightSpeedSupplier;
+  private final Supplier<Double> m_xAxisSpeedSupplier;
+  private final Supplier<Double> m_zAxisRotateSupplier;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Drive(Drivetrain drivetrain, Supplier<Double> leftSpeedSupplier, Supplier<Double> rightSpeedSupplier) {
+  public Drive(Drivetrain drivetrain, Supplier<Double> xAxisSpeedSupplier, Supplier<Double> zAxisRotateSupplier) {
     m_drivetrain = drivetrain;
-    m_leftSpeedSupplier = leftSpeedSupplier;
-    m_rightSpeedSupplier = rightSpeedSupplier;
+    m_xAxisSpeedSupplier = xAxisSpeedSupplier;
+    m_zAxisRotateSupplier = zAxisRotateSupplier;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }

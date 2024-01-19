@@ -31,6 +31,14 @@ public class Drivetrain extends SubsystemBase {
     leftBack.setSmartCurrentLimit(DrivetrainLimits);
     rightFront.setSmartCurrentLimit(DrivetrainLimits);
     rightBack.setSmartCurrentLimit(DrivetrainLimits);
+
+    rightFront.setInverted(false);
+    leftFront.setInverted(true);
+
+    rightBack.follow(rightFront);
+    leftBack.follow(leftFront);
+
+  
   }
 
 

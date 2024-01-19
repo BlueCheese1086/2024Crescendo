@@ -6,7 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -14,15 +14,15 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class driveSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  private final static CANSparkMax rightLeader = new CANSparkMax(2, MotorType.kBrushless); 
-  private final static CANSparkMax rightFollower = new CANSparkMax(4, MotorType.kBrushless);
-  private final static CANSparkMax leftLeader = new CANSparkMax(1, MotorType.kBrushless);
-  private final static CANSparkMax leftFollower = new CANSparkMax(3, MotorType.kBrushless);
+  private final static CANSparkMax rightLeader = new CANSparkMax(Constants.DriveConstants.FRONT_RIGHT_ID, MotorType.kBrushless); 
+  private final static CANSparkMax rightFollower = new CANSparkMax(Constants.DriveConstants.BACK_RIGHT_ID, MotorType.kBrushless);
+  private final static CANSparkMax leftLeader = new CANSparkMax(Constants.DriveConstants.FRONT_LEFT_ID, MotorType.kBrushless);
+  private final static CANSparkMax leftFollower = new CANSparkMax(Constants.DriveConstants.BACK_LEFT_ID, MotorType.kBrushless);
 
   private final static BangBangController controller = new BangBangController();
 
@@ -35,22 +35,6 @@ public class driveSubsystem extends SubsystemBase {
   SwerveDriveKinematics kinematics;
 
   public driveSubsystem() {
-    //ChassisSpeeds speeds = new ChassisSpeeds(0.0001, 0, 0);
-
-    // Convert to module states
-    //SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(speeds);
-
-    // Front left module state
-    //SwerveModuleState frontLeft = moduleStates[0];
-
-    // Front right module state
-    //SwerveModuleState frontRight = moduleStates[1];
-
-    // Back left module state
-    //SwerveModuleState backLeft = moduleStates[2];
-
-    // Back right module state
-    //SwerveModuleState backRight = moduleStates[3]; 
     leftFollower.follow(leftLeader);
     rightFollower.follow(rightLeader); 
   }
@@ -60,7 +44,7 @@ public class driveSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void set(double leftF, double rightF, double leftB, double rightB) {
+  public void set(double leftF, double rightF) {
     leftLeader.set(leftF);
     rightLeader.set(rightF);
   }
@@ -73,12 +57,12 @@ public class driveSubsystem extends SubsystemBase {
     return encoderFR;
   }
 
-  public void driveAlign(double pitch){
-      if(pitch > 0){
-        leftLeader.set(controller.calculate(encoderFL.getPosition(), Math.abs(pitch)));
+  public void driveAlign(double yaw){
+      if(yaw > 0){
+        leftLeader.set(controller.calculate(encoderFL.getPosition(), Math.abs(yaw)));
       }
       else {
-        rightLeader.set(controller.calculate(encoderFR.getPosition(), Math.abs(pitch)));
+        rightLeader.set(controller.calculate(encoderFR.getPosition(), Math.abs(yaw)));
       }
   }
   

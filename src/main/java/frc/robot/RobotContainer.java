@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -34,10 +34,8 @@ public class RobotContainer {
 
     m_DriveSubsystem.setDefaultCommand(
     new Drive(m_DriveSubsystem, 
-    () -> (joy.getRawAxis(1) - joy.getRawAxis(4)) * -0.1, //FL
-    () -> (joy.getRawAxis(1) + joy.getRawAxis(4)) * -0.1, //FR
-    () -> (joy.getRawAxis(1) - joy.getRawAxis(4)) * -0.1, //BL
-    () -> (joy.getRawAxis(1) + joy.getRawAxis(4)) * -0.1) //BR
+    () -> (joy.getRawAxis(1) - joy.getRawAxis(0)), //FL
+    () -> (joy.getRawAxis(1) + joy.getRawAxis(0))) //FR
   );
 
   m_IntakeSubsystem.setDefaultCommand(

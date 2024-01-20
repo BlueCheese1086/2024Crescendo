@@ -58,7 +58,7 @@ public class Align extends Command{
         }
 
         if (alignDo.getAsBoolean()){
-            m_subsystem.driveAlign(yaw);
+            //m_subsystem.driveAlign(yaw); //uncomment when you know that yaw works correctly and conversion is set
         }
       }
 }

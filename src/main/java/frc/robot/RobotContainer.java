@@ -22,8 +22,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final driveSubsystem m_DriveSubsystem = new driveSubsystem();
-  private final shooterSubystem m_IntakeSubsystem = new shooterSubystem();
-  XboxController joy = new XboxController(0);
+  private final shooterSubystem m_ShooterSubsystem = new shooterSubystem();
+  CommandXboxController xbox = new CommandXboxController(0);
+  XboxController joy = xbox.getHID();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
@@ -34,14 +35,17 @@ public class RobotContainer {
 
     m_DriveSubsystem.setDefaultCommand(
     new Drive(m_DriveSubsystem, 
-    () -> (joy.getRawAxis(1) - joy.getRawAxis(0)), //FL
-    () -> (joy.getRawAxis(1) + joy.getRawAxis(0))) //FR
+    () -> (joy.getRightY() - joy.getRightX()), //FL
+    () -> (joy.getRightY() + joy.getRightX())) //FR
   );
-
+  /* 
   m_IntakeSubsystem.setDefaultCommand(
   new Shoot(m_IntakeSubsystem, 
-  () -> joy.getAButton()));
+  () -> joy.getAButton()));*/
+
+    xbox.a().whileTrue(new Shoot(m_ShooterSubsystem));
   }
+
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the

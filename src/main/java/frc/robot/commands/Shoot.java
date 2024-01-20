@@ -11,13 +11,13 @@ import frc.robot.subsystems.*;
 public class Shoot extends Command{
  
     private final shooterSubystem m_subsystem;
-    private final BooleanSupplier shootDo;
+    //private final BooleanSupplier shootDo;
     //private final DoubleSupplier intakeSpeed;
 
     XboxController joy = new XboxController(0);
 
-    public Shoot(shooterSubystem shooterSubystem, BooleanSupplier shootDo) {
-        this.shootDo = shootDo;
+    public Shoot(shooterSubystem shooterSubystem) {
+        //this.shootDo = shootDo;
 
         m_subsystem = shooterSubystem;
   
@@ -26,6 +26,6 @@ public class Shoot extends Command{
     }
     
     public void execute() {;
-        shooterSubystem.shoot(shootDo.getAsBoolean());
+        shooterSubystem.shoot(true);
     }
 }

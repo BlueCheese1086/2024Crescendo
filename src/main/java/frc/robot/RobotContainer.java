@@ -43,7 +43,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     m_drivetrain.setDefaultCommand(
-      new Drive(m_drivetrain, () -> m_driverController.getLeftY(), () -> m_driverController.getRightY())
+      new Drive(m_drivetrain, () -> -m_driverController.getLeftY(), () -> -m_driverController.getRightY())
     );
 
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`

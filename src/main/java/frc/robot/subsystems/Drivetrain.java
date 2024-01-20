@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
   /** Creates a new Drivetrain. */
-  DifferentialDrive m_diffDrive;
+  private final DifferentialDrive m_diffDrive;
 
   public Drivetrain(){
     // The CANSparkMax motors are being initalized.

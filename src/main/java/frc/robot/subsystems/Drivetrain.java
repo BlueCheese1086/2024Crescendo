@@ -11,15 +11,13 @@ import static frc.robot.Constants.DrivetrainConstants.RightBackMotor;
 import static frc.robot.Constants.DrivetrainConstants.RightFrontMotor;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
-  /** Creates a new Drivetrain. */
-  private final DifferentialDrive m_diffDrive;
-
   public Drivetrain(){
     // The CANSparkMax motors are being initalized.
     CANSparkMax rightFront = new CANSparkMax(RightFrontMotor, MotorType.kBrushless);
@@ -32,13 +30,16 @@ public class Drivetrain extends SubsystemBase {
     rightFront.setSmartCurrentLimit(DrivetrainLimits);
     rightBack.setSmartCurrentLimit(DrivetrainLimits);
 
+    leftFront.setIdleMode(IdleMode.kBrake);
+    leftBack.setIdleMode(IdleMode.kBrake);
+    rightFront.setIdleMode(IdleMode.kBrake);
+    rightBack.setIdleMode(IdleMode.kBrake);
+
     rightFront.setInverted(false);
     leftFront.setInverted(true);
 
     rightBack.follow(rightFront);
     leftBack.follow(leftFront);
-
-    m_diffDrive = new DifferentialDrive(leftFront, rightFront);
   }
 
 
@@ -63,6 +64,6 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void arcadeDrive(double speed, double rotate) {
-    m_diffDrive.arcadeDrive(speed, rotate);
+    
   }
 }

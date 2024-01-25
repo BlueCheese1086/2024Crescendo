@@ -23,6 +23,7 @@ public final class Constants {
     public static final int RightBackMotor = 4;
     public static final int RightFrontMotor = 3;
     public static final int DrivetrainLimits = 60;
+    public static final double SpeedMultiplier = 0.5;
   }
 
 }

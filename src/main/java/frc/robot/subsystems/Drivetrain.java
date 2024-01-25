@@ -9,6 +9,7 @@ import static frc.robot.Constants.DrivetrainConstants.LeftBackMotor;
 import static frc.robot.Constants.DrivetrainConstants.LeftFrontMotor;
 import static frc.robot.Constants.DrivetrainConstants.RightBackMotor;
 import static frc.robot.Constants.DrivetrainConstants.RightFrontMotor;
+import static frc.robot.Constants.DrivetrainConstants.SpeedMultiplier;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -18,28 +19,33 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
+  CANSparkMax m_rightFront;
+  CANSparkMax m_rightBack; 
+  CANSparkMax m_leftFront;
+  CANSparkMax m_leftBack;
+
   public Drivetrain(){
     // The CANSparkMax motors are being initalized.
-    CANSparkMax rightFront = new CANSparkMax(RightFrontMotor, MotorType.kBrushless);
-    CANSparkMax rightBack = new CANSparkMax(RightBackMotor, MotorType.kBrushless);
-    CANSparkMax leftFront = new CANSparkMax(LeftFrontMotor, MotorType.kBrushless);
-    CANSparkMax leftBack = new CANSparkMax(LeftBackMotor, MotorType.kBrushless);
+    m_rightFront = new CANSparkMax(RightFrontMotor, MotorType.kBrushless);
+    m_rightBack = new CANSparkMax(RightBackMotor, MotorType.kBrushless);
+    m_leftFront = new CANSparkMax(LeftFrontMotor, MotorType.kBrushless);
+    m_leftBack = new CANSparkMax(LeftBackMotor, MotorType.kBrushless);
 
-    leftFront.setSmartCurrentLimit(DrivetrainLimits);
-    leftBack.setSmartCurrentLimit(DrivetrainLimits);
-    rightFront.setSmartCurrentLimit(DrivetrainLimits);
-    rightBack.setSmartCurrentLimit(DrivetrainLimits);
+    m_leftFront.setSmartCurrentLimit(DrivetrainLimits);
+    m_leftBack.setSmartCurrentLimit(DrivetrainLimits);
+    m_rightFront.setSmartCurrentLimit(DrivetrainLimits);
+    m_rightBack.setSmartCurrentLimit(DrivetrainLimits);
 
-    leftFront.setIdleMode(IdleMode.kBrake);
-    leftBack.setIdleMode(IdleMode.kBrake);
-    rightFront.setIdleMode(IdleMode.kBrake);
-    rightBack.setIdleMode(IdleMode.kBrake);
+    m_leftFront.setIdleMode(IdleMode.kBrake);
+    m_leftBack.setIdleMode(IdleMode.kBrake);
+    m_rightFront.setIdleMode(IdleMode.kBrake);
+    m_rightBack.setIdleMode(IdleMode.kBrake);
 
-    rightFront.setInverted(false);
-    leftFront.setInverted(true);
+    m_rightFront.setInverted(false);
+    m_leftFront.setInverted(true);
 
-    rightBack.follow(rightFront);
-    leftBack.follow(leftFront);
+    m_rightBack.follow(m_rightFront);
+    m_leftBack.follow(m_leftFront);
   }
 
 
@@ -64,6 +70,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void arcadeDrive(double speed, double rotate) {
-    
+    m_leftFront.set((speed + rotate) * SpeedMultiplier);
+    m_rightFront.set((speed - rotate) * SpeedMultiplier);
   }
 }

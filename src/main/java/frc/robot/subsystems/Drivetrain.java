@@ -15,7 +15,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+//import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
@@ -41,8 +41,8 @@ public class Drivetrain extends SubsystemBase {
     m_rightFront.setIdleMode(IdleMode.kBrake);
     m_rightBack.setIdleMode(IdleMode.kBrake);
 
-    m_rightFront.setInverted(false);
-    m_leftFront.setInverted(true);
+    m_rightFront.setInverted(true);
+    m_leftFront.setInverted(false);
 
     m_rightBack.follow(m_rightFront);
     m_leftBack.follow(m_leftFront);
@@ -70,7 +70,9 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void arcadeDrive(double speed, double rotate) {
-    m_leftFront.set((speed + rotate) * SpeedMultiplier);
-    m_rightFront.set((speed - rotate) * SpeedMultiplier);
+
+
+    m_leftFront.set((speed - rotate) * SpeedMultiplier);
+    m_rightFront.set((speed + rotate) * SpeedMultiplier);
   }
 }

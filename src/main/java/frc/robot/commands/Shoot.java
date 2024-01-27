@@ -11,17 +11,33 @@ import frc.robot.subsystems.*;
 public class Shoot extends Command{
  
     private final shooterSubystem m_subsystem;
-    private final BooleanSupplier shootDo;
+    private final boolean shootDo;
 
-    public Shoot(shooterSubystem shooterSubystem, BooleanSupplier shootDo) {
+    private long start;
+
+    public Shoot(shooterSubystem shooterSubystem, boolean shootDo) {
         this.shootDo = shootDo;
         m_subsystem = shooterSubystem;
   
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooterSubystem);
     }
+
+    public void initialize(){
+        start = System.currentTimeMillis();
+    }
     
-    public void execute() {;
-        m_subsystem.shoot(shootDo.getAsBoolean());
+    public void execute() {
+        if(start + 500 > System.currentTimeMillis()){
+            m_subsystem.shootUpper(shootDo);
+        }
+        else {
+            m_subsystem.shootUpper(shootDo);
+            m_subsystem.shootLower(shootDo);
+        }
+    }
+
+    public boolean isFinished(){
+        return start + 1000 <= System.currentTimeMillis();
     }
 }

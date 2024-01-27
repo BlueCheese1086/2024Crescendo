@@ -16,10 +16,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.math.MathUtil;
 
 public class driveSubsystem extends SubsystemBase {
@@ -35,6 +37,8 @@ public class driveSubsystem extends SubsystemBase {
   RelativeEncoder encoderBR = rightFollower.getEncoder();
   RelativeEncoder encoderBL = leftFollower.getEncoder();
 
+  CommandXboxController xbox = new CommandXboxController(0);
+  XboxController joy = xbox.getHID();
   
   SwerveDriveKinematics kinematics;
 
@@ -49,6 +53,11 @@ public class driveSubsystem extends SubsystemBase {
     rightFollower.setIdleMode(IdleMode.kBrake);
     leftFollower.setIdleMode(IdleMode.kBrake);
 
+    leftLeader.setSmartCurrentLimit(Constants.DriveConstants.DRIVETRAINLIMITS);
+    leftFollower.setSmartCurrentLimit(Constants.DriveConstants.DRIVETRAINLIMITS);
+    rightLeader.setSmartCurrentLimit(Constants.DriveConstants.DRIVETRAINLIMITS);
+    rightFollower.setSmartCurrentLimit(Constants.DriveConstants.DRIVETRAINLIMITS);
+
     leftLeader.setInverted(false);
     rightLeader.setInverted(true);
 
@@ -59,15 +68,17 @@ public class driveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {}
 
-  public void set(double leftF, double rightF) {
-    MathUtil.applyDeadband(leftF, Constants.DriveConstants.DEADBAND);
-    MathUtil.applyDeadband(rightF, Constants.DriveConstants.DEADBAND);
+  public void set(double rotateSpeed, double driveSpeed) {
+    //MathUtil.applyDeadband(leftF, Constants.DriveConstants.DEADBAND);
+    //MathUtil.applyDeadband(rightF, Constants.DriveConstants.DEADBAND);
 
-    rightLeader.set(rightF);
-    leftLeader.set(leftF);
+    rightLeader.set((driveSpeed + rotateSpeed));
+    leftLeader.set((driveSpeed - rotateSpeed));
     
-    SmartDashboard.putNumber("Right speed", rightF);
-    SmartDashboard.putNumber("Left speed", leftF);
+    SmartDashboard.putNumber("Rotate speed:", rotateSpeed);
+    SmartDashboard.putNumber("drive speed:", driveSpeed);
+    SmartDashboard.putNumber("Joystick x", joy.getRightX());
+    SmartDashboard.putNumber("Joystick y", joy.getRightY());
   }
 
   public RelativeEncoder getEncoderFL(){
@@ -80,10 +91,10 @@ public class driveSubsystem extends SubsystemBase {
 
   public void driveAlign(double yaw){
       if(yaw > 0){
-        leftLeader.set(controller.calculate(encoderFL.getPosition(), Math.abs(yaw)));
+        leftLeader.set(Math.abs(controller.calculate(yaw, 0) * 0.1));
       }
       else {
-        rightLeader.set(controller.calculate(encoderFR.getPosition(), Math.abs(yaw)));
+        rightLeader.set(Math.abs(controller.calculate(yaw, 0) * 0.1));
       }
   }
 }

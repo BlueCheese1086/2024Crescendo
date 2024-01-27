@@ -20,7 +20,7 @@ import frc.robot.subsystems.*;
 public class Align extends Command{
 
     private final driveSubsystem m_subsystem;
-    private final BooleanSupplier alignDo;
+    private final boolean alignDo;
 
     private final RelativeEncoder encoderFL;
     private final RelativeEncoder encoderFR; 
@@ -28,13 +28,13 @@ public class Align extends Command{
     double yaw;
     double pitch;
 
-    static PhotonCamera camera = new PhotonCamera("photon vision");
+    static PhotonCamera camera = new PhotonCamera("Camera_Module_v1");
     static PhotonPipelineResult result = camera.getLatestResult();
     static PhotonTrackedTarget target = result.getBestTarget();
 
     static BangBangController controller = new BangBangController();
     
-    public Align(driveSubsystem subsystem, BooleanSupplier alignDo) {
+    public Align(driveSubsystem subsystem, boolean alignDo) {
         m_subsystem = subsystem;
         this.alignDo = alignDo;
         encoderFL = m_subsystem.getEncoderFL();
@@ -58,9 +58,12 @@ public class Align extends Command{
             SmartDashboard.putNumber("Y distance", camToTarget.getY());
             SmartDashboard.putNumber("Z distance", camToTarget.getZ());
         }
+        else{
+          yaw = 0;
+        }
 
-        if (alignDo.getAsBoolean()){
-            //m_subsystem.driveAlign(yaw); //uncomment when you know that yaw works correctly and conversion is set
+        if (alignDo){
+            m_subsystem.driveAlign(yaw); //uncomment when you know that yaw works correctly and conversion is set
         }
       }
 }

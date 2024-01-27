@@ -7,22 +7,22 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.driveSubsystem;
 
 public class Drive extends Command  {
-    private final DoubleSupplier rightSpeedF;
-    private final DoubleSupplier leftSpeedF;
+    private final DoubleSupplier rotateSpeed;
+    private final DoubleSupplier driveSpeed;
     private final driveSubsystem m_subsystem;
 
-    public Drive(driveSubsystem subsystem, DoubleSupplier leftSpeedF, DoubleSupplier rightSpeedF) {
+    public Drive(driveSubsystem subsystem, DoubleSupplier rotateSpeed, DoubleSupplier driveSpeed) {
         m_subsystem = subsystem;
-        this.rightSpeedF = rightSpeedF;
-        this.leftSpeedF = leftSpeedF;
+        this.rotateSpeed = rotateSpeed;
+        this.driveSpeed = driveSpeed;
       
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
       }
       
       public void execute() {
-        m_subsystem.set(leftSpeedF.getAsDouble(), rightSpeedF.getAsDouble());
-        SmartDashboard.putNumber("Left Speed:", leftSpeedF.getAsDouble());
-        SmartDashboard.putNumber("Right Speed:", rightSpeedF.getAsDouble());
+        m_subsystem.set(rotateSpeed.getAsDouble(), driveSpeed.getAsDouble());
+        SmartDashboard.putNumber("Rotate speed:", rotateSpeed.getAsDouble());
+        SmartDashboard.putNumber("Drive speed:", driveSpeed.getAsDouble());
       }
 }

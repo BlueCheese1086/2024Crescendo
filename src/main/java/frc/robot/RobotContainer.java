@@ -5,10 +5,11 @@
 package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
-import frc.robot.commands.Autos;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -36,15 +37,10 @@ public class RobotContainer {
 
     m_DriveSubsystem.setDefaultCommand(
     new Drive(m_DriveSubsystem, 
-    () -> (joy.getRightY() - joy.getRightX()), //FL
-    () -> (joy.getRightY() + joy.getRightX())) //FR
+    () -> MathUtil.applyDeadband((-joy.getRightX()), 0.2), //Rotate speed
+    () -> MathUtil.applyDeadband((-joy.getRightY()), 0.2)) //Drive speed
   );
-  
-  m_ShooterSubsystem.setDefaultCommand(
-  new Shoot(m_ShooterSubsystem, 
-  () -> joy.getAButton()));
   }
-
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -57,15 +53,8 @@ public class RobotContainer {
    */
   private void configureBindings() {
     //xbox.a().whileTrue(new Shoot(m_ShooterSubsystem));
+    xbox.x().whileTrue(new Align(m_DriveSubsystem, true));
+    xbox.a().onTrue(new Shoot(m_ShooterSubsystem, true));
+    xbox.b().whileTrue(new Intake(m_ShooterSubsystem, true));
   }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  //public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    //return Autos.exampleAuto(m_exampleSubsystem);
-  //}
 }

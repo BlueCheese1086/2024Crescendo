@@ -31,6 +31,11 @@ public class Drivetrain extends SubsystemBase {
     m_leftFront = new CANSparkMax(LeftFrontMotor, MotorType.kBrushless);
     m_leftBack = new CANSparkMax(LeftBackMotor, MotorType.kBrushless);
 
+    m_rightFront.restoreFactoryDefaults();
+    m_rightBack.restoreFactoryDefaults();
+    m_leftFront.restoreFactoryDefaults();
+    m_leftBack.restoreFactoryDefaults();
+
     m_leftFront.setSmartCurrentLimit(DrivetrainLimits);
     m_leftBack.setSmartCurrentLimit(DrivetrainLimits);
     m_rightFront.setSmartCurrentLimit(DrivetrainLimits);

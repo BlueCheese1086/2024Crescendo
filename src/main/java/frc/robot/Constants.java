@@ -18,9 +18,11 @@ public final class Constants {
     public static final int BACK_LEFT_ID = 2;
     public static final int FRONT_RIGHT_ID = 3;
     public static final int BACK_RIGHT_ID = 4;
+    public static final double DEADBAND = 0.2;
   }
   public static class ShooterConstants {
     public static final int UPPER_SHOOTER_ID = 11;
     public static final int LOWER_SHOOTER_ID = 12;
+    public static final double SHOOTER_MAX_SPEED = 0.5;
   }
 }

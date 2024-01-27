@@ -6,54 +6,75 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import edu.wpi.first.math.MathUtil;
 
 public class driveSubsystem extends SubsystemBase {
-  /** Creates a new ExampleSubsystem. */
-  private final static CANSparkMax rightLeader = new CANSparkMax(Constants.DriveConstants.FRONT_RIGHT_ID, MotorType.kBrushless); 
-  private final static CANSparkMax rightFollower = new CANSparkMax(Constants.DriveConstants.BACK_RIGHT_ID, MotorType.kBrushless);
-  private final static CANSparkMax leftLeader = new CANSparkMax(Constants.DriveConstants.FRONT_LEFT_ID, MotorType.kBrushless);
-  private final static CANSparkMax leftFollower = new CANSparkMax(Constants.DriveConstants.BACK_LEFT_ID, MotorType.kBrushless);
+  CANSparkMax rightLeader = new CANSparkMax(Constants.DriveConstants.FRONT_RIGHT_ID, MotorType.kBrushless); 
+  CANSparkMax rightFollower = new CANSparkMax(Constants.DriveConstants.BACK_RIGHT_ID, MotorType.kBrushless);
+  CANSparkMax leftLeader = new CANSparkMax(Constants.DriveConstants.FRONT_LEFT_ID, MotorType.kBrushless);
+  CANSparkMax leftFollower = new CANSparkMax(Constants.DriveConstants.BACK_LEFT_ID, MotorType.kBrushless);
 
-  private final static BangBangController controller = new BangBangController();
+  BangBangController controller = new BangBangController();
 
-  private final static RelativeEncoder encoderFR = rightLeader.getEncoder();
-  private final static RelativeEncoder encoderFL = leftLeader.getEncoder();
-  private final static RelativeEncoder encoderBR = rightFollower.getEncoder();
-  private final static RelativeEncoder encoderBL = leftFollower.getEncoder();
+  RelativeEncoder encoderFR = rightLeader.getEncoder();
+  RelativeEncoder encoderFL = leftLeader.getEncoder();
+  RelativeEncoder encoderBR = rightFollower.getEncoder();
+  RelativeEncoder encoderBL = leftFollower.getEncoder();
 
   
   SwerveDriveKinematics kinematics;
 
   public driveSubsystem() {
+    rightLeader.restoreFactoryDefaults();
+    leftLeader.restoreFactoryDefaults();
+    rightFollower.restoreFactoryDefaults();
+    leftFollower.restoreFactoryDefaults();
+
+    rightLeader.setIdleMode(IdleMode.kBrake);
+    leftLeader.setIdleMode(IdleMode.kBrake);
+    rightFollower.setIdleMode(IdleMode.kBrake);
+    leftFollower.setIdleMode(IdleMode.kBrake);
+
+    leftLeader.setInverted(false);
+    rightLeader.setInverted(true);
+
     leftFollower.follow(leftLeader);
     rightFollower.follow(rightLeader); 
   }
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+  public void periodic() {}
 
   public void set(double leftF, double rightF) {
-    leftLeader.set(leftF);
+    MathUtil.applyDeadband(leftF, Constants.DriveConstants.DEADBAND);
+    MathUtil.applyDeadband(rightF, Constants.DriveConstants.DEADBAND);
+
     rightLeader.set(rightF);
+    leftLeader.set(leftF);
+    
+    SmartDashboard.putNumber("Right speed", rightF);
+    SmartDashboard.putNumber("Left speed", leftF);
   }
 
-  public static RelativeEncoder getEncoderFL(){
+  public RelativeEncoder getEncoderFL(){
     return encoderFL;
   }
 
-  public static RelativeEncoder getEncoderFR(){
+  public RelativeEncoder getEncoderFR(){
     return encoderFR;
   }
 
@@ -65,5 +86,4 @@ public class driveSubsystem extends SubsystemBase {
         rightLeader.set(controller.calculate(encoderFR.getPosition(), Math.abs(yaw)));
       }
   }
-  
 }

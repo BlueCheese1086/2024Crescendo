@@ -23,6 +23,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final driveSubsystem m_DriveSubsystem = new driveSubsystem();
   private final shooterSubystem m_ShooterSubsystem = new shooterSubystem();
+
   CommandXboxController xbox = new CommandXboxController(0);
   XboxController joy = xbox.getHID();
 
@@ -38,12 +39,10 @@ public class RobotContainer {
     () -> (joy.getRightY() - joy.getRightX()), //FL
     () -> (joy.getRightY() + joy.getRightX())) //FR
   );
-  /* 
-  m_IntakeSubsystem.setDefaultCommand(
-  new Shoot(m_IntakeSubsystem, 
-  () -> joy.getAButton()));*/
-
-    xbox.a().whileTrue(new Shoot(m_ShooterSubsystem));
+  
+  m_ShooterSubsystem.setDefaultCommand(
+  new Shoot(m_ShooterSubsystem, 
+  () -> joy.getAButton()));
   }
 
 
@@ -57,6 +56,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    //xbox.a().whileTrue(new Shoot(m_ShooterSubsystem));
   }
 
   /**

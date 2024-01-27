@@ -22,8 +22,8 @@ public class Align extends Command{
     private final driveSubsystem m_subsystem;
     private final BooleanSupplier alignDo;
 
-    private final RelativeEncoder encoderFL = driveSubsystem.getEncoderFL();
-    private final RelativeEncoder encoderFR = driveSubsystem.getEncoderFR(); 
+    private final RelativeEncoder encoderFL;
+    private final RelativeEncoder encoderFR; 
 
     double yaw;
     double pitch;
@@ -37,6 +37,8 @@ public class Align extends Command{
     public Align(driveSubsystem subsystem, BooleanSupplier alignDo) {
         m_subsystem = subsystem;
         this.alignDo = alignDo;
+        encoderFL = m_subsystem.getEncoderFL();
+        encoderFR = m_subsystem.getEncoderFR();
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);

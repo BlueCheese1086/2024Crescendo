@@ -39,8 +39,8 @@ public class Intake extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_launcher.setUpper(0.0);
-    m_launcher.setLower(0.0);
+    m_launcher.stopLower();
+    m_launcher.stopUpper();
   }
 
   // Returns true when the command should end.

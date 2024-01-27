@@ -40,7 +40,7 @@ public class Launch extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_launcher.setLower(0.0);
+    m_launcher.stopLower();
   }
 
   // Returns true when the command should end.

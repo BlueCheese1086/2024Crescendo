@@ -38,7 +38,7 @@ public class Launcher extends SubsystemBase {
     feedPID.setD(0);
     // feedPID.setFF(0.01);
 
-    launchPID.setP(0.3);
+    launchPID.setP(0.0001);
     launchPID.setI(0);
     launchPID.setD(0);
     // launchPID.setFF(0.01);
@@ -51,7 +51,7 @@ public class Launcher extends SubsystemBase {
   }
 
   /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
+   * An example method querying a boolean state of the subsystem (for example, a digital sensor). // lil'python was here
    *
    * @return value of some boolean subsystem state, such as a digital sensor.
    */
@@ -63,8 +63,8 @@ public class Launcher extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    launchPID.setReference(upperSpeed, ControlType.kVelocity);
-    // feedPID.setReference(lowerSpeed, ControlType.kVelocity)
+    if (!upperStop) launchPID.setReference(upperSpeed, ControlType.kVelocity);
+    // if (!lowerStop) feedPID.setReference(lowerSpeed, ControlType.kVelocity)
   }
 
   @Override
@@ -79,6 +79,7 @@ public class Launcher extends SubsystemBase {
   public void setUpper(double speed) {
     System.out.println(speed);
     upperSpeed = speed;
+    upperStop = false;
   }
 
   /**
@@ -88,5 +89,18 @@ public class Launcher extends SubsystemBase {
   public void setLower(double speed) {
     System.out.println(speed);
     lowerSpeed = speed;
+    lowerStop = false;
+  }
+
+  public void stopUpper() {
+    upperStop = true;
+    upperSpeed = 0;
+    m_upper.stopMotor();
+  }
+
+  public void stopLower() {
+    lowerStop = true;
+    lowerSpeed = 0;
+    m_lower.stopMotor();
   }
 }

@@ -22,12 +22,6 @@ public class Launcher extends SubsystemBase {
   SparkPIDController feedPID = m_lower.getPIDController();
   SparkPIDController launchPID = m_upper.getPIDController();
 
-  double lowerSpeed;
-  double upperSpeed;
-
-  boolean lowerStop = true;
-  boolean upperStop = true;
-
   public Launcher() {
     // The CANSparkMax motors are being initalized.
     m_lower.restoreFactoryDefaults();
@@ -38,7 +32,7 @@ public class Launcher extends SubsystemBase {
     feedPID.setD(0);
     // feedPID.setFF(0.01);
 
-    launchPID.setP(0.0001);
+    launchPID.setP(0.00001);
     launchPID.setI(0);
     launchPID.setD(0);
     // launchPID.setFF(0.01);
@@ -61,11 +55,7 @@ public class Launcher extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    if (!upperStop) launchPID.setReference(upperSpeed, ControlType.kVelocity);
-    // if (!lowerStop) feedPID.setReference(lowerSpeed, ControlType.kVelocity)
-  }
+  public void periodic() {}
 
   @Override
   public void simulationPeriodic() {
@@ -78,8 +68,7 @@ public class Launcher extends SubsystemBase {
    */
   public void setUpper(double speed) {
     System.out.println(speed);
-    upperSpeed = speed;
-    upperStop = false;
+    launchPID.setReference(speed, ControlType.kVelocity);
   }
 
   /**
@@ -88,19 +77,14 @@ public class Launcher extends SubsystemBase {
    */
   public void setLower(double speed) {
     System.out.println(speed);
-    lowerSpeed = speed;
-    lowerStop = false;
+    feedPID.setReference(speed, ControlType.kVelocity);
   }
 
   public void stopUpper() {
-    upperStop = true;
-    upperSpeed = 0;
     m_upper.stopMotor();
   }
 
   public void stopLower() {
-    lowerStop = true;
-    lowerSpeed = 0;
     m_lower.stopMotor();
   }
 }

@@ -27,14 +27,14 @@ public class Intake extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    m_launcher.setLower(IntakeSpeed);
-    m_launcher.setUpper(IntakeSpeed);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    m_launcher.setLower(IntakeSpeed);
+    m_launcher.setUpper(IntakeSpeed);
+  }
 
   // Called once the command ends or is interrupted.
   @Override

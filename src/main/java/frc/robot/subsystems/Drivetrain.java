@@ -4,12 +4,7 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.DrivetrainConstants.DrivetrainLimits;
-import static frc.robot.Constants.DrivetrainConstants.LeftBackMotor;
-import static frc.robot.Constants.DrivetrainConstants.LeftFrontMotor;
-import static frc.robot.Constants.DrivetrainConstants.RightBackMotor;
-import static frc.robot.Constants.DrivetrainConstants.RightFrontMotor;
-import static frc.robot.Constants.DrivetrainConstants.SpeedMultiplier;
+import static frc.robot.Constants.DrivetrainConstants.*;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;

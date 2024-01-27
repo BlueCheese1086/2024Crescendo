@@ -17,6 +17,7 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
   public static class DrivetrainConstants {
     public static final int LeftBackMotor = 2;
     public static final int LeftFrontMotor = 1;
@@ -25,6 +26,15 @@ public final class Constants {
     public static final int DrivetrainLimits = 60;
     public static final double SpeedMultiplier = 0.5;
     public static final double Deadband = 0.2;
+  }
+
+  public static class LauncherConstants {
+    public static final int UpperMotor = 12;
+    public static final int LowerMotor = 11;
+    public static final int LauncherLimits = 60;
+    public static final double FlywheelSpeed = 1.0;
+    public static final double FeedSpeed = 0.5;
+    public static final double IntakeSpeed = -0.5;
   }
 
 }

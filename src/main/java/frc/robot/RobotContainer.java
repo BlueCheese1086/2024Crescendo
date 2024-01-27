@@ -53,12 +53,12 @@ public class RobotContainer {
       new Drive(
         m_drivetrain, 
         () -> MathUtil.applyDeadband(-m_driverController.getRawAxis(1), 0.2), 
-        () -> MathUtil.applyDeadband(-m_driverController.getRawAxis(2), 0.2)
+        () -> MathUtil.applyDeadband(-m_driverController.getRawAxis(4), 0.2)
       )
     );
 
-    new Trigger(() -> m_driverController.getRawButton(11)).whileTrue(new Flywheel(m_launcher));
-    new Trigger(() -> m_driverController.getRawButton(12)).whileTrue(new Launch(m_launcher));
+    new Trigger(() -> m_driverController.getRawButton(5)).whileTrue(new Flywheel(m_launcher));
+    new Trigger(() -> m_driverController.getRawButton(6)).whileTrue(new Launch(m_launcher));
     new Trigger(() -> m_driverController.getRawButton(1)).whileTrue(new Intake(m_launcher));
 
 

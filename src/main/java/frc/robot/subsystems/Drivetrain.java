@@ -70,8 +70,6 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void arcadeDrive(double speed, double rotate) {
-
-
     m_leftFront.set((speed - rotate) * SpeedMultiplier);
     m_rightFront.set((speed + rotate) * SpeedMultiplier);
   }

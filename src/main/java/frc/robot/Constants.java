@@ -31,10 +31,9 @@ public final class Constants {
   public static class LauncherConstants {
     public static final int UpperMotor = 12;
     public static final int LowerMotor = 11;
-    public static final int LauncherLimits = 60;
-    public static final double FlywheelSpeed = 1.0;
-    public static final double FeedSpeed = 0.5;
-    public static final double IntakeSpeed = -0.5;
+    public static final double FlywheelSpeed = 5500;
+    public static final double FeedSpeed = 15000;
+    public static final double IntakeSpeed = -5500;
   }
 
 }

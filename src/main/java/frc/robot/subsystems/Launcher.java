@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.LauncherConstants.*;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -14,25 +16,38 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Launcher extends SubsystemBase {
-  CANSparkMax m_lower;
-  CANSparkMax m_upper; 
+  CANSparkMax m_lower = new CANSparkMax(LowerMotor, MotorType.kBrushless);
+  CANSparkMax m_upper = new CANSparkMax(UpperMotor, MotorType.kBrushless);
 
-  public Launcher(){
+  SparkPIDController feedPID = m_lower.getPIDController();
+  SparkPIDController launchPID = m_upper.getPIDController();
+
+  double lowerSpeed;
+  double upperSpeed;
+
+  boolean lowerStop = true;
+  boolean upperStop = true;
+
+  public Launcher() {
     // The CANSparkMax motors are being initalized.
-    m_lower = new CANSparkMax(LowerMotor, MotorType.kBrushless);
-    m_upper = new CANSparkMax(UpperMotor, MotorType.kBrushless);
-
     m_lower.restoreFactoryDefaults();
     m_upper.restoreFactoryDefaults();
 
-    m_lower.setSmartCurrentLimit(LauncherLimits);
-    m_upper.setSmartCurrentLimit(LauncherLimits);
+    feedPID.setP(0);
+    feedPID.setI(0);
+    feedPID.setD(0);
+    // feedPID.setFF(0.01);
+
+    launchPID.setP(0.3);
+    launchPID.setI(0);
+    launchPID.setD(0);
+    // launchPID.setFF(0.01);
 
     m_lower.setIdleMode(IdleMode.kCoast);
     m_upper.setIdleMode(IdleMode.kCoast);
 
-    m_lower.setInverted(false);
-    m_upper.setInverted(false);
+    m_lower.setInverted(true);
+    m_upper.setInverted(true);
   }
 
   /**
@@ -48,6 +63,8 @@ public class Launcher extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    launchPID.setReference(upperSpeed, ControlType.kVelocity);
+    // feedPID.setReference(lowerSpeed, ControlType.kVelocity)
   }
 
   @Override
@@ -55,11 +72,21 @@ public class Launcher extends SubsystemBase {
     // This method will be called once per scheduler run during simulation
   }
 
+  /**
+   * Sets the speed of the upper (upper) motor.
+   * @param speed The desired speed in RPM
+   */
   public void setUpper(double speed) {
-    m_upper.set(speed);
+    System.out.println(speed);
+    upperSpeed = speed;
   }
 
+  /**
+   * Sets the speed of the lower (feed) motor.
+   * @param speed The desired speed in RPM
+   */
   public void setLower(double speed) {
-    m_lower.set(speed);
+    System.out.println(speed);
+    lowerSpeed = speed;
   }
 }

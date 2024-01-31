@@ -11,12 +11,10 @@ import frc.robot.subsystems.*;
 public class Shoot extends Command{
  
     private final shooterSubystem m_subsystem;
-    private final boolean shootDo;
 
     private long start;
 
-    public Shoot(shooterSubystem shooterSubystem, boolean shootDo) {
-        this.shootDo = shootDo;
+    public Shoot(shooterSubystem shooterSubystem) {
         m_subsystem = shooterSubystem;
   
     // Use addRequirements() here to declare subsystem dependencies.
@@ -29,15 +27,23 @@ public class Shoot extends Command{
     
     public void execute() {
         if(start + 500 > System.currentTimeMillis()){
-            m_subsystem.shootUpper(shootDo);
+            SmartDashboard.putString("Stage:", "Stage 1");
+            m_subsystem.shootUpper(true);
         }
-        else {
-            m_subsystem.shootUpper(shootDo);
-            m_subsystem.shootLower(shootDo);
+        else if (start+500 < System.currentTimeMillis() && start + 1000 > System.currentTimeMillis()){
+            SmartDashboard.putString("Stage:", "Stage 2");
+            m_subsystem.shootUpper(true);
+            m_subsystem.shootLower(true);
         }
     }
 
     public boolean isFinished(){
         return start + 1000 <= System.currentTimeMillis();
+    }
+
+    public void end(boolean interrupted){
+        SmartDashboard.putString("Stage:", "Stage 3");
+        m_subsystem.shootLower(false);
+        m_subsystem.shootUpper(false);
     }
 }

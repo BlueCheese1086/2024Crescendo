@@ -18,8 +18,13 @@ public final class Constants {
     public static final int BACK_LEFT_ID = 2;
     public static final int FRONT_RIGHT_ID = 3;
     public static final int BACK_RIGHT_ID = 4;
-    public static final double DEADBAND = 0.4;
+    public static final double DEADBAND = 0.2;
     public static final int DRIVETRAINLIMITS = 60;
+    public static final double MAX_ALIGN_SPEED = 0.1;
+    public static final double DriveP = 1;
+    public static final double DriveI = 0;
+    public static final double DriveD = 0;
+    public static final double DriveFF = 0;
   }
   public static class ShooterConstants {
     public static final int UPPER_SHOOTER_ID = 11;

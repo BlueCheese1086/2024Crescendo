@@ -50,9 +50,11 @@ public class shooterSubystem extends SubsystemBase {
   public void shootLower(boolean doShootL){
     if (doShootL){
       lowerPID.setReference(15000, ControlType.kVelocity);
+      SmartDashboard.putString("Lower shooter:", "Refrence = 15000");
     }
     else{
-        lowerPID.setReference(0, ControlType.kVelocity);
+        shooterL.set(0);
+        SmartDashboard.putString("Lower shooter:", "Speed = 0");
     }
   } 
 
@@ -67,10 +69,12 @@ public class shooterSubystem extends SubsystemBase {
 
   public void intake(boolean doIntake){
     if (doIntake){
+      SmartDashboard.putBoolean("Running Intake:", true);
       shooterU.set(1);
       shooterL.set(1);
     }
     else{
+      SmartDashboard.putBoolean("Running Intake:", false);
       shooterU.set(0);
       shooterL.set(0);
     }

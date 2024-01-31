@@ -11,10 +11,8 @@ import frc.robot.subsystems.*;
 public class Intake extends Command{
  
     private final shooterSubystem m_subsystem;
-    private final boolean intakeDo;
 
-    public Intake(shooterSubystem shooterSubystem, boolean intakeDo) {
-        this.intakeDo = intakeDo;
+    public Intake(shooterSubystem shooterSubystem) {
         m_subsystem = shooterSubystem;
   
     // Use addRequirements() here to declare subsystem dependencies.
@@ -22,6 +20,10 @@ public class Intake extends Command{
     }
     
     public void execute() {
-        m_subsystem.intake(intakeDo);
+        m_subsystem.intake(true);
+    }
+
+    public void end(boolean interrupted){
+         m_subsystem.intake(false);
     }
 }

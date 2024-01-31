@@ -22,7 +22,5 @@ public class Drive extends Command  {
       
       public void execute() {
         m_subsystem.set(rotateSpeed.getAsDouble(), driveSpeed.getAsDouble());
-        SmartDashboard.putNumber("Rotate speed:", rotateSpeed.getAsDouble());
-        SmartDashboard.putNumber("Drive speed:", driveSpeed.getAsDouble());
       }
 }

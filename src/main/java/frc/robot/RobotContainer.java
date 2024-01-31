@@ -37,8 +37,8 @@ public class RobotContainer {
 
     m_DriveSubsystem.setDefaultCommand(
     new Drive(m_DriveSubsystem, 
-    () -> MathUtil.applyDeadband((-joy.getRightX()), 0.2), //Rotate speed
-    () -> MathUtil.applyDeadband((-joy.getRightY()), 0.2)) //Drive speed
+    () -> MathUtil.applyDeadband((-joy.getRightX()), DriveConstants.DEADBAND), //Rotate speed
+    () -> MathUtil.applyDeadband((-joy.getRightY()), DriveConstants.DEADBAND)) //Drive speed
   );
   }
 
@@ -49,12 +49,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
    * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
+   * joysticks}
    */
   private void configureBindings() {
-    //xbox.a().whileTrue(new Shoot(m_ShooterSubsystem));
-    xbox.x().whileTrue(new Align(m_DriveSubsystem, true));
-    xbox.a().onTrue(new Shoot(m_ShooterSubsystem, true));
-    xbox.b().whileTrue(new Intake(m_ShooterSubsystem, true));
+    //xbox.x().whileTrue(new Align(m_DriveSubsystem, true));
+    xbox.a().onTrue(new Shoot(m_ShooterSubsystem));
+    xbox.b().whileTrue(new Intake(m_ShooterSubsystem));
   }
 }

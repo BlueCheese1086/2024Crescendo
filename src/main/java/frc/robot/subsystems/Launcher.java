@@ -19,23 +19,23 @@ public class Launcher extends SubsystemBase {
   CANSparkMax m_lower = new CANSparkMax(LowerMotor, MotorType.kBrushless);
   CANSparkMax m_upper = new CANSparkMax(UpperMotor, MotorType.kBrushless);
 
-  SparkPIDController feedPID = m_lower.getPIDController();
-  SparkPIDController launchPID = m_upper.getPIDController();
+  SparkPIDController lowerPID = m_lower.getPIDController();
+  SparkPIDController upperPID = m_upper.getPIDController();
 
   public Launcher() {
     // The CANSparkMax motors are being initalized.
     m_lower.restoreFactoryDefaults();
     m_upper.restoreFactoryDefaults();
 
-    feedPID.setP(0);
-    feedPID.setI(0);
-    feedPID.setD(0);
-    // feedPID.setFF(0.01);
+    lowerPID.setP(0.00001);
+    lowerPID.setI(0);
+    lowerPID.setD(0);
+    lowerPID.setFF(0.01);
 
-    launchPID.setP(0.00001);
-    launchPID.setI(0);
-    launchPID.setD(0);
-    // launchPID.setFF(0.01);
+    upperPID.setP(0.00001);
+    upperPID.setI(0);
+    upperPID.setD(0);
+    upperPID.setFF(0.01);
 
     m_lower.setIdleMode(IdleMode.kCoast);
     m_upper.setIdleMode(IdleMode.kCoast);
@@ -68,7 +68,7 @@ public class Launcher extends SubsystemBase {
    */
   public void setUpper(double speed) {
     System.out.println(speed);
-    launchPID.setReference(speed, ControlType.kVelocity);
+    upperPID.setReference(speed, ControlType.kVelocity);
   }
 
   /**
@@ -77,7 +77,7 @@ public class Launcher extends SubsystemBase {
    */
   public void setLower(double speed) {
     System.out.println(speed);
-    feedPID.setReference(speed, ControlType.kVelocity);
+    lowerPID.setReference(speed, ControlType.kVelocity);
   }
 
   public void stopUpper() {

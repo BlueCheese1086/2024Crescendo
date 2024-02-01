@@ -15,6 +15,10 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 //import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Launcher subsystem uses PID and FeedForward to control upper (flywheel) motor and launch (feed) 
+ * motor.
+ */
 public class Launcher extends SubsystemBase {
   CANSparkMax m_lower = new CANSparkMax(LowerMotor, MotorType.kBrushless);
   CANSparkMax m_upper = new CANSparkMax(UpperMotor, MotorType.kBrushless);
@@ -22,6 +26,9 @@ public class Launcher extends SubsystemBase {
   SparkPIDController lowerPID = m_lower.getPIDController();
   SparkPIDController upperPID = m_upper.getPIDController();
 
+  /**
+   * Creates a new launcher subsystem.
+   */
   public Launcher() {
     // The CANSparkMax motors are being initalized.
     m_lower.restoreFactoryDefaults();
@@ -45,24 +52,6 @@ public class Launcher extends SubsystemBase {
   }
 
   /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor). lil'python was here
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
-  }
-
-  @Override
-  public void periodic() {}
-
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
-
-  /**
    * Sets the speed of the upper (flywheel) motor.
    * @param speed The desired speed in RPM
    */
@@ -80,10 +69,16 @@ public class Launcher extends SubsystemBase {
     lowerPID.setReference(speed, ControlType.kVelocity);
   }
 
+  /**
+   * Stops the upper (flywheel) motor, which stops the control systems.
+   */
   public void stopUpper() {
     m_upper.stopMotor();
   }
 
+  /**
+   * Stops the lower (feed) motor, which stops the control systems.
+   */
   public void stopLower() {
     m_lower.stopMotor();
   }

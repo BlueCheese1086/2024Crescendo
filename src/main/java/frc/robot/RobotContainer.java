@@ -25,17 +25,18 @@ import edu.wpi.first.wpilibj.Joystick;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
   private final Drivetrain m_drivetrain = new Drivetrain();
   private final Launcher m_launcher = new Launcher();
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
+  // Replace with CommandPS4Controller or CommandJoystick if needed.
+  // private final CommandXboxController m_driverController =
+  //     new CommandXboxController(OperatorConstants.kDriverControllerPort);
   private final Joystick m_driverController =
       new Joystick(OperatorConstants.kDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
+    // Configure the trigger bindings.
     configureBindings();
   }
 
@@ -60,16 +61,6 @@ public class RobotContainer {
     new Trigger(() -> m_driverController.getRawButton(5)).whileTrue(new Flywheel(m_launcher));
     new Trigger(() -> m_driverController.getRawButton(6)).whileTrue(new Launch(m_launcher));
     new Trigger(() -> m_driverController.getRawButton(1)).whileTrue(new Intake(m_launcher));
-
-
-
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    // new Trigger(m_exampleSubsystem::exampleCondition)
-    //     .onTrue(new ExampleCommand(m_exampleSubsystem));
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    // m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
   }
 
   /**

@@ -9,25 +9,23 @@ import static frc.robot.Constants.LauncherConstants.*;
 import frc.robot.subsystems.Launcher;
 import edu.wpi.first.wpilibj2.command.Command;
 
-/** An example command that uses an example subsystem. */
+/** 
+ * Launch command. Runs lower wheel while command is running.
+ */
 public class Launch extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Launcher m_launcher;
 
   /**
-   * Creates a new ExampleCommand.
+   * Creates a new Launch command.
    *
-   * @param subsystem The subsystem used by this command.
+   * @param launcher Launcher subsystem.
    */
   public Launch(Launcher launcher) {
     m_launcher = launcher;
-    // Use addRequirements() here to declare subsystem dependencies.
+    // Declare launcher subsystem dependency.
     addRequirements(launcher);
   }
-
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -38,12 +36,14 @@ public class Launch extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    // Stop the wheel; control systems are unnecessary.
     m_launcher.stopLower();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // Command is run until closed by container
     return false;
   }
 }

@@ -9,25 +9,23 @@ import static frc.robot.Constants.LauncherConstants.*;
 import frc.robot.subsystems.Launcher;
 import edu.wpi.first.wpilibj2.command.Command;
 
-/** An example command that uses an example subsystem. */
+/** 
+ * Intake command. Runs upper and lower wheels in reverse while command is running
+ */
 public class Intake extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Launcher m_launcher;
 
   /**
-   * Creates a new ExampleCommand.
+   * Creates a new Intake command.
    *
-   * @param subsystem The subsystem used by this command.
+   * @param launcher Launcher subsystem.
    */
   public Intake(Launcher launcher) {
     m_launcher = launcher;
-    // Use addRequirements() here to declare subsystem dependencies.
+    // Declare launcher subsystem dependency.
     addRequirements(launcher);
   }
-
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -39,6 +37,7 @@ public class Intake extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    // Stop the wheels; control systems are unnecessary.
     m_launcher.stopLower();
     m_launcher.stopUpper();
   }
@@ -46,6 +45,7 @@ public class Intake extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // Command is run until closed by container
     return false;
   }
 }

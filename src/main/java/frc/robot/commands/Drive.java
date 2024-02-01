@@ -8,7 +8,9 @@ import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.util.function.Supplier;
 
-/** An example command that uses an example subsystem. */
+/** 
+ * Drive command. Passes arcade drive inputs to the {@link Drivetrain drivetrain} subsystem.
+ */
 public class Drive extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Drivetrain m_drivetrain;
@@ -16,21 +18,17 @@ public class Drive extends Command {
   private final Supplier<Double> m_rotateSupplier;
 
   /**
-   * Creates a new ExampleCommand.
+   * Creates a new Drive command.
    *
-   * @param subsystem The subsystem used by this command.
+   * @param drivetrain Drivetrain subsystem.
    */
   public Drive(Drivetrain drivetrain, Supplier<Double> speedSupplier, Supplier<Double> rotateSupplier) {
     m_drivetrain = drivetrain;
     m_speedSupplier = speedSupplier;
     m_rotateSupplier = rotateSupplier;
-    // Use addRequirements() here to declare subsystem dependencies.
+    // Declare drivetrain subsystem dependency.
     addRequirements(drivetrain);
   }
-
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -38,13 +36,10 @@ public class Drive extends Command {
     m_drivetrain.arcadeDrive(m_speedSupplier.get(), m_rotateSupplier.get());  
   }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // Command is run until closed by container
     return false;
   }
 }

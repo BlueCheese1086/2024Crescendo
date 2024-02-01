@@ -12,12 +12,18 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Drivetrain subsystem controlled with arcade-style inputs.
+ */
 public class Drivetrain extends SubsystemBase {
   CANSparkMax m_rightFront;
   CANSparkMax m_rightBack; 
   CANSparkMax m_leftFront;
   CANSparkMax m_leftBack;
 
+  /**
+   * Creates a new Drivetrain subsystem.
+   */
   public Drivetrain(){
     // The CANSparkMax motors are being initalized.
     m_rightFront = new CANSparkMax(RightFrontMotor, MotorType.kBrushless);
@@ -47,27 +53,10 @@ public class Drivetrain extends SubsystemBase {
     m_leftBack.follow(m_leftFront);
   }
 
-
   /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
+   * @param speed X-axis speed.
+   * @param rotate Z-axis rotate.
    */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
-
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
-
   public void arcadeDrive(double speed, double rotate) {
     m_leftFront.set((speed - rotate) * SpeedMultiplier);
     m_rightFront.set((speed + rotate) * SpeedMultiplier);

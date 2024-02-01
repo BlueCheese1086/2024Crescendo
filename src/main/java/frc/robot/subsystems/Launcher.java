@@ -45,7 +45,7 @@ public class Launcher extends SubsystemBase {
   }
 
   /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor). // lil'python was here
+   * An example method querying a boolean state of the subsystem (for example, a digital sensor). lil'python was here
    *
    * @return value of some boolean subsystem state, such as a digital sensor.
    */
@@ -63,7 +63,7 @@ public class Launcher extends SubsystemBase {
   }
 
   /**
-   * Sets the speed of the upper (upper) motor.
+   * Sets the speed of the upper (flywheel) motor.
    * @param speed The desired speed in RPM
    */
   public void setUpper(double speed) {

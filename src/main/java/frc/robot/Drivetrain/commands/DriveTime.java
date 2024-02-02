@@ -1,8 +1,8 @@
-package frc.robot.subsystems.Drivetrain.commands;
+package frc.robot.Drivetrain.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-import frc.robot.subsystems.Drivetrain.Drivetrain;
+import frc.robot.Drivetrain.Drivetrain;
 
 public class DriveTime extends Command {
     private Drivetrain drivetrain;
@@ -11,7 +11,8 @@ public class DriveTime extends Command {
     private double endTime;
 
     /**
-     * Creates a new DriveTime command. 
+     * Creates a new DriveTime command.
+     * 
      * @param drivetrain A representation of the {@link Drivetrain} class that this subsystem manipulates.
      * @param xSpeed The percent speed that the robot should move forward at.
      * @param zRotate The percent speed that the robot should turn at.

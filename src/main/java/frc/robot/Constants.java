@@ -30,15 +30,31 @@ public final class Constants {
         public static final double deadband = 0.2;
 
         // Current (amps) limit for drivetrain motors
-        public static final int kCurrentLimit = 60;
+        public static final int currentLimit = 60;
     }
 
     public static class LauncherConstants {
         // CAN IDs for motor controllers
-        public static final int FeederID = 5;
-        public static final int LauncherID = 6;
+        public static final int FeederID = 11;
+        public static final int LauncherID = 12;
 
         // Current (amps) limit for both Launcher wheels
         public static final int LauncherCurrentLimit = 80;
+
+        // Feed PID Constants
+        public static final double feedP = 0.00001;
+        public static final double feedI = 0;
+        public static final double feedD = 0;
+        public static final double feedFF = 0.01;
+
+        // Launch PID Constants
+        public static final double launchP = 0.00001;
+        public static final double launchI = 0;
+        public static final double launchD = 0;
+        public static final double launchFF = 0.01;
+
+        // The max speed for each motor in RPM
+        public static final int feedSpeed = 15000; // Not quite the max speed, but it is necessary to launch the note
+        public static final int launchSpeed = 5500;
     }
 }

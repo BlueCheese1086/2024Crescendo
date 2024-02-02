@@ -2,10 +2,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-import frc.robot.subsystems.Drivetrain.commands.*;
-import frc.robot.subsystems.Drivetrain.Drivetrain;
-import frc.robot.subsystems.Launcher.commands.*;
-import frc.robot.subsystems.Launcher.Launcher;
+import frc.robot.Drivetrain.commands.*;
+import frc.robot.Drivetrain.Drivetrain;
+import frc.robot.Launcher.commands.*;
+import frc.robot.Launcher.Launcher;
 
 /**
  * This class contains static references to different command sequences that can be used to change the autonomous program on the fly.
@@ -31,7 +31,7 @@ public final class Autos {
      */
     public static SequentialCommandGroup jaxAuto(Drivetrain drivetrain, Launcher launcher) {
         return new SequentialCommandGroup(
-            new LauncherTime(launcher, 1, 1, 1, 2),
+            new LaunchTime(launcher, 1, 1, 1, 2),
             new DriveTime(drivetrain, -0.5, 0, 1)
         );
     }

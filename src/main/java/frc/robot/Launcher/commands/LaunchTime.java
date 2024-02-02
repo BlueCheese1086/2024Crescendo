@@ -1,10 +1,10 @@
-package frc.robot.subsystems.Launcher.commands;
+package frc.robot.Launcher.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-import frc.robot.subsystems.Launcher.Launcher;
+import frc.robot.Launcher.Launcher;
 
-public class LauncherTime extends Command {
+public class LaunchTime extends Command {
     private Launcher launcher;
     private double feedSpeed;
     private double launcherSpeed;
@@ -18,7 +18,7 @@ public class LauncherTime extends Command {
      * @param launchDelay The amount of time in seconds that the command should wait before running the feed wheel.
      * @param seconds The amount of time in seconds that the command will run. (Should be higher than kaunchDelay!)
     */
-    public LauncherTime(Launcher launcher, double launcherSpeed, double feedSpeed, double launchDelay, double seconds) {
+    public LaunchTime(Launcher launcher, double launcherSpeed, double feedSpeed, double launchDelay, double seconds) {
         this.launcher = launcher;
         this.launcherSpeed = launcherSpeed;
         this.feedSpeed = feedSpeed;
@@ -48,6 +48,6 @@ public class LauncherTime extends Command {
     /** This function is called once the command ends or is interrupted. */
     @Override
     public void end(boolean interrupted) {
-        launcher.stop();
+        launcher.setSpeeds(0, 0);
     }
 }

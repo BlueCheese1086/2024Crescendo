@@ -1,14 +1,13 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.Drivetrain.commands.*;
-import frc.robot.subsystems.Drivetrain.Drivetrain;
-import frc.robot.subsystems.Launcher.commands.*;
-import frc.robot.subsystems.Launcher.Launcher;
+import frc.robot.Drivetrain.commands.*;
+import frc.robot.Drivetrain.Drivetrain;
+import frc.robot.Launcher.commands.*;
+import frc.robot.Launcher.Launcher;
 
 public class RobotContainer {
     // Defining the robot's subsystems
@@ -16,8 +15,7 @@ public class RobotContainer {
     private final Launcher launcher = new Launcher();
 
     // Creating instances of the xbox remotes used for driving the robot.
-    private final XboxController primaryXbox = new XboxController(OperatorConstants.PrimaryPort);
-    private final XboxController secondaryXbox = new XboxController(OperatorConstants.SecondaryPort);
+    private final CommandXboxController xbox = new CommandXboxController(OperatorConstants.PrimaryPort);
 
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
@@ -25,19 +23,15 @@ public class RobotContainer {
         configureBindings();
     }
 
-    /**
-     * Creates button bindings for the necessary functions.
-     */
+    /** Creates button bindings for the necessary functions. */
     private void configureBindings() {
-        // Creating triggers for each button.
-        Trigger secondaryA = new Trigger(secondaryXbox::getAButton);
-        Trigger secondaryLeftBumper = new Trigger(secondaryXbox::getLeftBumper);
-
-        // Assigning operations to each trigger.
-        // "A" runs the launcher with a bit of warmup for the launch wheel.
-        // "Left Bumper" collects new notes by running the launcher in reverse.
-        secondaryA.whileTrue(new RunLauncher(launcher, 1, 1, 1));
-        secondaryLeftBumper.whileTrue(new RunLauncher(launcher, -1, -1, 0));
+        // Assigning operations to each button.
+        // "Left Trigger" runs the flywheel on the launcher.
+        // "Right Trigger" runs the feed wheel on the launcher.
+        // "A" runs the launcher in reverse to collect notes.
+        xbox.a().whileTrue(new RunFlywheel(launcher, -1));
+        xbox.leftTrigger().whileTrue(new RunFlywheel(launcher, 1));
+        xbox.rightTrigger().whileTrue(new RunFeed(launcher, 1).raceWith(new WaitCommand(1)));
     }
 
     /**
@@ -55,6 +49,6 @@ public class RobotContainer {
      * @return The command to run in Teleop mode.
      */
     public Command getTeleopCommand() {
-        return new ArcadeDrive(drivetrain, () -> -primaryXbox.getLeftY(), () -> primaryXbox.getRightX());
+        return new ArcadeDrive(drivetrain, () -> xbox.getLeftY(), () -> xbox.getRightX());
     }
 }

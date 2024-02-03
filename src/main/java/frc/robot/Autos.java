@@ -29,7 +29,7 @@ public final class Autos {
      * <p>
      * This function returns an autonomous drive that shoots the loaded game piece, and then moves backwards at half speed for 1 second.
      */
-    public static SequentialCommandGroup jaxAuto(Drivetrain drivetrain, Launcher launcher) {
+    public static SequentialCommandGroup mainAuto(Drivetrain drivetrain, Launcher launcher) {
         return new SequentialCommandGroup(
             new LaunchTime(launcher, 1, 1, 1, 2),
             new DriveTime(drivetrain, -0.5, 0, 1)

@@ -40,7 +40,7 @@ public class RobotContainer {
      * @return The command to run in Autonomous mode.
      */
     public Command getAutonomousCommand() {
-        return Autos.jaxAuto(drivetrain, launcher);
+        return Autos.mainAuto(drivetrain, launcher);
     }
 
     /**

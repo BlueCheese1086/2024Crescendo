@@ -52,7 +52,7 @@ public class Climb extends SubsystemBase {
       rightClimb.setIdleMode(IdleMode.kBrake);
     } else {
       leftClimb.setIdleMode(IdleMode.kCoast);
-      leftClimb.setIdleMode(IdleMode.kCoast);
+      rightClimb.setIdleMode(IdleMode.kCoast);
     }
   }
 

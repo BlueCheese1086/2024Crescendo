@@ -140,8 +140,7 @@ public class FieldElements {
                 Units.inchesToMeters(52.00),
                 new Rotation3d(0, 0, Math.toRadians(240))
             )
-        ),
-        
+        )
     };
 
     public static final Map<Integer, AprilTag> aprilTags = Map.ofEntries(
@@ -161,20 +160,5 @@ public class FieldElements {
         Map.entry(14, tags[13]),
         Map.entry(15, tags[14]),
         Map.entry(16, tags[15])
-    );
-
-    public static final Map<Integer, Pose2d> scoringStations = Map.ofEntries(
-        Map.entry(1,  new Pose2d(Units.inchesToMeters(596.6), Units.inchesToMeters(20.5),  new Rotation2d())),
-        Map.entry(2,  new Pose2d(Units.inchesToMeters(596.6), Units.inchesToMeters(42.4),  new Rotation2d())),
-        Map.entry(3,  new Pose2d(Units.inchesToMeters(596.6), Units.inchesToMeters(64.4),  new Rotation2d())),
-        Map.entry(4,  new Pose2d(Units.inchesToMeters(596.6), Units.inchesToMeters(86.4),  new Rotation2d())),
-        Map.entry(5,  new Pose2d(Units.inchesToMeters(596.6), Units.inchesToMeters(108.4), new Rotation2d())),
-        Map.entry(6,  new Pose2d(Units.inchesToMeters(596.6), Units.inchesToMeters(130.4), new Rotation2d())),
-        Map.entry(7,  new Pose2d(Units.inchesToMeters(596.6), Units.inchesToMeters(152.4), new Rotation2d())),
-        Map.entry(8,  new Pose2d(Units.inchesToMeters(596.6), Units.inchesToMeters(174.4), new Rotation2d())),
-        Map.entry(9,  new Pose2d(Units.inchesToMeters(596.6), Units.inchesToMeters(196.4), new Rotation2d())),
-        Map.entry(10, new Pose2d(Units.inchesToMeters(53.8),  Units.inchesToMeters(196.4), new Rotation2d())),
-        Map.entry(11, new Pose2d(Units.inchesToMeters(53.8),  Units.inchesToMeters(174.4), new Rotation2d())),
-        Map.entry(12, new Pose2d(Units.inchesToMeters(53.8),  Units.inchesToMeters(152.4), new Rotation2d())),
     );
 }

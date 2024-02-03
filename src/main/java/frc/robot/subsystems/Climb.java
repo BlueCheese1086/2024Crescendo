@@ -17,12 +17,12 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.ClimbConstants;
 
 public class Climb extends SubsystemBase {
     
-  private final CANSparkMax leftClimb = new CANSparkMax(OperatorConstants.Kleftclimbmotorid, MotorType.kBrushless);
-  private final CANSparkMax rightClimb = new CANSparkMax(OperatorConstants.Krightclimbmotorid, MotorType.kBrushless);
+  private final CANSparkMax leftClimb = new CANSparkMax(ClimbConstants.Kleftclimbmotorid, MotorType.kBrushless);
+  private final CANSparkMax rightClimb = new CANSparkMax(ClimbConstants.Krightclimbmotorid, MotorType.kBrushless);
 
   private final RelativeEncoder leftEncoder = leftClimb.getEncoder();
   private final RelativeEncoder rightEncoder = rightClimb.getEncoder();
@@ -32,9 +32,9 @@ public class Climb extends SubsystemBase {
   public Climb() 
   {
     rightClimb.follow(leftClimb);
-    climbPID.setP(0.01);
-    climbPID.setI(0.0);
-    climbPID.setD(0.0);
+    climbPID.setP(ClimbConstants.climbP);
+    climbPID.setI(ClimbConstants.climbI);
+    climbPID.setD(ClimbConstants.climbD);
   }
 
   public void runClimb(double climbDistance) 

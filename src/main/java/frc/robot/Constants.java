@@ -13,17 +13,16 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  enum ClimbMode {
-    UP,
-    DOWN
-  }
-
-  public static class OperatorConstants {
+  public static class ClimbConstants {
     public static final int kDriverControllerPort = 0;
     public static final int Kleftclimbmotorid = 11;
     public static final int Krightclimbmotorid = 12;
 
     public static final double kClimbLength = 10.5;
+
+    public static final double climbP = 0.01;
+    public static final double climbI = 0.0;
+    public static final double climbD = 0.0;
   }
 }
 

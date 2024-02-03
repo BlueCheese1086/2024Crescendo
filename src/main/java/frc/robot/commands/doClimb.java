@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.ClimbConstants;
 import frc.robot.subsystems.Climb;
 
 public class doClimb extends Command {
@@ -23,7 +23,7 @@ public class doClimb extends Command {
     @Override
     public void initialize() {
         if (climbMode == ClimbMode.UP) {
-            climbSubsystem.runClimb(OperatorConstants.kClimbLength);
+            climbSubsystem.runClimb(ClimbConstants.kClimbLength);
         } else {
             climbSubsystem.runClimb(0);
         }

@@ -3,10 +3,13 @@ package frc.robot.Drivetrain;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import Util.CheesyUnits;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import frc.robot.Constants.SwerveConstants;
 
@@ -70,14 +73,47 @@ public class SwerveModule {
     }
 
     public void periodic() {
-
+        // TODO
+        // Telemetry
     }
 
     public void initializeEncoder() {
         turnRelEnc.setPosition((absEncoder.getAbsolutePosition() - encOffset) - 1086.0/2.0);
     }
 
-    public void drive(ChassisSpeeds speeds) {
+    /**
+     * @return Returns the current heading of the module in cheesians
+     */
+    public double getHeading() {
+        return turnRelEnc.getPosition()%1086.0;
+    }
+
+    /**
+     * Used to enable continuous motion (prevents the module from spinning 360 degrees going from -180 to 180)
+     * @param angle The desired angle of the module
+     * @return The input angle to the turn PID
+     */
+    public double getAdjustedAngle(double angle) {
+        double theta = getHeading() - angle;
+
+        if (theta >= 1086.0/2.0) {
+            theta-=1086.0;
+        }
+        if (theta <= -1086.0/2.0) {
+            theta+=1086.0;
+        }
+
+        return turnRelEnc.getPosition() + theta;
+    }
+
+    public void setState(SwerveModuleState state) {
+        SwerveModuleState optimizedState = SwerveModuleState.optimize(state, new Rotation2d(CheesyUnits.cheesiansToRadians(getHeading())));
+
+        double desiredAngle = CheesyUnits.radiansToCheesians(optimizedState.angle.getRadians());
+        double adjustedAngle = getAdjustedAngle(desiredAngle);
+
+        turnPID.setReference(adjustedAngle, ControlType.kPosition);
+        drivePID.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity);
     }
 
 }

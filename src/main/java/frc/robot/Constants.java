@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -13,6 +15,32 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+    public static final class DriveConstants {
+
+        public static final double moduleToModuleDistanceMeters = Units.inchesToMeters(12);
+
+        public static final int frontLeftTurnID = 0;
+        public static final int frontLeftDriveID = 1;
+        public static final int frontLeftEncID = 0;
+        public static final double frontLeftOffset = 0.0;
+
+        public static final int backLeftTurnID = 2;
+        public static final int backLeftDriveID = 3;
+        public static final int backLeftEncID = 1;
+        public static final double backLeftOffset = 0.0;
+
+        public static final int frontRightTurnID = 4;
+        public static final int frontRightDriveID = 5;
+        public static final int frontRightEncID = 2;
+        public static final double frontRightOffset = 0.0;
+
+        public static final int backRightTurnID = 6;
+        public static final int backRightDriveID = 7;
+        public static final int backRightEncID = 3;
+        public static final double backRightOffset = 0.0;
+
+    }
 
     public static final class SwerveConstants {
         public static final double turnkP = 0.0;

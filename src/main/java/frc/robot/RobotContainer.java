@@ -9,18 +9,20 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 public class RobotContainer {
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    // Configure the trigger bindings
-    configureBindings();
-  }
+	/**
+	 * The container for the robot. Contains subsystems, OI devices, and commands.
+	 */
+	public RobotContainer() {
+		// Configure the trigger bindings
+		configureBindings();
+	}
 
-  private void configureBindings() {
+	private void configureBindings() {
 
-  }
+	}
 
-  public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return Commands.print("Test");
-  }
+	public Command getAutonomousCommand() {
+		// An example command will be run in autonomous
+		return Commands.print("Test");
+	}
 }

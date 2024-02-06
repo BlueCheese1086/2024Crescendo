@@ -43,15 +43,15 @@ public final class Constants {
     }
 
     public static final class SwerveConstants {
-        public static final double turnkP = 0.0;
-        public static final double turnkI = 0.0;
-        public static final double turnkD = 0.0;
-        public static final double turnkFF = 0.0;
+        public static final double kPTurn = 0.0;
+        public static final double kITurn = 0.0;
+        public static final double kDTurn = 0.0;
+        public static final double kFFTurn = 0.0;
 
-        public static final double drivekP = 0.0;
-        public static final double drivekI = 0.0;
-        public static final double drivekD = 0.0;
-        public static final double drivekFF = 0.0;
+        public static final double kPDriveVelo = 0.0;
+        public static final double kIDriveVelo = 0.0;
+        public static final double kDDriveVelo = 0.0;
+        public static final double kFFDriveVelo = 0.0;
 
         public static final double positionConversionFactor = 1.0;
     }

@@ -11,9 +11,10 @@ import Util.CheesyUnits;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
 
-public class SwerveModule {
+public class SwerveModule extends SubsystemBase {
 
     /*           backLeft    frontLeft
      *                 x_____x
@@ -56,16 +57,16 @@ public class SwerveModule {
         turnRelEnc.setVelocityConversionFactor(SwerveConstants.positionConversionFactor/60.0);
         
         drivePID = drive.getPIDController();
-        drivePID.setP(SwerveConstants.drivekP);
-        drivePID.setI(SwerveConstants.drivekI);
-        drivePID.setD(SwerveConstants.drivekD);
-        drivePID.setFF(SwerveConstants.drivekFF);
+        drivePID.setP(SwerveConstants.kPDriveVelo, 0);
+        drivePID.setI(SwerveConstants.kIDriveVelo, 0);
+        drivePID.setD(SwerveConstants.kDDriveVelo, 0);
+        drivePID.setFF(SwerveConstants.kFFDriveVelo, 0);
 
         turnPID = turn.getPIDController();
-        turnPID.setP(SwerveConstants.turnkP);
-        turnPID.setI(SwerveConstants.turnkI);
-        turnPID.setD(SwerveConstants.turnkD);
-        turnPID.setFF(SwerveConstants.turnkFF);
+        turnPID.setP(SwerveConstants.kPTurn, 0);
+        turnPID.setI(SwerveConstants.kITurn, 0);
+        turnPID.setD(SwerveConstants.kDTurn, 0);
+        turnPID.setFF(SwerveConstants.kFFTurn, 0);
 
         drive.burnFlash();
         turn.burnFlash();
@@ -112,8 +113,8 @@ public class SwerveModule {
         double desiredAngle = CheesyUnits.radiansToCheesians(optimizedState.angle.getRadians());
         double adjustedAngle = getAdjustedAngle(desiredAngle);
 
-        turnPID.setReference(adjustedAngle, ControlType.kPosition);
-        drivePID.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity);
+        turnPID.setReference(adjustedAngle, ControlType.kPosition, 0);
+        drivePID.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity, 0);
     }
 
 }

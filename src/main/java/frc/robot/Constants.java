@@ -38,8 +38,7 @@ public final class Constants {
         public static final int gyroID = 4;
 
         // Speeds the robot can move at
-        public static final double maxDriveSpeed = 5600; // RPM
-        public static final double maxTurnSpeed = 5600; // RPM
+        public static final double maxSpeed = 0.3; // Percent
 
         // The threshold of values where the robot will ignore joystick input. (including negatives)
         public static final double deadband = 0.2;

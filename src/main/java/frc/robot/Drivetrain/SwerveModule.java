@@ -103,10 +103,7 @@ public class SwerveModule {
         SwerveModuleState optimizedState = SwerveModuleState.optimize(state, getTurnAngle());
 
         // Setting the PID positions
-        drivePID.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity);
+        drivePID.setReference(optimizedState.speedMetersPerSecond * DriveConstants.maxSpeed, ControlType.kVelocity);
         turnPID.setReference(optimizedState.angle.getDegrees(), ControlType.kPosition);
-
-        // Setting the speeds of each motor
-        driveMotor.set(optimizedState.speedMetersPerSecond);
     }
 }

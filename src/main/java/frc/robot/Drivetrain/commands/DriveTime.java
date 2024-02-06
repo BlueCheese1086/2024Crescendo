@@ -1,9 +1,10 @@
 package frc.robot.Drivetrain.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Drivetrain.Drivetrain;
 
 public class DriveTime extends Command {
@@ -24,8 +25,8 @@ public class DriveTime extends Command {
      */
     public DriveTime(Drivetrain drivetrain, double xSpeed, double zSpeed, double angle, double seconds) {
         this.drivetrain = drivetrain;
-        this.xSpeed = xSpeed;
-        this.zSpeed = zSpeed;
+        this.xSpeed = MathUtil.applyDeadband(xSpeed, DriveConstants.deadband);
+        this.zSpeed = MathUtil.applyDeadband(zSpeed, DriveConstants.deadband);
         this.angle = (angle == -1) ? drivetrain.getAngle() : Rotation2d.fromDegrees(angle);
         this.endTime = System.currentTimeMillis() + (seconds * 1000);
 

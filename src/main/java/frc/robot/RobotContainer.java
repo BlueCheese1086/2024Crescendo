@@ -3,7 +3,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.Drivetrain.commands.*;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.Launcher.commands.*;
@@ -15,7 +14,7 @@ public class RobotContainer {
     private final Launcher launcher = new Launcher();
 
     // Creating instances of the xbox remotes used for driving the robot.
-    private final CommandXboxController xbox = new CommandXboxController(OperatorConstants.PrimaryPort);
+    private final CommandXboxController xbox = new CommandXboxController(0);
 
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
@@ -49,6 +48,6 @@ public class RobotContainer {
      * @return The command to run in Teleop mode.
      */
     public Command getTeleopCommand() {
-        return new ArcadeDrive(drivetrain, () -> xbox.getLeftY(), () -> xbox.getRightX());
+        return new SwerveDrive(drivetrain, xbox::getLeftY, xbox::getLeftX, xbox::getRightX);
     }
 }

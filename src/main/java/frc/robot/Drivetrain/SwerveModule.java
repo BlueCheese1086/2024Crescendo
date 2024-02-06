@@ -10,7 +10,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.SwerveConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
@@ -41,13 +40,13 @@ public class SwerveModule {
 
         // Setting the attributes of each motor
         driveMotor.restoreFactoryDefaults();
-        driveMotor.setSmartCurrentLimit(DriveConstants.currentLimit);
-        driveMotor.enableVoltageCompensation(DriveConstants.voltageCompensation);
         driveMotor.setInverted(false);
-        driveMotor.setIdleMode(IdleMode.kBrake);
+        driveMotor.setIdleMode(IdleMode.kCoast);
         driveMotor.burnFlash();
 
         turnMotor.restoreFactoryDefaults();
+        driveMotor.setInverted(false);
+        driveMotor.setIdleMode(IdleMode.kCoast);
         turnMotor.burnFlash();
 
         // Getting the encoders for each motor
@@ -56,25 +55,26 @@ public class SwerveModule {
 
         // Setting the attributes of each encoder
         driveEncoder.setPosition(0);
-        driveEncoder.setVelocityConversionFactor(SwerveConstants.wheelCircumference / SwerveConstants.driveRatio / 60.0);
-        driveEncoder.setPositionConversionFactor(SwerveConstants.wheelCircumference / SwerveConstants.driveRatio);
+        driveEncoder.setVelocityConversionFactor(DriveConstants.wheelCircumference / DriveConstants.driveRatio / 60.0);
+        driveEncoder.setPositionConversionFactor(DriveConstants.wheelCircumference / DriveConstants.driveRatio);
         turnEncoder.setPosition(getCancoderAngle().getDegrees());
-        turnEncoder.setVelocityConversionFactor(360.0 / SwerveConstants.turnRatio / 60.0);
-        turnEncoder.setPositionConversionFactor(360.0 / SwerveConstants.turnRatio);
+        turnEncoder.setVelocityConversionFactor(360.0 / DriveConstants.turnRatio / 60.0);
+        turnEncoder.setPositionConversionFactor(360.0 / DriveConstants.turnRatio);
 
         // Getting the PIDControllers for each motor
         drivePID = driveMotor.getPIDController();
         turnPID = turnMotor.getPIDController();
 
         // Setting PIDFF values for each PID
-        drivePID.setP(SwerveConstants.driveP);
-        drivePID.setI(SwerveConstants.driveI);
-        drivePID.setD(SwerveConstants.driveD);
-        drivePID.setFF(SwerveConstants.driveFF);
+        drivePID.setP(DriveConstants.driveP);
+        drivePID.setI(DriveConstants.driveI);
+        drivePID.setD(DriveConstants.driveD);
+        drivePID.setFF(DriveConstants.driveFF);
 
-        turnPID.setP(SwerveConstants.turnP);
-        turnPID.setI(SwerveConstants.turnI);
-        turnPID.setD(SwerveConstants.turnD);
+        turnPID.setP(DriveConstants.turnP);
+        turnPID.setI(DriveConstants.turnI);
+        turnPID.setD(DriveConstants.turnD);
+        turnPID.setFF(DriveConstants.turnFF);
     }
 
     public SwerveModuleState getState() {

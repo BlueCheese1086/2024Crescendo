@@ -21,7 +21,7 @@ public class Drivetrain extends SubsystemBase {
     SwerveModule brModule = new SwerveModule("Back Right",  DriveConstants.backRightDriveID,  DriveConstants.backRightTurnID,  DriveConstants.backRightCancoderID,  DriveConstants.backRightOffset);
 
     // Sensors
-    Pigeon2 gyro = new Pigeon2(DriveConstants.gyroID);
+    // Pigeon2 gyro = new Pigeon2(DriveConstants.gyroID);
 
     // Module Management
     private SwerveModuleState[] states = new SwerveModuleState[4];
@@ -34,33 +34,19 @@ public class Drivetrain extends SubsystemBase {
         new Translation2d(-DriveConstants.kModuleToCenter, -DriveConstants.kModuleToCenter)
     );
 
-    // Timer
-    private final double start;
-
     /**
      * Constructor. This method is called when an instance of the class is created. This should generally be used to set up
      * instance variables and perform any configuration or necessary set up on hardware.
      */
-    public Drivetrain() {
-        // Setting the start time
-        start = System.currentTimeMillis();
-    }
+    public Drivetrain() {}
 
-    /**
-     * This function runs every tick.
-     * I will use it to update the odometry of the motors,
-     * 
-     */
     @Override
     public void periodic() {}
 
     /**
-     * Yet to be implemented -- This is theoretical code for when Kitbot gets the swerve upgrade.
-     * Drives the robot in different directions determined by the parameters.
+     * Drives the robot in different directions.
      * 
-     * @param xTraverse
-     * @param zTraverse
-     * @param zRotate
+     * @param speeds The speeds that each motor should go at.
      */
     public void swerveDrive(ChassisSpeeds speeds) {
         // Converting the ChassisSpeeds to SwerveModuleStates
@@ -73,9 +59,9 @@ public class Drivetrain extends SubsystemBase {
         brModule.setState(states[3]);
 
         // Updating the Gyro if the robot is being simulated
-        if (Robot.isSimulation()) {
-            gyro.setYaw(gyro.getYaw().getValueAsDouble() + 180 + (System.currentTimeMillis() - start) / 1000.0 * Units.radiansToDegrees(speeds.omegaRadiansPerSecond));
-        }
+        // if (Robot.isSimulation()) {
+        //     gyro.setYaw(gyro.getYaw().getValueAsDouble() + 180 + (System.currentTimeMillis() - start) / 1000.0 * Units.radiansToDegrees(speeds.omegaRadiansPerSecond));
+        // }
     }
 
     /**
@@ -84,7 +70,7 @@ public class Drivetrain extends SubsystemBase {
      * @return The angle of the robot as a Rotation2D
      */
     public Rotation2d getAngle() {
-        return new Rotation2d(gyro.getAngle());
+        return new Rotation2d();//new Rotation2d(gyro.getAngle());
     }
 
     /**
@@ -93,6 +79,6 @@ public class Drivetrain extends SubsystemBase {
      * @return The rate that the robot is turning. (rad/sec)
      */
     public double getAngularVel() {
-        return Math.toRadians(gyro.getRate());
+        return 0;//Math.toRadians(gyro.getRate());
     }
 }

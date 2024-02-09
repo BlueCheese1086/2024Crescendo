@@ -14,24 +14,24 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
     public static class DriveConstants {
         // IDs and offset
-        public static final int frontLeftTurnID = 3;
-        public static final int frontLeftDriveID = 4;
-        public static final int frontLeftCancoderID = 3;
+        public static final int frontLeftTurnID = 8;
+        public static final int frontLeftDriveID = 7;
+        public static final int frontLeftCancoderID = 1;
         public static final double frontLeftOffset = 0.0; // To be tuned
 
         public static final int frontRightTurnID = 6;
         public static final int frontRightDriveID = 5;
-        public static final int frontRightCancoderID = 2;
+        public static final int frontRightCancoderID = 3;
         public static final double frontRightOffset = 0.0; // To be tuned
 
-        public static final int backLeftTurnID = 8;
-        public static final int backLeftDriveID = 7;
-        public static final int backLeftCancoderID = 1;
+        public static final int backLeftTurnID = 2;
+        public static final int backLeftDriveID = 1;
+        public static final int backLeftCancoderID = 0;
         public static final double backLeftOffset = 0.0; // To be tuned
 
-        public static final int backRightTurnID = 1;
-        public static final int backRightDriveID = 2;
-        public static final int backRightCancoderID = 0;
+        public static final int backRightTurnID = 4;
+        public static final int backRightDriveID = 3;
+        public static final int backRightCancoderID = 2;
         public static final double backRightOffset = 0.0; // To be tuned
 
         // IDs for sensors
@@ -41,7 +41,7 @@ public final class Constants {
         public static final double maxSpeed = 0.3; // Percent
 
         // The threshold of values where the robot will ignore joystick input. (including negatives)
-        public static final double deadband = 0.2;
+        public static final double deadband = 0.5;
     
         // Gear ratios
         public static final double turnRatio = 150.0/7.0;
@@ -55,15 +55,15 @@ public final class Constants {
         public static final double kModuleToCenter = kModuleToModuleDistance / 2; // Meters
 
         // PID Values
-        public static final double driveP = 0.0; // To be tuned
+        public static final double driveP = 0.01; // To be tuned
         public static final double driveI = 0.0; // To be tuned
         public static final double driveD = 0.0; // To be tuned
-        public static final double driveFF = 0.0; // To be tuned
+        public static final double driveFF = 1.96; // To be tuned
 
-        public static final double turnP = 0.0; // To be tuned
+        public static final double turnP = 0.01; // To be tuned
         public static final double turnI = 0.0; // To be tuned
-        public static final double turnD = 0.0; // To be tuned
-        public static final double turnFF = 0.0; // To be tuned
+        public static final double turnD = 0.01; // To be tuned
+        public static final double turnFF = 0;
     }
 
     public static class LauncherConstants {

@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
 
@@ -92,6 +93,10 @@ public class SwerveModule extends SubsystemBase {
         Logger.recordOutput(name + "/Turn/BusVoltage", turn.getBusVoltage());
         Logger.recordOutput(name + "/Turn/Position", turnRelEnc.getPosition());
         Logger.recordOutput(name + "/Turn/Temperature", turn.getMotorTemperature());
+
+        SmartDashboard.putNumber(name + "/AbsPosition", absEncoder.getAbsolutePosition());
+        SmartDashboard.putNumber(name + "/TurnAngle", getHeading());
+        SmartDashboard.putNumber(name + "/WheelSpeed", driveRelEnc.getVelocity());
         
     }
 

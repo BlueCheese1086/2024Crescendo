@@ -2,7 +2,6 @@ package frc.robot.Drivetrain.commands;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
@@ -41,13 +40,13 @@ public class SwerveDrive extends Command {
         // the speed and angle that the motors need to be at.  It also takes in the current angle
         // of the robot to adjust the turn angle as needed
         ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            MathUtil.applyDeadband(xTraverseSupplier.get(), DriveConstants.deadband),
-            MathUtil.applyDeadband(zTraverseSupplier.get(), DriveConstants.deadband),
-            MathUtil.applyDeadband(zRotateSupplier.get(), DriveConstants.deadband),
+            xTraverseSupplier.get() * DriveConstants.maxDriveSpeed,
+            zTraverseSupplier.get() * DriveConstants.maxDriveSpeed,
+            zRotateSupplier.get() * DriveConstants.maxTurnSpeed,
             drivetrain.getAngle()
         );
 
-        drivetrain.swerveDrive(speeds);
+        drivetrain.drive(speeds);
     }
 
     /** This function returns true when the command should end.  It runs at the same time as the {@linkplain #execute() execute()} function */
@@ -60,6 +59,6 @@ public class SwerveDrive extends Command {
     @Override
     public void end(boolean interrupted) {
         // Stops the motors
-        drivetrain.swerveDrive(new ChassisSpeeds());
+        drivetrain.drive(new ChassisSpeeds());
     }
 }

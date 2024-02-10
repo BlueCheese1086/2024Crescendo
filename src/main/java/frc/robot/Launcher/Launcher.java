@@ -16,8 +16,8 @@ import frc.robot.Constants.LauncherConstants;
 
 public class Launcher extends SubsystemBase {
     // The motors of the intake subsystem.
-    private CANSparkMax launchMotor = new CANSparkMax(LauncherConstants.LauncherID, MotorType.kBrushless);
-    private CANSparkMax feedMotor = new CANSparkMax(LauncherConstants.FeederID, MotorType.kBrushless);
+    private CANSparkMax launchMotor = new CANSparkMax(LauncherConstants.LaunchID, MotorType.kBrushless);
+    private CANSparkMax feedMotor = new CANSparkMax(LauncherConstants.FeedID, MotorType.kBrushless);
 
     // The PID controllers for each motor.
     private SparkPIDController launchPID = launchMotor.getPIDController();

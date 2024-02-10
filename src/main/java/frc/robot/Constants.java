@@ -13,35 +13,36 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
     public static class DriveConstants {
-        // IDs and offset
+        // IDs and offsets
         public static final int frontLeftTurnID = 8;
         public static final int frontLeftDriveID = 7;
         public static final int frontLeftCancoderID = 1;
-        public static final double frontLeftOffset = 0.0; // To be tuned
+        public static final double frontLeftOffset = 0.302845;
 
         public static final int frontRightTurnID = 6;
         public static final int frontRightDriveID = 5;
         public static final int frontRightCancoderID = 3;
-        public static final double frontRightOffset = 0.0; // To be tuned
+        public static final double frontRightOffset = 0.807160;
 
         public static final int backLeftTurnID = 2;
         public static final int backLeftDriveID = 1;
         public static final int backLeftCancoderID = 0;
-        public static final double backLeftOffset = 0.0; // To be tuned
+        public static final double backLeftOffset = 0.012487;
 
         public static final int backRightTurnID = 4;
         public static final int backRightDriveID = 3;
         public static final int backRightCancoderID = 2;
-        public static final double backRightOffset = 0.0; // To be tuned
+        public static final double backRightOffset = 0.030477;
 
         // IDs for sensors
         public static final int gyroID = 4;
 
         // Speeds the robot can move at
-        public static final double maxSpeed = 0.3; // Percent
+        public static final double maxDriveSpeed = 0.25; // Meters/second
+        public static final double maxTurnSpeed = 11; // Radians/second
 
         // The threshold of values where the robot will ignore joystick input. (including negatives)
-        public static final double deadband = 0.5;
+        public static final double deadband = 0.2;
     
         // Gear ratios
         public static final double turnRatio = 150.0/7.0;
@@ -55,21 +56,20 @@ public final class Constants {
         public static final double kModuleToCenter = kModuleToModuleDistance / 2; // Meters
 
         // PID Values
-        public static final double driveP = 0.01; // To be tuned
-        public static final double driveI = 0.0; // To be tuned
-        public static final double driveD = 0.0; // To be tuned
-        public static final double driveFF = 1.96; // To be tuned
+        public static final double driveP = 0.01;
+        public static final double driveI = 0.0;
+        public static final double driveD = 0.0;
+        public static final double driveFF = 1.96;
 
-        public static final double turnP = 0.01; // To be tuned
-        public static final double turnI = 0.0; // To be tuned
-        public static final double turnD = 0.01; // To be tuned
-        public static final double turnFF = 0;
+        public static final double turnP = 0.01;
+        public static final double turnI = 0.0;
+        public static final double turnD = 0.01;
     }
 
     public static class LauncherConstants {
         // CAN IDs for motor controllers
-        public static final int FeederID = 11;
-        public static final int LauncherID = 12;
+        public static final int FeedID = 11;
+        public static final int LaunchID = 12;
 
         // Current (amps) limit for both Launcher wheels
         public static final int LauncherCurrentLimit = 80;

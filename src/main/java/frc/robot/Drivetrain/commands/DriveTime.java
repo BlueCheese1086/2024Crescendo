@@ -27,7 +27,7 @@ public class DriveTime extends Command {
         this.drivetrain = drivetrain;
         this.xSpeed = MathUtil.applyDeadband(xSpeed, DriveConstants.deadband);
         this.zSpeed = MathUtil.applyDeadband(zSpeed, DriveConstants.deadband);
-        this.angle = (angle == -1) ? drivetrain.getAngle() : Rotation2d.fromDegrees(angle);
+        this.angle = (angle == -1) ? new Rotation2d() : Rotation2d.fromDegrees(angle);
         this.endTime = System.currentTimeMillis() + (seconds * 1000);
 
         addRequirements(drivetrain);
@@ -40,7 +40,7 @@ public class DriveTime extends Command {
     /** This function is called every time the scheduler runs while the command is scheduled. */
     @Override
     public void execute() {
-        drivetrain.swerveDrive(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, zSpeed, angle.getRadians(), drivetrain.getAngle()));
+        drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, zSpeed, angle.getRadians(), new Rotation2d()));
     }
 
     /** This function returns true when the command should end.  It runs at the same time as the {@linkplain #execute() execute()} function */
@@ -52,6 +52,6 @@ public class DriveTime extends Command {
     /** This function is called once the command ends or is interrupted. */
     @Override
     public void end(boolean interrupted) {
-        drivetrain.swerveDrive(ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, 0, drivetrain.getAngle()));
+        drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, 0, new Rotation2d()));
     }
 }

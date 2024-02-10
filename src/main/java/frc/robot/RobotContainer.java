@@ -1,17 +1,19 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Drivetrain.commands.*;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Drivetrain.Drivetrain;
-import frc.robot.Launcher.commands.*;
-import frc.robot.Launcher.Launcher;
 
 public class RobotContainer {
     // Defining the robot's subsystems
     private final Drivetrain drivetrain = new Drivetrain();
     // private final Launcher launcher = new Launcher();
+    // private final Climb climb = new Climb();
+    // private final Intake intake = new Intake();
+    // private fina Pigeon2 gyro = new Pigeon2();
 
     // Creating instances of the xbox remotes used for driving the robot.
     private final CommandXboxController xbox = new CommandXboxController(0);
@@ -48,6 +50,10 @@ public class RobotContainer {
      * @return The command to run in Teleop mode.
      */
     public Command getTeleopCommand() {
-        return new SwerveDrive(drivetrain, () -> xbox.getLeftY(), () -> xbox.getLeftX(), () -> xbox.getRightX());
+        return new SwerveDrive(drivetrain,
+            () -> MathUtil.applyDeadband( xbox.getLeftX(), DriveConstants.deadband),
+            () -> MathUtil.applyDeadband( xbox.getLeftY(), DriveConstants.deadband),
+            () -> MathUtil.applyDeadband(xbox.getRightX(), DriveConstants.deadband)
+        );
     }
 }

@@ -7,105 +7,121 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 public class SwerveModule extends SubsystemBase {
-    // Cancoder
-    private AnalogEncoder cancoder;
-    private double offset;
+    private final AnalogEncoder cancoder;
+    private final double offset;
 
-    // Motors
-    private CANSparkMax driveMotor;
-    private CANSparkMax turnMotor;
+    private final CANSparkMax turn;
+    private final CANSparkMax drive;
 
-    // Encoder for each motor
-    private RelativeEncoder driveEncoder;
-    private RelativeEncoder turnEncoder;
+    private final RelativeEncoder turnEnc;
+    private final RelativeEncoder driveEnc;
 
-    // PID Controllers for each motor
-    private SparkPIDController drivePID;
-    private SparkPIDController turnPID;
+    private final SparkPIDController turnPID;
+    private final SparkPIDController drivePID;
 
-    public SwerveModule(String name, int driveID, int turnID, int cancoderID, double offset) {
-        // Initializing the cancoder and its offset
+    private SwerveModuleState state;
+    private String name;
+
+    public SwerveModule(String name, int driveId, int turnId, int channel, double offset) {
+        this.name = name;
+        this.state = new SwerveModuleState(0.0, Rotation2d.fromDegrees(0.0));
+
+        cancoder = new AnalogEncoder(channel);
         this.offset = offset;
-        this.cancoder = new AnalogEncoder(cancoderID);
 
-        // Setting the motors with the given IDs
-        driveMotor = new CANSparkMax(driveID, MotorType.kBrushless);
-        turnMotor = new CANSparkMax(turnID, MotorType.kBrushless);
+        turn = new CANSparkMax(turnId, MotorType.kBrushless);
+        drive = new CANSparkMax(driveId, MotorType.kBrushless);
 
-        // Setting the attributes of each motor
-        driveMotor.restoreFactoryDefaults();
-        driveMotor.setInverted(false);
-        driveMotor.setIdleMode(IdleMode.kCoast);
+        turn.restoreFactoryDefaults();
+        drive.restoreFactoryDefaults();
 
-        turnMotor.restoreFactoryDefaults();
-        turnMotor.setInverted(false);
-        turnMotor.setIdleMode(IdleMode.kCoast);
+        turn.setSmartCurrentLimit(35);
+        drive.setSmartCurrentLimit(35);
 
-        // Getting the encoders for each motor
-        driveEncoder = driveMotor.getEncoder();
-        turnEncoder = turnMotor.getEncoder();
+        drive.enableVoltageCompensation(12);
+        turn.enableVoltageCompensation(12);
 
-        // Setting the attributes of each encoder
-        driveEncoder.setVelocityConversionFactor(1 / 60.0);
-        driveEncoder.setPositionConversionFactor(1);
+        turn.setInverted(true);
+        drive.setInverted(false);
 
-        turnEncoder.setVelocityConversionFactor(1 / 60.0);
-        turnEncoder.setPositionConversionFactor(1);
+        turn.setIdleMode(IdleMode.kCoast);
+        drive.setIdleMode(IdleMode.kCoast);
 
-        // Getting the PIDControllers for each motor
-        drivePID = driveMotor.getPIDController();
-        turnPID = turnMotor.getPIDController();
+        turnEnc = turn.getEncoder();
+        driveEnc = drive.getEncoder();
 
-        // Setting PIDFF values for each PID
+        driveEnc.setPosition(0);
+        turnEnc.setPosition(0);
+
+        turnPID = turn.getPIDController();
+        drivePID = drive.getPIDController();
+
+        turnPID.setP(DriveConstants.turnP);
+        turnPID.setI(DriveConstants.turnI);
+        turnPID.setD(DriveConstants.turnD);
+
         drivePID.setP(DriveConstants.driveP);
         drivePID.setI(DriveConstants.driveI);
         drivePID.setD(DriveConstants.driveD);
         drivePID.setFF(DriveConstants.driveFF);
 
-        turnPID.setP(DriveConstants.turnP);
-        turnPID.setI(DriveConstants.turnI);
-        turnPID.setD(DriveConstants.turnD);
-        turnPID.setFF(DriveConstants.turnFF);
+        turnEnc.setPositionConversionFactor(360.0 / DriveConstants.turnRatio);
+        driveEnc.setVelocityConversionFactor(DriveConstants.wheelCircumference / DriveConstants.driveRatio / 60);
+        driveEnc.setPositionConversionFactor(DriveConstants.wheelCircumference / DriveConstants.driveRatio);
 
-        driveMotor.burnFlash();
-        turnMotor.burnFlash();
+        turn.burnFlash();
+        drive.burnFlash();
     }
 
-    public SwerveModuleState getState() {
-        return new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(turnEncoder.getPosition()));
+    /** Runs every 20 ms */
+    @Override
+    public void periodic() {}
+
+    /** Initializes the turn encoders to match the cancoder. */
+    public void initEncoder() {
+        turnEnc.setPosition((cancoder.getAbsolutePosition() - offset) * 360.0);
     }
 
-    public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(driveEncoder.getPosition(), new Rotation2d(turnEncoder.getPosition()));
+    /**
+     * Calculate the angle motor setpoint based on the desired angle and the current
+     * angle measurement
+     * 
+     * @return Returns the calculated delta angle
+     */
+    public double getAdjustedAngle(double targetAngle) {
+        double theta = getTurnAngle().getDegrees() - targetAngle;
+
+        if (theta > 180)  theta -= 360;
+        if (theta < -180) theta += 360;
+
+        return turnEnc.getPosition() - theta;
     }
 
+    /**
+     * Gets the current module angle based on relative encoder
+     * 
+     * @return Rotation2d of the current module angle
+     */
     public Rotation2d getTurnAngle() {
-        return new Rotation2d(turnEncoder.getPosition());
+        return Rotation2d.fromDegrees((turnEnc.getPosition() % 360 + 360) % 360);
     }
 
-    public Rotation2d getCancoderAngle() {
-        // Calculating the angle of the cancoder and adjusting it if it is less than 0.
-        double angle = (360 * (cancoder.getAbsolutePosition() - offset) % 360);
-        angle += (angle < 0) ? 360 : 0;
-
-        return new Rotation2d((360 * (cancoder.getAbsolutePosition() - this.offset) % 360));
-    }
-
-    // Speed in m/s, angle in radians
+    /**
+     * Sets the module to the desired state
+     * 
+     * @param state The desired state
+     */
     public void setState(SwerveModuleState state) {
-        // Optimizing the state so that the motor doesn't travel too far.
-        SwerveModuleState optimizedState = SwerveModuleState.optimize(state, getTurnAngle());
+        this.state = SwerveModuleState.optimize(state, getTurnAngle());
 
-        // Setting the PID positions
-        drivePID.setReference(optimizedState.speedMetersPerSecond * DriveConstants.maxSpeed, ControlType.kVelocity);
-        turnPID.setReference(optimizedState.angle.getRadians(), ControlType.kPosition);
+        drivePID.setReference(this.state.speedMetersPerSecond, ControlType.kVelocity);
+        turnPID.setReference(getAdjustedAngle(this.state.angle.getDegrees()), ControlType.kPosition);
     }
 }

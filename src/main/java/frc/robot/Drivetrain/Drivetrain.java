@@ -1,84 +1,87 @@
 package frc.robot.Drivetrain;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import com.ctre.phoenix6.hardware.Pigeon2;
-
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Robot;
 
 public class Drivetrain extends SubsystemBase {
-    // Swerve modules for the robot -- NOT BUILT
-    SwerveModule flModule = new SwerveModule("Front Left",  DriveConstants.frontLeftDriveID,  DriveConstants.frontLeftTurnID,  DriveConstants.frontLeftCancoderID,  DriveConstants.frontLeftOffset);
-    SwerveModule blModule = new SwerveModule("Back Left",   DriveConstants.backLeftDriveID,   DriveConstants.backLeftTurnID,   DriveConstants.backLeftCancoderID,   DriveConstants.backLeftOffset);
-    SwerveModule frModule = new SwerveModule("Front Right", DriveConstants.frontRightDriveID, DriveConstants.frontRightTurnID, DriveConstants.frontRightCancoderID, DriveConstants.frontRightOffset);
-    SwerveModule brModule = new SwerveModule("Back Right",  DriveConstants.backRightDriveID,  DriveConstants.backRightTurnID,  DriveConstants.backRightCancoderID,  DriveConstants.backRightOffset);
-
-    // Sensors
-    // Pigeon2 gyro = new Pigeon2(DriveConstants.gyroID);
+    // Swerve Modules
+    private final SwerveModule frontLeft = new SwerveModule("Front Left", DriveConstants.frontLeftDriveID, DriveConstants.frontLeftTurnID, DriveConstants.frontLeftCancoderID, DriveConstants.frontLeftOffset);
+    private final SwerveModule frontRight = new SwerveModule("Front Right", DriveConstants.frontRightDriveID, DriveConstants.frontRightTurnID, DriveConstants.frontRightCancoderID, DriveConstants.frontRightOffset);
+    private final SwerveModule backLeft = new SwerveModule("Back Left", DriveConstants.backLeftDriveID, DriveConstants.backLeftTurnID, DriveConstants.backLeftCancoderID, DriveConstants.backLeftOffset);
+    private final SwerveModule backRight = new SwerveModule("Back Right", DriveConstants.backRightDriveID, DriveConstants.backRightTurnID, DriveConstants.backRightCancoderID, DriveConstants.backRightOffset);
 
     // Module Management
+    private SwerveModule[] modules = {frontLeft, frontRight, backLeft, backRight};
     private SwerveModuleState[] states = new SwerveModuleState[4];
+    private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
 
     // Kinematics
+    private ChassisSpeeds speeds = new ChassisSpeeds(0.0, 0.0, 0.0);
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-        new Translation2d( DriveConstants.kModuleToCenter,  DriveConstants.kModuleToCenter),
-        new Translation2d( DriveConstants.kModuleToCenter, -DriveConstants.kModuleToCenter),
-        new Translation2d(-DriveConstants.kModuleToCenter,  DriveConstants.kModuleToCenter),
-        new Translation2d(-DriveConstants.kModuleToCenter, -DriveConstants.kModuleToCenter)
+        new Translation2d(-DriveConstants.kModuleToCenter, DriveConstants.kModuleToCenter),
+        new Translation2d(DriveConstants.kModuleToCenter, DriveConstants.kModuleToCenter),
+        new Translation2d(-DriveConstants.kModuleToCenter, -DriveConstants.kModuleToCenter),
+        new Translation2d(DriveConstants.kModuleToCenter, -DriveConstants.kModuleToCenter)
     );
 
-    /**
-     * Constructor. This method is called when an instance of the class is created. This should generally be used to set up
-     * instance variables and perform any configuration or necessary set up on hardware.
-     */
-    public Drivetrain() {}
+    // Odometry
+    private final SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, getAngle(), modulePositions);
 
+    // Gyro
+    private Pigeon2 gyro = new Pigeon2(DriveConstants.gyroID);
+
+    public Drivetrain() {
+        for(SwerveModule module : modules) {
+            module.initEncoder();
+        }
+    }
+
+    /**
+     * Runs every tick (20 ms)
+     */
     @Override
     public void periodic() {}
 
     /**
-     * Drives the robot in different directions.
+     * Gets the angle the robot is facing.
      * 
-     * @param speeds The speeds that each motor should go at.
-     */
-    public void swerveDrive(ChassisSpeeds speeds) {
-        // Converting the ChassisSpeeds to SwerveModuleStates
-        states = kinematics.toSwerveModuleStates(speeds);
-
-        // Setting the states of each module
-        flModule.setState(states[0]);
-        blModule.setState(states[1]);
-        frModule.setState(states[2]);
-        brModule.setState(states[3]);
-
-        // Updating the Gyro if the robot is being simulated
-        // if (Robot.isSimulation()) {
-        //     gyro.setYaw(gyro.getYaw().getValueAsDouble() + 180 + (System.currentTimeMillis() - start) / 1000.0 * Units.radiansToDegrees(speeds.omegaRadiansPerSecond));
-        // }
-    }
-
-    /**
-     * Returns the current angle of the robot
-     * 
-     * @return The angle of the robot as a Rotation2D
+     * @return A rotation2d representing the angle of the robot.
      */
     public Rotation2d getAngle() {
-        return new Rotation2d();//new Rotation2d(gyro.getAngle());
+        return Rotation2d.fromDegrees(gyro.getAngle());
     }
 
     /**
-     * Returns the angluar velocity along the z axis of the robot.
-     * 
-     * @return The rate that the robot is turning. (rad/sec)
+     * Drives the drivetrain
+     * @param sp The desired ChassisSpeeds
      */
-    public double getAngularVel() {
-        return 0;//Math.toRadians(gyro.getRate());
+    public void drive(ChassisSpeeds sp) {
+        // System.out.println(sp.toString());
+        // System.out.println(getRobotAngle().toString());
+        this.speeds = sp;
+        states = kinematics.toSwerveModuleStates(speeds, new Translation2d(0.0, 0.0));
+        // modules[0].setState(states[0]);
+        for (int i = 0; i < 4; i++) {
+            modules[i].setState(states[i]);
+            //modules[i].setState(new SwerveModuleState(0.0, Rotation2d.fromDegrees(0)));
+        }
+    }
+
+    /**
+     * Stops all drivetrain movement
+     */
+    public void stop() {
+        this.drive(
+            new ChassisSpeeds(0.0, 0.0, 0.0)
+        );
     }
 }

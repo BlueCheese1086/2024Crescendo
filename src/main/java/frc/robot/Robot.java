@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -42,7 +43,7 @@ public class Robot extends TimedRobot {
     /** This function is called once when the robot enters Autonomous mode. */
     @Override
     public void autonomousInit() {
-        System.out.println("Robot Mode: Autonomous");
+        SmartDashboard.putString("Robot Mode", "Autonomous");
         autonomousCommand.schedule();
     }
 
@@ -59,7 +60,7 @@ public class Robot extends TimedRobot {
     /** This function is called once when the robot enters Teleop mode. */
     @Override
     public void teleopInit() {
-        System.out.println("Robot Mode: Teleop");
+        SmartDashboard.putString("Robot Mode", "Teleop");
         teleopCommand.schedule();
     }
 
@@ -76,7 +77,7 @@ public class Robot extends TimedRobot {
     /** This function is called once when the robot enters Disabled mode. */
     @Override
     public void disabledInit() {
-        System.out.println("Robot Mode: Disabled");
+        SmartDashboard.putString("Robot Mode", "Disabled");
     }
 
     /** This function is called periodically during Disabled mode. */
@@ -90,7 +91,7 @@ public class Robot extends TimedRobot {
     /** This function is called once when the robot enters Test mode. */
     @Override
     public void testInit() {
-        System.out.println("Robot Mode: Testing");
+        SmartDashboard.putString("Robot Mode", "Testing");
     }
 
     /** This function is called periodically during Test mode. */
@@ -104,7 +105,7 @@ public class Robot extends TimedRobot {
     /** This function is called once when the robot enters Simulation mode. */
     @Override
     public void simulationInit() {
-        System.out.println("Robot Mode: Simulation");
+        SmartDashboard.putString("Robot Mode", "Simulation");
     }
 
     /** This function is called periodically during Simulation mode. */

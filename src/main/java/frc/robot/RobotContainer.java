@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import Util.ControllableConfiguration;
 import Util.IntializedSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -24,12 +25,15 @@ public class RobotContainer {
 	Shooter shooter = new Shooter();
 
 	CommandXboxController primary, secondary;
+	ControllableConfiguration climbDown = new ControllableConfiguration("Climb", "ClimbIsDown", false);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
 		// Configure the trigger bindings
+
+
 
 		primary = new CommandXboxController(0);
 		secondary = new CommandXboxController(1);
@@ -61,6 +65,14 @@ public class RobotContainer {
 			climb.stopMotors();
 		}, climb));
 
+	}
+
+	public void checkClimb() {
+		if ((Boolean) climbDown.getValue()) {
+			climb.initialize();
+		} else {
+			climb.setEncToTop();
+		}
 	}
 
 	public Command getAutonomousCommand() {

@@ -63,6 +63,11 @@ public class Climb extends SubsystemBase implements IntializedSubsystem {
         rightEnc.setPosition(0.0);
     }
 
+    public void setEncToTop() {
+        leftEnc.setPosition(ClimbConstants.maxHeight);
+        rightEnc.setPosition(ClimbConstants.maxHeight);
+    }
+
     public void periodic() {
         if (leftEnc.getPosition() >= ClimbConstants.maxHeight) left.stopMotor();
         if (rightEnc.getPosition() >= ClimbConstants.maxHeight) right.stopMotor();

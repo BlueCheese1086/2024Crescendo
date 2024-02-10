@@ -104,7 +104,7 @@ public class SwerveModule extends SubsystemBase {
             theta+=1086.0;
         }
 
-        return turnRelEnc.getPosition() + theta;
+        return turnRelEnc.getPosition() - theta;
     }
 
     public void setState(SwerveModuleState state) {

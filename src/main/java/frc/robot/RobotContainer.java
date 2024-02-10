@@ -4,20 +4,62 @@
 
 package frc.robot;
 
+import Util.IntializedSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Climb.Climb;
+import frc.robot.Climb.Commands.SetClimbPos;
+import frc.robot.Drivetrain.Drivetrain;
+import frc.robot.Drivetrain.Commands.DefaultDrive;
+import frc.robot.Shooter.Shooter;
+import frc.robot.Shooter.Commands.RunShooter;
 
 public class RobotContainer {
+
+	Drivetrain drivetrain = new Drivetrain();
+	Climb climb = new Climb();
+	Shooter shooter = new Shooter();
+
+	CommandXboxController primary, secondary;
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
 		// Configure the trigger bindings
+
+		primary = new CommandXboxController(0);
+		secondary = new CommandXboxController(1);
+
+		for (SubsystemBase s : new SubsystemBase[]{drivetrain, climb, shooter}) {
+			((IntializedSubsystem) s).initialize();
+		}
+
+		drivetrain.setDefaultCommand(
+			new DefaultDrive(
+				() -> primary.getLeftY(), 
+				() -> primary.getLeftX(), 
+				() -> primary.getRightX(), 
+				drivetrain)
+		);
+
 		configureBindings();
 	}
 
 	private void configureBindings() {
+
+		secondary.y().toggleOnTrue(new RunShooter(5500.0, 0.0, shooter));
+		secondary.a().whileTrue(new RunShooter(5500.0, 15000, shooter));
+		secondary.x().whileTrue(new RunShooter(-5500, -5500, shooter));
+
+		secondary.pov(0).onTrue(new SetClimbPos(1, 1, climb));
+		secondary.pov(180).onTrue(new SetClimbPos(1, 1, climb));
+		secondary.pov(-1).onTrue(new InstantCommand(() -> {
+			climb.stopMotors();
+		}, climb));
 
 	}
 

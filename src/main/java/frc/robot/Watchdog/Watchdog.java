@@ -2,13 +2,14 @@ package frc.robot.Watchdog;
 
 import java.util.Objects;
 
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Watchdog extends SubsystemBase {
 
     private static Watchdog instance;
 
-    public Watchdog getInstance() {
+    public static Watchdog getInstance() {
         if (Objects.isNull(instance)) {
             instance = new Watchdog();
         }
@@ -27,8 +28,14 @@ public class Watchdog extends SubsystemBase {
     private double climbPriority = 4;
     private double shooterPriority = 3;
 
+    private PowerDistribution pdh;
+
     public void periodic() {
 
+    }
+
+    public void setPDH(PowerDistribution pdh) {
+        this.pdh = pdh;
     }
 
     public double getDrivetrainMultiplier() {

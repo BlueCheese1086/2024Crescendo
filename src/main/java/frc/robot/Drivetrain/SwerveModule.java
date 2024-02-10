@@ -1,5 +1,7 @@
 package frc.robot.Drivetrain;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -10,7 +12,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import Util.CheesyUnits;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
 
@@ -25,18 +28,23 @@ public class SwerveModule extends SubsystemBase {
      *           backRight   frontRight
      */
     
+    private final String name;
+
     private final CANSparkMax drive, turn;
     private final RelativeEncoder driveRelEnc, turnRelEnc;
     private final SparkPIDController drivePID, turnPID;
 
-    private final AnalogEncoder absEncoder;
+    private final DutyCycleEncoder absEncoder;
     private final double encOffset;
 
-    public SwerveModule(int driveID, int turnID, int encID, double encOffset) {
+    public SwerveModule(String name, int driveID, int turnID, int encID, double encOffset) {
+
+        this.name = name;
+
         drive = new CANSparkMax(driveID, MotorType.kBrushless);
         turn = new CANSparkMax(turnID, MotorType.kBrushless);
 
-        absEncoder = new AnalogEncoder(encID);
+        absEncoder = new DutyCycleEncoder(new DigitalInput(encID));
         this.encOffset = encOffset;
 
         drive.restoreFactoryDefaults();
@@ -49,12 +57,12 @@ public class SwerveModule extends SubsystemBase {
         turn.setIdleMode(IdleMode.kCoast);
 
         driveRelEnc = drive.getEncoder();
-        driveRelEnc.setPositionConversionFactor(SwerveConstants.positionConversionFactor);
-        driveRelEnc.setVelocityConversionFactor(SwerveConstants.positionConversionFactor/60.0);
+        driveRelEnc.setPositionConversionFactor(SwerveConstants.drivePosConversionFactor);
+        driveRelEnc.setVelocityConversionFactor(SwerveConstants.drivePosConversionFactor / 60.0);
 
         turnRelEnc = turn.getEncoder();
-        turnRelEnc.setPositionConversionFactor(SwerveConstants.positionConversionFactor);
-        turnRelEnc.setVelocityConversionFactor(SwerveConstants.positionConversionFactor/60.0);
+        turnRelEnc.setPositionConversionFactor(SwerveConstants.steerPosConversionFactor);
+        turnRelEnc.setVelocityConversionFactor(SwerveConstants.steerPosConversionFactor / 60.0);
         
         drivePID = drive.getPIDController();
         drivePID.setP(SwerveConstants.kPDriveVelo, 0);
@@ -70,12 +78,21 @@ public class SwerveModule extends SubsystemBase {
 
         drive.burnFlash();
         turn.burnFlash();
-
     }
 
     public void periodic() {
         // TODO
         // Telemetry
+        Logger.recordOutput(name + "/Drive/MotorCurrent", drive.getOutputCurrent());
+        Logger.recordOutput(name + "/Drive/BusVoltage", drive.getBusVoltage());
+        Logger.recordOutput(name + "/Drive/Velocity", driveRelEnc.getVelocity());
+        Logger.recordOutput(name + "/Drive/Temperature", drive.getMotorTemperature());
+
+        Logger.recordOutput(name + "/Turn/MotorCurrent", turn.getOutputCurrent());
+        Logger.recordOutput(name + "/Turn/BusVoltage", turn.getBusVoltage());
+        Logger.recordOutput(name + "/Turn/Position", turnRelEnc.getPosition());
+        Logger.recordOutput(name + "/Turn/Temperature", turn.getMotorTemperature());
+        
     }
 
     public void initializeEncoder() {
@@ -115,6 +132,19 @@ public class SwerveModule extends SubsystemBase {
 
         turnPID.setReference(adjustedAngle, ControlType.kPosition, 0);
         drivePID.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity, 0);
+    }
+
+    public CANSparkMax getDrive() {
+        return drive;
+    }
+
+    public CANSparkMax getTurn() {
+        return turn;
+    }
+
+    public void stop() {
+        drive.stopMotor();
+        turn.stopMotor();
     }
 
 }

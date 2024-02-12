@@ -24,22 +24,22 @@ public final class Constants {
         public static final int frontLeftTurnID = 1;
         public static final int frontLeftDriveID = 2;
         public static final int frontLeftEncID = 9;
-        public static final double frontLeftOffset = 0.0;
+        public static final double frontLeftOffset = 0.007;
 
         public static final int backLeftTurnID = 3;
         public static final int backLeftDriveID = 4;
         public static final int backLeftEncID = 1;
-        public static final double backLeftOffset = 0.0;
+        public static final double backLeftOffset = 0.079;
 
         public static final int frontRightTurnID = 7;
         public static final int frontRightDriveID = 8;
         public static final int frontRightEncID = 8;
-        public static final double frontRightOffset = 0.0;
+        public static final double frontRightOffset = 0.498;
 
         public static final int backRightTurnID = 5;
         public static final int backRightDriveID = 6;
         public static final int backRightEncID = 0;
-        public static final double backRightOffset = 0.0;
+        public static final double backRightOffset = 0.594;
 
         public static final int pigeonID = 0;
 
@@ -67,7 +67,7 @@ public final class Constants {
         public static final double wheelCircumpherence = Units.inchesToMeters(4.0) * Math.PI;
 
         public static final double drivePosConversionFactor = wheelCircumpherence / 5.14;
-        public static final double steerPosConversionFactor = 1.0 / 12.8;
+        public static final double steerPosConversionFactor = 1086.0 / 12.8;
 
     }
 

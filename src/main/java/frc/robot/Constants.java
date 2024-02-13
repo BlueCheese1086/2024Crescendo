@@ -57,7 +57,7 @@ public final class Constants {
         public static final double kPTurn = 0.01;
         public static final double kITurn = 0.0;
         public static final double kDTurn = 0.01;
-        public static final double kFFTurn = 0.0;
+        public static final double kFFTurn = 1.96;
 
         public static final double kPDriveVelo = 0.01;
         public static final double kIDriveVelo = 0.0;

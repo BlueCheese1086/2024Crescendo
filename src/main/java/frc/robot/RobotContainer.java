@@ -55,6 +55,10 @@ public class RobotContainer {
 
 	private void configureBindings() {
 
+		primary.y().onTrue(new InstantCommand(() -> {
+			drivetrain.initPigeon();
+		}));
+
 		secondary.y().toggleOnTrue(new RunShooter(5500.0, 0.0, shooter));
 		secondary.a().whileTrue(new RunShooter(5500.0, 15000, shooter));
 		secondary.x().whileTrue(new RunShooter(-5500, -5500, shooter));

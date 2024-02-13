@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
@@ -29,6 +30,7 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
 
     private final SwerveDriveKinematics kinematics;
     private final SwerveModule[] modules;
+    private SwerveModuleState[] states = new SwerveModuleState[4];
 
     private final Pigeon2 gyro;
 
@@ -79,7 +81,13 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
         }
     }
 
-    public void periodic() {}
+    public void periodic() {
+        SmartDashboard.putNumber("/Gyro", gyro.getYaw());
+    }
+    
+    public ChassisSpeeds getSpeeds() {
+        return kinematics.toChassisSpeeds(states);
+    }
 
     public void initPigeon() {
         gyro.setYaw(0.0);
@@ -95,7 +103,7 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
     }
 
     public void drive(ChassisSpeeds speeds) {
-        SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds, new Translation2d());
+        states = kinematics.toSwerveModuleStates(speeds, new Translation2d());
 
         for (int i = 0; i < modules.length; i++) {
             modules[i].setState(states[i]);

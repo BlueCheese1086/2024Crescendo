@@ -41,7 +41,7 @@ public final class Constants {
         public static final int backRightEncID = 0;
         public static final double backRightOffset = 0.594;
 
-        public static final int pigeonID = 0;
+        public static final int pigeonID = 2;
 
         public static final double turnRatio = 0.0;
         public static final double driveRatio = 0.0;

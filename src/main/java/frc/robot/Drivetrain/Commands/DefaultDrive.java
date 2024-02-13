@@ -1,5 +1,6 @@
 package frc.robot.Drivetrain.Commands;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -13,12 +14,16 @@ public class DefaultDrive extends Command {
     private final DoubleSupplier y_trans;
     private final DoubleSupplier z_rot;
 
+    private final BooleanSupplier marioKart;
+
     private final Drivetrain drivetrain;
 
-    public DefaultDrive(DoubleSupplier x_trans, DoubleSupplier y_trans, DoubleSupplier z_rot, Drivetrain drivetrain) {
+    public DefaultDrive(DoubleSupplier x_trans, DoubleSupplier y_trans, DoubleSupplier z_rot, BooleanSupplier marioKart, Drivetrain drivetrain) {
         this.x_trans = x_trans;
         this.y_trans = y_trans;
         this.z_rot = z_rot;
+
+        this.marioKart = marioKart;
 
         this.drivetrain = drivetrain;
         addRequirements(drivetrain);
@@ -27,9 +32,11 @@ public class DefaultDrive extends Command {
     public void initialize() {}
 
     public void execute() {
+        ChassisSpeeds speeds = drivetrain.getSpeeds();
+
         drivetrain.drive(ChassisSpeeds.fromRobotRelativeSpeeds(
-            x_trans.getAsDouble() * DriveConstants.maxWheelVelocity, 
-            y_trans.getAsDouble() * DriveConstants.maxWheelVelocity,
+            x_trans.getAsDouble() * DriveConstants.maxWheelVelocity + (marioKart.getAsBoolean() ? Math.signum(x_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-drivetrain.getSpeeds().vxMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0), 
+            y_trans.getAsDouble() * DriveConstants.maxWheelVelocity + (marioKart.getAsBoolean() ? Math.signum(y_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-drivetrain.getSpeeds().vxMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0),
             z_rot.getAsDouble() * DriveConstants.maxRotationalVelocity, 
             drivetrain.getYaw()));
     }

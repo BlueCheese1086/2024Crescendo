@@ -54,20 +54,20 @@ public final class Constants {
 
     public static final class SwerveConstants {
 
-        public static final double kPTurn = 0.01;
+        public static final double kPTurn = 1.0;
         public static final double kITurn = 0.0;
-        public static final double kDTurn = 0.01;
-        public static final double kFFTurn = 1.96;
+        public static final double kDTurn = 0.0;
+        public static final double kFFTurn = 0.0;
 
         public static final double kPDriveVelo = 0.01;
         public static final double kIDriveVelo = 0.0;
         public static final double kDDriveVelo = 0.0;
-        public static final double kFFDriveVelo = 0.0;
+        public static final double kFFDriveVelo = 1.96;
 
         public static final double wheelCircumpherence = Units.inchesToMeters(4.0) * Math.PI;
 
         public static final double drivePosConversionFactor = wheelCircumpherence / 5.14;
-        public static final double steerPosConversionFactor = 1086.0 / 12.8;
+        public static final double steerPosConversionFactor = Math.PI * 2.0 / 12.8;
 
     }
 

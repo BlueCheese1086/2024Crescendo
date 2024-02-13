@@ -9,7 +9,6 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import Util.CheesyUnits;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -101,14 +100,14 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public void initializeEncoder() {
-        turnRelEnc.setPosition((absEncoder.getAbsolutePosition() - encOffset) - 1086.0/2.0);
+        turnRelEnc.setPosition((absEncoder.getAbsolutePosition() - encOffset) * (2.0 * Math.PI));
     }
 
     /**
      * @return Returns the current heading of the module in cheesians
      */
     public double getHeading() {
-        return turnRelEnc.getPosition()%1086.0;
+        return turnRelEnc.getPosition()%(2.0 * Math.PI);
     }
 
     /**
@@ -119,20 +118,20 @@ public class SwerveModule extends SubsystemBase {
     public double getAdjustedAngle(double angle) {
         double theta = getHeading() - angle;
 
-        if (theta >= 1086.0/2.0) {
-            theta-=1086.0;
+        if (theta >= Math.PI) {
+            theta-=(2.0 * Math.PI);
         }
-        if (theta <= -1086.0/2.0) {
-            theta+=1086.0;
+        if (theta <= -Math.PI) {
+            theta+=(2.0 * Math.PI);
         }
 
         return turnRelEnc.getPosition() - theta;
     }
 
     public void setState(SwerveModuleState state) {
-        SwerveModuleState optimizedState = SwerveModuleState.optimize(state, new Rotation2d(CheesyUnits.cheesiansToRadians(getHeading())));
+        SwerveModuleState optimizedState = SwerveModuleState.optimize(state, new Rotation2d(getHeading()));
 
-        double desiredAngle = CheesyUnits.radiansToCheesians(optimizedState.angle.getRadians());
+        double desiredAngle = optimizedState.angle.getRadians();
         double adjustedAngle = getAdjustedAngle(desiredAngle);
 
         turnPID.setReference(adjustedAngle, ControlType.kPosition, 0);

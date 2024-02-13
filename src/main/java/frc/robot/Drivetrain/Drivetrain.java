@@ -1,6 +1,6 @@
 package frc.robot.Drivetrain;
 
-import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix.sensors.Pigeon2;
 
 import Util.IntializedSubsystem;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -91,7 +91,7 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
     }
 
     public Rotation2d getYaw() {
-        return Rotation2d.fromDegrees(gyro.getYaw().getValueAsDouble());
+        return Rotation2d.fromDegrees(gyro.getYaw());
     }
 
     public void drive(ChassisSpeeds speeds) {

@@ -35,8 +35,8 @@ public class DefaultDrive extends Command {
         ChassisSpeeds speeds = drivetrain.getSpeeds();
 
         drivetrain.drive(ChassisSpeeds.fromRobotRelativeSpeeds(
-            x_trans.getAsDouble() * DriveConstants.maxWheelVelocity + (marioKart.getAsBoolean() ? Math.signum(x_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-drivetrain.getSpeeds().vxMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0), 
-            y_trans.getAsDouble() * DriveConstants.maxWheelVelocity + (marioKart.getAsBoolean() ? Math.signum(y_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-drivetrain.getSpeeds().vxMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0),
+            x_trans.getAsDouble() * DriveConstants.maxWheelVelocity + (marioKart.getAsBoolean() ? Math.signum(x_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-speeds.vxMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0), 
+            y_trans.getAsDouble() * DriveConstants.maxWheelVelocity + (marioKart.getAsBoolean() ? Math.signum(y_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-speeds.vxMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0),
             z_rot.getAsDouble() * DriveConstants.maxRotationalVelocity, 
             drivetrain.getYaw()));
     }

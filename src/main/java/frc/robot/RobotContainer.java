@@ -47,6 +47,7 @@ public class RobotContainer {
 				() -> primary.getLeftY(), 
 				() -> primary.getLeftX(), 
 				() -> primary.getRightX(), 
+				() -> primary.rightBumper().getAsBoolean(),
 				drivetrain)
 		);
 

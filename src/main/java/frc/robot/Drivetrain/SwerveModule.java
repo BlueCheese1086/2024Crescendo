@@ -10,13 +10,13 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
 public class SwerveModule extends SubsystemBase {
     // Analog Encoder + offset
-    private final AnalogEncoder cancoder;
+    private final DutyCycleEncoder cancoder;
     private final double offset;
 
     // Motors
@@ -41,7 +41,7 @@ public class SwerveModule extends SubsystemBase {
         this.name = name;
 
         // Initializing the cancoder and saving its offset.
-        cancoder = new AnalogEncoder(channel);
+        cancoder = new DutyCycleEncoder(channel);
         this.offset = offset;
 
         // Initializing the motors.
@@ -99,6 +99,9 @@ public class SwerveModule extends SubsystemBase {
         // Saving the settings.
         turn.burnFlash();
         drive.burnFlash();
+
+        this.state = new SwerveModuleState(0, getAngle());
+        this.position = new SwerveModulePosition(0, getAngle());
     }
 
     /** Runs every 20 ms */

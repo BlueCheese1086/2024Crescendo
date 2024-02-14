@@ -18,28 +18,28 @@ public final class Constants {
 
     public static class DriveConstants {
         // Motor IDs and offsets
-        public static final int frontLeftTurnID = 8;
-        public static final int frontLeftDriveID = 7;
-        public static final int frontLeftCancoderID = 1;
-        public static final double frontLeftOffset = 0.302845;
+        public static final int frontLeftTurnID = 1;
+        public static final int frontLeftDriveID = 2;
+        public static final int frontLeftCancoderID = 9;
+        public static final double frontLeftOffset = 0.007;
 
-        public static final int frontRightTurnID = 6;
-        public static final int frontRightDriveID = 5;
-        public static final int frontRightCancoderID = 3;
-        public static final double frontRightOffset = 0.807160;
+        public static final int frontRightTurnID = 7;
+        public static final int frontRightDriveID = 8;
+        public static final int frontRightCancoderID = 8;
+        public static final double frontRightOffset = 0.498;
 
-        public static final int backLeftTurnID = 2;
-        public static final int backLeftDriveID = 1;
-        public static final int backLeftCancoderID = 0;
-        public static final double backLeftOffset = 0.012487;
+        public static final int backLeftTurnID = 3;
+        public static final int backLeftDriveID = 4;
+        public static final int backLeftCancoderID = 1;
+        public static final double backLeftOffset = 0.079;
 
-        public static final int backRightTurnID = 4;
-        public static final int backRightDriveID = 3;
-        public static final int backRightCancoderID = 2;
-        public static final double backRightOffset = 0.030477;
+        public static final int backRightTurnID = 5;
+        public static final int backRightDriveID = 6;
+        public static final int backRightCancoderID = 0;
+        public static final double backRightOffset = 0.594;
 
         // Gyro ID
-        public static final int gyroID = 4;
+        public static final int gyroID = 2;
 
         // Speeds the robot can move at
         public static final double maxDriveSpeed = 0.25; // Meters/second
@@ -66,15 +66,15 @@ public final class Constants {
         public static final double driveFF = 1.96;
 
         // Turn PID Constants
-        public static final double turnP = 0.01;
+        public static final double turnP = 1.0;
         public static final double turnI = 0.0;
-        public static final double turnD = 0.01;
+        public static final double turnD = 0.0;
     }
 
     public static class LauncherConstants {
         // CAN IDs for motor controllers
-        public static final int FeedID = 11;
-        public static final int LaunchID = 12;
+        public static final int FeedID = 12;
+        public static final int LaunchID = 11;
 
         // Current (amps) limit for both Launcher wheels
         public static final int CurrentLimit = 80;
@@ -96,23 +96,10 @@ public final class Constants {
         public static final int maxLaunchSpeed = 5800;
     }
 
-    public static class IntakeConstants {
-        // Motor IDs
-        public static final int accessID = 21;
-        public static final int rollerID = 22;
-
-        // Gear Ratios
-        public static final double accessRatio = 26.18;
-        public static final double rollerRatio = 1;
-
-        // The max speed the intake will run at in percent
-        public static final double maxSpeed = 0.5;
-    }
-
     public static class ClimbConstants {
         // Motor IDs
-        public static final int leftID = 31;
-        public static final int rightID = 32;
+        public static final int leftID = 21;
+        public static final int rightID = 22;
 
         // Gear Ratios
         public static final double leftRatio = 25;
@@ -120,5 +107,18 @@ public final class Constants {
 
         // The max speed the climb will run at in percent
         public static final double maxSpeed = 0.3;
+    }
+
+    public static class IntakeConstants {
+        // Motor IDs
+        public static final int accessID = 31;
+        public static final int rollerID = 32;
+
+        // Gear Ratios
+        public static final double accessRatio = 26.18;
+        public static final double rollerRatio = 1;
+
+        // The max speed the intake will run at in percent
+        public static final double maxSpeed = 0.5;
     }
 }

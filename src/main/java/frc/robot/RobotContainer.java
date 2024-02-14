@@ -1,6 +1,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.OperatorConstants;
@@ -40,7 +43,7 @@ public class RobotContainer {
      * @return The command to run in Autonomous mode.
      */
     public Command getAutonomousCommand() {
-        return Autos.mainAuto(drivetrain, launcher);
+        return new PathPlannerAuto("Replace Me");
     }
 
     /**

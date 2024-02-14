@@ -1,7 +1,6 @@
 package frc.robot.Climb;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -12,10 +11,6 @@ public class Climb extends SubsystemBase {
     // Motors
     private CANSparkMax left = new CANSparkMax(ClimbConstants.leftID, MotorType.kBrushless);
     private CANSparkMax right = new CANSparkMax(ClimbConstants.rightID, MotorType.kBrushless);
-
-    // Encoders
-    private RelativeEncoder leftEncoder;
-    private RelativeEncoder rightEncoder;
 
     public Climb() {
         // Resetting the settings of the motors.
@@ -37,20 +32,6 @@ public class Climb extends SubsystemBase {
         // Setting idle modes for each motor.
         left.setIdleMode(IdleMode.kBrake);
         right.setIdleMode(IdleMode.kCoast);
-
-        // Getting the encoders of each motor.
-        leftEncoder = left.getEncoder();
-        rightEncoder = right.getEncoder();
-
-        // Resetting encoder positions.
-        leftEncoder.setPosition(0);
-        rightEncoder.setPosition(0);
-
-        // Setting RPM conversions for each encoder.
-        leftEncoder.setPositionConversionFactor(360.0 / ClimbConstants.leftRatio); // To degrees
-        leftEncoder.setVelocityConversionFactor(1 / ClimbConstants.leftRatio / 60.0); // To M/S
-        rightEncoder.setPositionConversionFactor(1 / ClimbConstants.rightRatio); // To M
-        rightEncoder.setVelocityConversionFactor(1 / ClimbConstants.rightRatio / 60.0); // To M/S
 
         // Saving the settings.
         left.burnFlash();

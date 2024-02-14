@@ -17,10 +17,6 @@ public class RunFlywheel extends Command {
         this.speed = speed;
     }
 
-    /** This function is called when the command is initially scheduled. */
-    @Override
-    public void initialize() {}
-
     /**
      * This function is called every time the scheduler runs while the command is scheduled.
      * 
@@ -29,12 +25,6 @@ public class RunFlywheel extends Command {
     @Override
     public void execute() {
         launcher.setLaunchWheel(speed);
-    }
-
-    /** This function returns true when the command should end.  It runs at the same time as the {@linkplain #execute() execute()} function */
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 
     /** This function is called once the command ends or is interrupted. */

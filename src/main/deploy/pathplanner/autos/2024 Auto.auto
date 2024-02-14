@@ -97,7 +97,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.0
+                        "waitTime": 0.5
                       }
                     }
                   ]
@@ -107,6 +107,25 @@
                 "type": "path",
                 "data": {
                   "pathName": "Return From Center"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "CloseIntake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Getting Taxi Points"
                 }
               }
             ]

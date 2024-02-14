@@ -12,20 +12,10 @@ public class RunFeed extends Command {
         this.launcher = launcher;
         this.speed = speed;
     }
-    
-    @Override
-    public void initialize() {
-    }
 
     @Override
     public void execute() {
-        // Works!
         launcher.setFeedWheel(speed);
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 
     @Override

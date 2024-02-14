@@ -12,8 +12,12 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    // General Constants
+    // NEO 550 Max Speed
+    public static final int neoMaxSpeed = 5880;
+
     public static class DriveConstants {
-        // IDs and offsets
+        // Motor IDs and offsets
         public static final int frontLeftTurnID = 8;
         public static final int frontLeftDriveID = 7;
         public static final int frontLeftCancoderID = 1;
@@ -34,7 +38,7 @@ public final class Constants {
         public static final int backRightCancoderID = 2;
         public static final double backRightOffset = 0.030477;
 
-        // IDs for sensors
+        // Gyro ID
         public static final int gyroID = 4;
 
         // Speeds the robot can move at
@@ -55,12 +59,13 @@ public final class Constants {
         public static final double kModuleToModuleDistance = Units.inchesToMeters(12); // Meters
         public static final double kModuleToCenter = kModuleToModuleDistance / 2; // Meters
 
-        // PID Values
+        // Drive PID Constants
         public static final double driveP = 0.01;
         public static final double driveI = 0.0;
         public static final double driveD = 0.0;
         public static final double driveFF = 1.96;
 
+        // Turn PID Constants
         public static final double turnP = 0.01;
         public static final double turnI = 0.0;
         public static final double turnD = 0.01;
@@ -72,22 +77,48 @@ public final class Constants {
         public static final int LaunchID = 12;
 
         // Current (amps) limit for both Launcher wheels
-        public static final int LauncherCurrentLimit = 80;
+        public static final int CurrentLimit = 80;
 
         // Feed PID Constants
-        public static final double feedP = 0.00001;
+        public static final double feedP = 0.0001;
         public static final double feedI = 0;
         public static final double feedD = 0;
         public static final double feedFF = 0.01;
 
         // Launch PID Constants
-        public static final double launchP = 0.00001;
+        public static final double launchP = 0.0001;
         public static final double launchI = 0;
         public static final double launchD = 0;
         public static final double launchFF = 0.01;
 
         // The max speed for each motor in RPM
-        public static final int feedSpeed = 15000; // Not quite the max speed, but it is necessary to launch the note
-        public static final int launchSpeed = 5500;
+        public static final int maxFeedSpeed = 15000; // Be careful for how long the feed runs with this value.
+        public static final int maxLaunchSpeed = 5800;
+    }
+
+    public static class IntakeConstants {
+        // Motor IDs
+        public static final int accessID = 21;
+        public static final int rollerID = 22;
+
+        // Gear Ratios
+        public static final double accessRatio = 26.18;
+        public static final double rollerRatio = 1;
+
+        // The max speed the intake will run at in percent
+        public static final double maxSpeed = 0.5;
+    }
+
+    public static class ClimbConstants {
+        // Motor IDs
+        public static final int leftID = 31;
+        public static final int rightID = 32;
+
+        // Gear Ratios
+        public static final double leftRatio = 25;
+        public static final double rightRatio = 25;
+
+        // The max speed the climb will run at in percent
+        public static final double maxSpeed = 0.3;
     }
 }

@@ -15,7 +15,7 @@ import com.revrobotics.SparkPIDController;
 import frc.robot.Constants.LauncherConstants;
 
 public class Launcher extends SubsystemBase {
-    // The motors of the intake subsystem.
+    // The motors of the launch subsystem.
     private CANSparkMax launchMotor = new CANSparkMax(LauncherConstants.LaunchID, MotorType.kBrushless);
     private CANSparkMax feedMotor = new CANSparkMax(LauncherConstants.FeedID, MotorType.kBrushless);
 
@@ -29,28 +29,6 @@ public class Launcher extends SubsystemBase {
      * This subsystem is in charge of collecting and scoring notes.
      */
     public Launcher() {
-        // // Setting (and saving) defaults for each motor
-        // feedMotor.restoreFactoryDefaults();
-        // feedMotor.setIdleMode(IdleMode.kCoast);
-        // feedMotor.setInverted(true);
-        // // feedMotor.burnFlash();
-
-        // launchMotor.restoreFactoryDefaults();
-        // launchMotor.setIdleMode(IdleMode.kCoast);
-        // launchMotor.setInverted(true);
-        // // launchMotor.burnFlash();
-
-        // // Setting PID Constants
-        // feedPID.setP(LauncherConstants.feedP);
-        // feedPID.setI(LauncherConstants.feedI);
-        // feedPID.setD(LauncherConstants.feedD);
-        // feedPID.setFF(LauncherConstants.feedFF);
-
-        // launchPID.setP(LauncherConstants.launchP);
-        // launchPID.setI(LauncherConstants.launchI);
-        // launchPID.setD(LauncherConstants.launchD);
-        // launchPID.setFF(LauncherConstants.launchFF);
-        // The CANSparkMax motors are being initalized.
         feedMotor.restoreFactoryDefaults();
         launchMotor.restoreFactoryDefaults();
 
@@ -80,7 +58,7 @@ public class Launcher extends SubsystemBase {
         if (speed == 0) {
             launchMotor.set(0);
         } else {
-            launchPID.setReference(speed * LauncherConstants.launchSpeed, ControlType.kVelocity);
+            launchPID.setReference(speed * LauncherConstants.maxLaunchSpeed, ControlType.kVelocity);
         }
     }
 
@@ -93,7 +71,7 @@ public class Launcher extends SubsystemBase {
         if (speed == 0) {
             feedMotor.set(0);
         } else {
-            feedPID.setReference(speed * LauncherConstants.feedSpeed, ControlType.kVelocity);
+            feedPID.setReference(speed * LauncherConstants.maxFeedSpeed, ControlType.kVelocity);
         }
     }
 
@@ -104,11 +82,6 @@ public class Launcher extends SubsystemBase {
      * @param feedSpeed The desired speed of the feed motor in RPM
      */
     public void setSpeeds(double launchSpeed, double feedSpeed) {
-        // Setting speeds for each motor
-        // launchPID.setReference(launchSpeed, ControlType.kVelocity);
-        // feedPID.setReference(feedSpeed, ControlType.kVelocity);
-
-        // This code worked, be careful using the above
         // Setting speeds for each motor
         setLaunchWheel(launchSpeed);
         setFeedWheel(feedSpeed);

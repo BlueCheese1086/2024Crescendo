@@ -1,6 +1,6 @@
 package frc.robot.Drivetrain;
 
-import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix.sensors.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -27,8 +27,8 @@ public class Drivetrain extends SubsystemBase {
 
     // Module Management
     private SwerveModule[] modules = {frontLeft, frontRight, backLeft, backRight};
-    private SwerveModuleState[] states = new SwerveModuleState[4];
-    private SwerveModulePosition[] positions = new SwerveModulePosition[4];
+    private SwerveModuleState[] states = {frontLeft.state, frontRight.state, backLeft.state, backRight.state};
+    private SwerveModulePosition[] positions = {frontLeft.position, frontRight.position, backLeft.position, backRight.position};
 
     // Kinematics
     private ChassisSpeeds speeds = new ChassisSpeeds(0.0, 0.0, 0.0);
@@ -90,7 +90,7 @@ public class Drivetrain extends SubsystemBase {
      * @return A rotation2d representing the angle of the robot.
      */
     public Rotation2d getAngle() {
-        return Rotation2d.fromDegrees(gyro.getAngle());
+        return Rotation2d.fromDegrees(gyro.getYaw());
     }
 
     /**

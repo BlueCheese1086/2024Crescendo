@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
@@ -20,16 +21,16 @@ public class SwerveModule extends SubsystemBase {
     private final double offset;
 
     // Motors
-    private final CANSparkMax turn;
-    private final CANSparkMax drive;
+    private final CANSparkMax driveMotor;
+    private final CANSparkMax turnMotor;
 
     // Motor Encoders
-    private final RelativeEncoder turnEnc;
     private final RelativeEncoder driveEnc;
+    private final RelativeEncoder turnEnc;
 
     // Spark PID Controllers
-    private final SparkPIDController turnPID;
     private final SparkPIDController drivePID;
+    private final SparkPIDController turnPID;
 
     // Public vars
     public SwerveModuleState state;
@@ -41,64 +42,66 @@ public class SwerveModule extends SubsystemBase {
         this.name = name;
 
         // Initializing the cancoder and saving its offset.
-        cancoder = new DutyCycleEncoder(channel);
+        cancoder = new DutyCycleEncoder(new DigitalInput(channel));
         this.offset = offset;
 
         // Initializing the motors.
-        turn = new CANSparkMax(turnId, MotorType.kBrushless);
-        drive = new CANSparkMax(driveId, MotorType.kBrushless);
+        driveMotor = new CANSparkMax(driveId, MotorType.kBrushless);
+        turnMotor = new CANSparkMax(turnId, MotorType.kBrushless);
 
         // Resetting the settings of the motors.
-        turn.restoreFactoryDefaults();
-        drive.restoreFactoryDefaults();
+        driveMotor.restoreFactoryDefaults();
+        turnMotor.restoreFactoryDefaults();
 
         // Setting an amp limit.
-        turn.setSmartCurrentLimit(35);
-        drive.setSmartCurrentLimit(35);
+        driveMotor.setSmartCurrentLimit(35);
+        turnMotor.setSmartCurrentLimit(35);
 
         // Enabling voltage compansation.
-        drive.enableVoltageCompensation(12);
-        turn.enableVoltageCompensation(12);
+        driveMotor.enableVoltageCompensation(12);
+        turnMotor.enableVoltageCompensation(12);
 
         // Inverting the motors as necessary.
-        turn.setInverted(true);
-        drive.setInverted(false);
+        driveMotor.setInverted(false);
+        turnMotor.setInverted(false);
 
         // Putting the motors into Coast mode.
-        turn.setIdleMode(IdleMode.kCoast);
-        drive.setIdleMode(IdleMode.kCoast);
+        driveMotor.setIdleMode(IdleMode.kCoast);
+        turnMotor.setIdleMode(IdleMode.kCoast);
 
         // Gettting the encoders of each motor.
-        turnEnc = turn.getEncoder();
-        driveEnc = drive.getEncoder();
+        driveEnc = driveMotor.getEncoder();
+        turnEnc = turnMotor.getEncoder();
 
         // Resetting the positions of each encoder.
         driveEnc.setPosition(0);
         turnEnc.setPosition(0);
 
+        // Setting RPM conversions for each encoder.
+        driveEnc.setVelocityConversionFactor(DriveConstants.wheelCircumference / DriveConstants.driveRatio / 60);
+        driveEnc.setPositionConversionFactor(DriveConstants.wheelCircumference / DriveConstants.driveRatio);
+        turnEnc.setVelocityConversionFactor(360.0 / DriveConstants.turnRatio / 60);
+        turnEnc.setPositionConversionFactor(360.0 / DriveConstants.turnRatio);
+        
         // Getting the PID Controllers of each motor.
-        turnPID = turn.getPIDController();
-        drivePID = drive.getPIDController();
-
-        // Setting PIDFF values for the turn motor.
-        turnPID.setP(DriveConstants.turnP);
-        turnPID.setI(DriveConstants.turnI);
-        turnPID.setD(DriveConstants.turnD);
+        drivePID = driveMotor.getPIDController();
+        turnPID = turnMotor.getPIDController();
 
         // Setting PIDFF calues for the drive motor.
         drivePID.setP(DriveConstants.driveP);
         drivePID.setI(DriveConstants.driveI);
         drivePID.setD(DriveConstants.driveD);
         drivePID.setFF(DriveConstants.driveFF);
-
-        // Setting RPM conversions for each encoder.
-        turnEnc.setPositionConversionFactor(360.0 / DriveConstants.turnRatio);
-        driveEnc.setVelocityConversionFactor(DriveConstants.wheelCircumference / DriveConstants.driveRatio / 60);
-        driveEnc.setPositionConversionFactor(DriveConstants.wheelCircumference / DriveConstants.driveRatio);
+        
+        // Setting PIDFF values for the turn motor.
+        turnPID.setP(DriveConstants.turnP);
+        turnPID.setI(DriveConstants.turnI);
+        turnPID.setD(DriveConstants.turnD);
+        turnPID.setFF(DriveConstants.turnFF);
 
         // Saving the settings.
-        turn.burnFlash();
-        drive.burnFlash();
+        driveMotor.burnFlash();
+        turnMotor.burnFlash();
 
         this.state = new SwerveModuleState(0, getAngle());
         this.position = new SwerveModulePosition(0, getAngle());

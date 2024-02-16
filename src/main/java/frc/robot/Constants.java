@@ -12,10 +12,6 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    // General Constants
-    // NEO 550 Max Speed
-    public static final int neoMaxSpeed = 5880;
-
     public static class DriveConstants {
         // Motor IDs and offsets
         public static final int frontLeftTurnID = 1;
@@ -49,8 +45,8 @@ public final class Constants {
         public static final double deadband = 0.2;
     
         // Gear ratios
-        public static final double turnRatio = 150.0/7.0;
-        public static final double driveRatio = 6.12;
+        public static final double turnRatio = 12.8;
+        public static final double driveRatio = 5.14;
 
         // Wheel Circumference
         public static final double wheelCircumference = Units.inchesToMeters(4 * Math.PI); // Meters
@@ -69,6 +65,7 @@ public final class Constants {
         public static final double turnP = 1.0;
         public static final double turnI = 0.0;
         public static final double turnD = 0.0;
+        public static final double turnFF = 0.0;
     }
 
     public static class LauncherConstants {
@@ -92,8 +89,9 @@ public final class Constants {
         public static final double launchFF = 0.01;
 
         // The max speed for each motor in RPM
-        public static final int maxFeedSpeed = 15000; // Be careful for how long the feed runs with this value.
-        public static final int maxLaunchSpeed = 5800;
+        public static final int maxFeedInSpeed = 5800;//1;
+        public static final int maxFeedOutSpeed = 15000;//3;
+        public static final int maxLaunchSpeed = 5800;//1;
     }
 
     public static class ClimbConstants {

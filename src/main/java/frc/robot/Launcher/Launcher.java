@@ -56,22 +56,26 @@ public class Launcher extends SubsystemBase {
      */
     public void setLaunchWheel(double speed) {
         if (speed == 0) {
-            launchMotor.set(0);
+            launchMotor.set(0);   
         } else {
             launchPID.setReference(speed * LauncherConstants.maxLaunchSpeed, ControlType.kVelocity);
         }
     }
 
     /** 
-     * Sets the speed of the feed motor to a value in RPM.
+     * Sets the speed of the feed motor.
      * 
-     * @param speed The desired speed of the motor in RPM.
+     * @param speed The desired speed of the motor in %.
      */
     public void setFeedWheel(double speed) {
-        if (speed == 0) {
-            feedMotor.set(0);
+        // Has two different max speeds in case we use the launcher as an intake.
+        if (speed > 0) {
+            // Maybe try with kDutyCycle?  Would set const to 3
+            feedPID.setReference(speed * LauncherConstants.maxFeedOutSpeed, ControlType.kVelocity);
+        } else if (speed < 0) {
+            feedPID.setReference(speed * LauncherConstants.maxFeedInSpeed, ControlType.kVelocity);
         } else {
-            feedPID.setReference(speed * LauncherConstants.maxFeedSpeed, ControlType.kVelocity);
+            feedMotor.set(0);
         }
     }
 

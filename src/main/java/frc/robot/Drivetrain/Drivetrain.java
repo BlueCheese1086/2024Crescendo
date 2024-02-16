@@ -1,6 +1,7 @@
 package frc.robot.Drivetrain;
 
 import com.ctre.phoenix.sensors.Pigeon2;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -20,10 +21,10 @@ import frc.robot.Constants.DriveConstants;
 
 public class Drivetrain extends SubsystemBase {
     // Swerve Modules
-    private SwerveModule frontLeft = new SwerveModule("Front Left", DriveConstants.frontLeftDriveID, DriveConstants.frontLeftTurnID, DriveConstants.frontLeftCancoderID, DriveConstants.frontLeftOffset);
+    private SwerveModule frontLeft  = new SwerveModule("Front Left",  DriveConstants.frontLeftDriveID,  DriveConstants.frontLeftTurnID,  DriveConstants.frontLeftCancoderID,  DriveConstants.frontLeftOffset );
+    private SwerveModule backLeft   = new SwerveModule("Back Left",   DriveConstants.backLeftDriveID,   DriveConstants.backLeftTurnID,   DriveConstants.backLeftCancoderID,   DriveConstants.backLeftOffset  );
     private SwerveModule frontRight = new SwerveModule("Front Right", DriveConstants.frontRightDriveID, DriveConstants.frontRightTurnID, DriveConstants.frontRightCancoderID, DriveConstants.frontRightOffset);
-    private SwerveModule backLeft = new SwerveModule("Back Left", DriveConstants.backLeftDriveID, DriveConstants.backLeftTurnID, DriveConstants.backLeftCancoderID, DriveConstants.backLeftOffset);
-    private SwerveModule backRight = new SwerveModule("Back Right", DriveConstants.backRightDriveID, DriveConstants.backRightTurnID, DriveConstants.backRightCancoderID, DriveConstants.backRightOffset);
+    private SwerveModule backRight  = new SwerveModule("Back Right",  DriveConstants.backRightDriveID,  DriveConstants.backRightTurnID,  DriveConstants.backRightCancoderID,  DriveConstants.backRightOffset );
 
     // Module Management
     private SwerveModule[] modules = {frontLeft, frontRight, backLeft, backRight};
@@ -94,6 +95,17 @@ public class Drivetrain extends SubsystemBase {
     }
 
     /**
+     * Sets the angle the robot is facing to a value.
+     * <p>
+     * Note that this doesn't actually rotate the robot to match the angle.
+     * 
+     * @param angle A rotation2d representing the new angle of the robot.
+     */
+    public void setAngle(Rotation2d angle) {
+        gyro.setYaw(angle.getDegrees());
+    }
+
+    /**
      * Gets the estimated position of the robot.
      * 
      * @return An estimated pose of the robot
@@ -117,7 +129,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public void drive(ChassisSpeeds speeds) {
         this.speeds = speeds;
-        this.states = kinematics.toSwerveModuleStates(speeds, new Translation2d(0.0, 0.0));
+        states = kinematics.toSwerveModuleStates(speeds);
 
         for (int i = 0; i < 4; i++) {
             modules[i].setState(states[i]);
@@ -128,7 +140,7 @@ public class Drivetrain extends SubsystemBase {
      * Stops all drivetrain movement
      */
     public void stop() {
-        this.drive(
+        drive(
             new ChassisSpeeds(0.0, 0.0, 0.0)
         );
     }

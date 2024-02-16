@@ -2,6 +2,7 @@ package frc.robot.Launcher.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.Constants.LauncherConstants;
 import frc.robot.Launcher.Launcher;
 
 public class RunLauncher extends Command {
@@ -34,9 +35,9 @@ public class RunLauncher extends Command {
     /** This function is called every time the scheduler runs while the command is scheduled. */
     @Override
     public void execute() {
-        launcher.setLaunchWheel(launcherSpeed * Constants.neoMaxSpeed);
+        launcher.setLaunchWheel(launcherSpeed);
         if (System.currentTimeMillis() > whenLaunch) {
-            launcher.setFeedWheel(feedSpeed * Constants.neoMaxSpeed);
+            launcher.setFeedWheel(feedSpeed);
         }
     }
 

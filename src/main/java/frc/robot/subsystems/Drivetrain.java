@@ -92,7 +92,7 @@ public class Drivetrain extends SubsystemBase {
     m_leftFrontEncoder.setPositionConversionFactor(Units.inchesToMeters(6) * Math.PI);
 
     m_rightFrontEncoder.setVelocityConversionFactor(Units.inchesToMeters(6) * Math.PI / 60);
-    m_rightFrontEncoder.setVelocityConversionFactor(Units.inchesToMeters(6) * Math.PI / 60);
+    m_leftFrontEncoder.setVelocityConversionFactor(Units.inchesToMeters(6) * Math.PI / 60);
 
     m_differentialOdometry = new DifferentialDriveOdometry(m_ahrs.getRotation2d(), m_leftFrontEncoder.getPosition(), m_rightFrontEncoder.getPosition());
 

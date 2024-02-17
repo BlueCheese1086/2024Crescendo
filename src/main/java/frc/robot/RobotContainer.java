@@ -43,7 +43,7 @@ public class RobotContainer {
      * @return The command to run in Autonomous mode.
      */
     public Command getAutonomousCommand() {
-        return null;//new PathPlannerAuto("2024 ''Auto''");
+        return new PathPlannerAuto("2024 ''Auto''");
     }
 
     /**

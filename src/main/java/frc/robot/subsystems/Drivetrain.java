@@ -50,7 +50,7 @@ public class Drivetrain extends SubsystemBase {
   Pose2d m_pose = new Pose2d();
   AHRS m_ahrs = new AHRS(Port.kMXP);
 
-  DifferentialDriveKinematics m_differentialKinematics = new DifferentialDriveKinematics(Units.inchesToMeters(21.5));
+  public DifferentialDriveKinematics m_differentialKinematics = new DifferentialDriveKinematics(Units.inchesToMeters(21.5));
   DifferentialDriveOdometry m_differentialOdometry;
 
   /**
@@ -88,11 +88,11 @@ public class Drivetrain extends SubsystemBase {
     m_rightFrontPID.setD(0.0);
     m_rightFrontPID.setFF(0.0);
 
-    m_rightFrontEncoder.setPositionConversionFactor(Units.inchesToMeters(6) * Math.PI);
-    m_leftFrontEncoder.setPositionConversionFactor(Units.inchesToMeters(6) * Math.PI);
+    m_rightFrontEncoder.setPositionConversionFactor(Units.inchesToMeters(6) * Math.PI / 10.75);
+    m_leftFrontEncoder.setPositionConversionFactor(Units.inchesToMeters(6) * Math.PI / 10.75);
 
-    m_rightFrontEncoder.setVelocityConversionFactor(Units.inchesToMeters(6) * Math.PI / 60);
-    m_leftFrontEncoder.setVelocityConversionFactor(Units.inchesToMeters(6) * Math.PI / 60);
+    m_rightFrontEncoder.setVelocityConversionFactor(Units.inchesToMeters(6) * Math.PI / 10.75 / 60);
+    m_leftFrontEncoder.setVelocityConversionFactor(Units.inchesToMeters(6) * Math.PI / 10.75 / 60);
 
     m_differentialOdometry = new DifferentialDriveOdometry(m_ahrs.getRotation2d(), m_leftFrontEncoder.getPosition(), m_rightFrontEncoder.getPosition());
 
@@ -117,27 +117,6 @@ public class Drivetrain extends SubsystemBase {
     m_differentialOdometry.update(m_ahrs.getRotation2d(), m_leftFrontEncoder.getPosition(), m_rightFrontEncoder.getPosition());
   }
 
-  /**
-   * @param speed X-axis speed.
-   * @param rotate Z-axis rotate.
-   */
-  public void arcadeDrive(double speed, double rotate) {
-    double leftSpeed = speed - rotate;
-    double rightSpeed = speed + rotate;
-
-    double greaterInput = Math.max(Math.abs(speed), Math.abs(rotate));
-    double lesserInput = Math.min(Math.abs(speed), Math.abs(rotate));
-
-    if (greaterInput != 0) {
-      double saturatedInput = (greaterInput + lesserInput) / greaterInput;
-      leftSpeed /= saturatedInput;
-      rightSpeed /= saturatedInput;
-    }
-
-    m_leftFrontPID.setReference(leftSpeed * DrivetrainSpeed, ControlType.kVelocity);
-    m_rightFrontPID.setReference(rightSpeed * DrivetrainSpeed, ControlType.kVelocity);
-  }
-
   public Pose2d getPose() {
     return m_differentialOdometry.getPoseMeters();
   }
@@ -157,6 +136,7 @@ public class Drivetrain extends SubsystemBase {
 
   public void setSpeeds(ChassisSpeeds speeds) {
     DifferentialDriveWheelSpeeds wheelSpeeds = m_differentialKinematics.toWheelSpeeds(speeds);
+
     m_leftFrontPID.setReference(wheelSpeeds.leftMetersPerSecond, ControlType.kVelocity);
     m_rightFrontPID.setReference(wheelSpeeds.rightMetersPerSecond, ControlType.kVelocity);
   }

@@ -5,6 +5,8 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.Drivetrain;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.util.function.Supplier;
 
@@ -33,7 +35,22 @@ public class Drive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drivetrain.arcadeDrive(m_speedSupplier.get(), m_rotateSupplier.get());  
+    double speed = m_speedSupplier.get();
+    double rotate = m_rotateSupplier.get();
+
+    double leftSpeed = speed - rotate;
+    double rightSpeed = speed + rotate;
+
+    double greaterInput = Math.max(Math.abs(speed), Math.abs(rotate));
+    double lesserInput = Math.min(Math.abs(speed), Math.abs(rotate));
+    if (greaterInput != 0) {
+      double saturatedInput = (greaterInput + lesserInput) / greaterInput;
+      leftSpeed /= saturatedInput;
+      rightSpeed /= saturatedInput;
+    }
+
+    ChassisSpeeds speeds = m_drivetrain.m_differentialKinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(leftSpeed, rightSpeed));
+    m_drivetrain.setSpeeds(speeds);  
   }
 
   // Returns true when the command should end.

@@ -30,6 +30,9 @@
   },
   "NetworkTables": {
     "transitory": {
+      "PathPlanner": {
+        "open": true
+      },
       "SmartDashboard": {
         "open": true
       }

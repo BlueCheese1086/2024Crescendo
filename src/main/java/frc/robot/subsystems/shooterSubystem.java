@@ -23,11 +23,6 @@ public class shooterSubystem extends SubsystemBase {
   CANSparkMax shooterU = new CANSparkMax(ShooterConstants.UPPER_SHOOTER_ID, MotorType.kBrushless); //need actual value and motor type
   CANSparkMax shooterL = new CANSparkMax(ShooterConstants.LOWER_SHOOTER_ID, MotorType.kBrushless); //need actual value and motor type
 
-
-  PhotonCamera camera = new PhotonCamera("photon vision");
-  PhotonPipelineResult result = camera.getLatestResult();
-  PhotonTrackedTarget target = result.getBestTarget();
-
   SparkPIDController lowerPID = shooterL.getPIDController();
 
   public shooterSubystem() {
@@ -37,7 +32,7 @@ public class shooterSubystem extends SubsystemBase {
     shooterU.setIdleMode(IdleMode.kCoast);
     shooterL.setIdleMode(IdleMode.kCoast);
 
-    lowerPID.setP(0.00001);
+    lowerPID.setP(0.0001);
     lowerPID.setI(0);
     lowerPID.setD(0);
     lowerPID.setFF(0.01);
@@ -49,21 +44,21 @@ public class shooterSubystem extends SubsystemBase {
 
   public void shootLower(boolean doShootL){
     if (doShootL){
-      lowerPID.setReference(15000, ControlType.kVelocity);
+      lowerPID.setReference(-15000, ControlType.kVelocity);
       SmartDashboard.putString("Lower shooter:", "Refrence = 15000");
     }
     else{
-        shooterL.set(0);
-        SmartDashboard.putString("Lower shooter:", "Speed = 0");
+      shooterL.set(0);
+      SmartDashboard.putString("Lower shooter:", "Speed = 0");
     }
   } 
 
   public void shootUpper(boolean doShootU){
     if (doShootU){
-      shooterU.set(1);
+      shooterU.set(-1);
     }
     else{
-        shooterU.set(0);
+      shooterU.set(0);
     }
   }
 

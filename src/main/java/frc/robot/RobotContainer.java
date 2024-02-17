@@ -7,7 +7,14 @@ package frc.robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+
+import com.ctre.phoenix6.sim.ChassisReference;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,6 +31,8 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final driveSubsystem m_DriveSubsystem = new driveSubsystem();
   private final shooterSubystem m_ShooterSubsystem = new shooterSubystem();
+  
+  ChassisSpeeds speeds = new ChassisSpeeds();
 
   CommandXboxController xbox = new CommandXboxController(0);
   XboxController joy = xbox.getHID();
@@ -36,10 +45,10 @@ public class RobotContainer {
     configureBindings();
 
     m_DriveSubsystem.setDefaultCommand(
-    new Drive(m_DriveSubsystem, 
-    () -> MathUtil.applyDeadband((-joy.getRightX()), DriveConstants.DEADBAND), //Rotate speed
-    () -> MathUtil.applyDeadband((-joy.getRightY()), DriveConstants.DEADBAND)) //Drive speed
-  );
+    new Drive(m_DriveSubsystem, () -> new ChassisSpeeds(MathUtil.applyDeadband(-joy.getLeftY(), DriveConstants.DEADBAND)*DriveConstants.MAX_DRIVE_SPEED, MathUtil.applyDeadband(-joy.getLeftX(), DriveConstants.DEADBAND)*DriveConstants.MAX_DRIVE_SPEED, -joy.getLeftX()*3.14))
+    //() -> MathUtil.applyDeadband((-joy.getLeftX()), DriveConstants.DEADBAND), //Rotate speed
+    //() -> MathUtil.applyDeadband((-joy.getLeftY()), DriveConstants.DEADBAND)) //Drive speed
+    );
   }
 
   /**
@@ -52,8 +61,16 @@ public class RobotContainer {
    * joysticks}
    */
   private void configureBindings() {
-    //xbox.x().whileTrue(new Align(m_DriveSubsystem, true));
+    xbox.x().whileTrue(new Align(m_DriveSubsystem, true));
     xbox.a().onTrue(new Shoot(m_ShooterSubsystem));
     xbox.b().whileTrue(new Intake(m_ShooterSubsystem));
   }
+
+    public Command getAutonomousCommand() {
+        // Load the path you want to follow using its name in the GUI
+        PathPlannerPath path = PathPlannerPath.fromPathFile("Short Forward");
+
+        // Create a path following command using AutoBuilder. This will also trigger event markers.
+        return AutoBuilder.followPath(path);
+    }
 }

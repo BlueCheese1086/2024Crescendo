@@ -30,7 +30,7 @@ public class Shoot extends Command{
             SmartDashboard.putString("Stage:", "Stage 1");
             m_subsystem.shootUpper(true);
         }
-        else if (start+500 < System.currentTimeMillis() && start + 1000 > System.currentTimeMillis()){
+        else{
             SmartDashboard.putString("Stage:", "Stage 2");
             m_subsystem.shootUpper(true);
             m_subsystem.shootLower(true);

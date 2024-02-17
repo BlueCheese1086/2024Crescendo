@@ -24,6 +24,6 @@ public class Intake extends Command{
     }
 
     public void end(boolean interrupted){
-         m_subsystem.intake(false);
+        m_subsystem.intake(false);
     }
 }

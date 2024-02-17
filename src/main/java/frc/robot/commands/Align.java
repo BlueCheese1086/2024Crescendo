@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -28,9 +30,10 @@ public class Align extends Command{
     double yaw;
     double pitch;
 
-    static PhotonCamera camera = new PhotonCamera("Camera_Module_v1");
+    static PhotonCamera camera = new PhotonCamera("kitkam");
     static PhotonPipelineResult result = camera.getLatestResult();
     static PhotonTrackedTarget target = result.getBestTarget();
+    List<PhotonTrackedTarget> targets;
 
     static BangBangController controller = new BangBangController();
     
@@ -46,24 +49,41 @@ public class Align extends Command{
       
       public void execute() {
         result = camera.getLatestResult();
-
         if(result.hasTargets()){
-            target = result.getBestTarget();
-      
-            yaw = target.getYaw();
-            pitch = target.getPitch();
-            Transform3d camToTarget = target.getBestCameraToTarget();
-            SmartDashboard.putNumber("Yaw value", yaw);
-            SmartDashboard.putNumber("X distance", camToTarget.getX());
-            SmartDashboard.putNumber("Y distance", camToTarget.getY());
-            SmartDashboard.putNumber("Z distance", camToTarget.getZ());
+          boolean targetThere = false;
+          targets = result.getTargets();
+          for(int i = 0; i < targets.size(); i++){
+            if(targets.get(i).getFiducialId() == 4 || targets.get(i).getFiducialId() == 7){
+              target = targets.get(i);
+              yaw = target.getYaw();
+              pitch = target.getPitch();
+              targetThere = true;
+            }
+          }
+          if (!targetThere) {
+            yaw = 0;
+          }
+          //Transform3d camToTarget = target.getBestCameraToTarget();
+          SmartDashboard.putNumber("Yaw value", yaw);
+          SmartDashboard.putNumber("Pitch value", pitch);
+          SmartDashboard.putNumber("Feducial ID1", targets.get(0).getFiducialId());
+          if (targets.size() > 1) {
+            SmartDashboard.putNumber("Feducial ID2", targets.get(1).getFiducialId());
+          } else {
+            SmartDashboard.putNumber("Feducial ID2", -1);
+          }
+          //SmartDashboard.putNumber("X distance", camToTarget.getX());
+          //SmartDashboard.putNumber("Y distance", camToTarget.getY());
+          //SmartDashboard.putNumber("Z distance", camToTarget.getZ());
         }
-        else{
+        else {
           yaw = 0;
+          SmartDashboard.putNumber("Yaw value", yaw);
+          SmartDashboard.putNumber("Pitch value", pitch);
         }
 
         if (alignDo){
             m_subsystem.driveAlign(yaw); //uncomment when you know that yaw works correctly
-        }
+        } 
       }
 }

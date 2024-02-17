@@ -29,46 +29,38 @@ public class Launcher extends SubsystemBase {
      * This subsystem is in charge of collecting and scoring notes.
      */
     public Launcher() {
-        // // Setting (and saving) defaults for each motor
-        // feedMotor.restoreFactoryDefaults();
-        // feedMotor.setIdleMode(IdleMode.kCoast);
-        // feedMotor.setInverted(true);
-        // // feedMotor.burnFlash();
+        // Setting (and saving) defaults for each motor
+        // feedMotor.burnFlash();
+        // launchMotor.burnFlash();
 
-        // launchMotor.restoreFactoryDefaults();
-        // launchMotor.setIdleMode(IdleMode.kCoast);
-        // launchMotor.setInverted(true);
-        // // launchMotor.burnFlash();
-
-        // // Setting PID Constants
-        // feedPID.setP(LauncherConstants.feedP);
-        // feedPID.setI(LauncherConstants.feedI);
-        // feedPID.setD(LauncherConstants.feedD);
-        // feedPID.setFF(LauncherConstants.feedFF);
-
-        // launchPID.setP(LauncherConstants.launchP);
-        // launchPID.setI(LauncherConstants.launchI);
-        // launchPID.setD(LauncherConstants.launchD);
-        // launchPID.setFF(LauncherConstants.launchFF);
-        // The CANSparkMax motors are being initalized.
+        // Setting PID Constants
+        // Restoring default settings to the motors.
         feedMotor.restoreFactoryDefaults();
         launchMotor.restoreFactoryDefaults();
 
+        // Setting the idle mode of the motors.
+        feedMotor.setIdleMode(IdleMode.kCoast);
+        launchMotor.setIdleMode(IdleMode.kCoast);
+
+        // Inverting the motors.
+        feedMotor.setInverted(true);
+        launchMotor.setInverted(true);
+
+        // Setting feed PID values
         feedPID.setP(0.0001);
         feedPID.setI(0);
         feedPID.setD(0);
         feedPID.setFF(0.01);
 
+        // Setting launch PID values
         launchPID.setP(0.0001);
         launchPID.setI(0);
         launchPID.setD(0);
         launchPID.setFF(0.01);
-
-        feedMotor.setIdleMode(IdleMode.kCoast);
-        launchMotor.setIdleMode(IdleMode.kCoast);
-
-        feedMotor.setInverted(true);
-        launchMotor.setInverted(true);
+        
+        // Saving settings for the motors.
+        feedMotor.burnFlash();
+        launchMotor.burnFlash();
     }
 
     /** 

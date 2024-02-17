@@ -6,13 +6,16 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.commands.Drive;
+
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
   public static Command exampleAuto(Drivetrain drivetrain) {
-    return new Drive(drivetrain, () -> 1.0, () -> 1.0);
+    return new PathPlannerAuto("Example Auto");
   }
 
   private Autos() {

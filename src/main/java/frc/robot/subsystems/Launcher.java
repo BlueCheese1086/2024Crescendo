@@ -34,6 +34,12 @@ public class Launcher extends SubsystemBase {
     m_lower.restoreFactoryDefaults();
     m_upper.restoreFactoryDefaults();
 
+    m_lower.setIdleMode(IdleMode.kCoast);
+    m_upper.setIdleMode(IdleMode.kCoast);
+
+    m_lower.setInverted(true);
+    m_upper.setInverted(true);
+
     m_lowerPID.setP(0.00001);
     m_lowerPID.setI(0);
     m_lowerPID.setD(0);
@@ -43,12 +49,6 @@ public class Launcher extends SubsystemBase {
     m_upperPID.setI(0);
     m_upperPID.setD(0);
     m_upperPID.setFF(0.01);
-
-    m_lower.setIdleMode(IdleMode.kCoast);
-    m_upper.setIdleMode(IdleMode.kCoast);
-
-    m_lower.setInverted(true);
-    m_upper.setInverted(true);
   }
 
   /**

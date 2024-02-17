@@ -57,13 +57,13 @@ public final class Constants {
         public static final int LauncherCurrentLimit = 80;
 
         // Feed PID Constants
-        public static final double feedP = 0.00001;
+        public static final double feedP = 0.001;
         public static final double feedI = 0;
         public static final double feedD = 0;
         public static final double feedFF = 0.01;
 
         // Launch PID Constants
-        public static final double launchP = 0.00001;
+        public static final double launchP = 0.001;
         public static final double launchI = 0;
         public static final double launchD = 0;
         public static final double launchFF = 0.01;

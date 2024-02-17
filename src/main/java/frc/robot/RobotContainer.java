@@ -1,15 +1,16 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Drivetrain.commands.*;
+import frc.robot.Drivetrain.commands.ArcadeDrive;
 import frc.robot.Drivetrain.Drivetrain;
-import frc.robot.Launcher.commands.*;
+import frc.robot.Launcher.commands.RunFeed;
+import frc.robot.Launcher.commands.RunFlywheel;
 import frc.robot.Launcher.Launcher;
 
 public class RobotContainer {
@@ -20,7 +21,9 @@ public class RobotContainer {
     // Creating instances of the xbox remotes used for driving the robot.
     private final CommandXboxController xbox = new CommandXboxController(OperatorConstants.PrimaryPort);
 
-    /** The container for the robot. Contains subsystems, IO devices, and commands. */
+    /**
+     * The container for the robot. Contains subsystems, IO devices, and commands.
+     */
     public RobotContainer() {
         // Configuring the trigger bindings
         configureBindings();
@@ -29,8 +32,8 @@ public class RobotContainer {
     /** Creates button bindings for the necessary functions. */
     private void configureBindings() {
         // Assigning operations to each button.
-        // "Left Trigger" runs the flywheel on the launcher.
-        // "Right Trigger" runs the feed wheel on the launcher.
+        // "Left Bumper" runs the flywheel on the launcher.
+        // "Right Bumper" runs the feed wheel on the launcher.
         // "A" runs the launcher in reverse to collect notes.
         xbox.a().whileTrue(new RunFlywheel(launcher, -1));
         xbox.leftBumper().whileTrue(new RunFlywheel(launcher, 1));
@@ -43,7 +46,7 @@ public class RobotContainer {
      * @return The command to run in Autonomous mode.
      */
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("2024 ''Auto''");
+        return new PathPlannerAuto("Kitbot");
     }
 
     /**

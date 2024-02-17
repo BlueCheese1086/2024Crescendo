@@ -5,10 +5,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
- * project.  The TimedRobot class will poll the CommandScheduler every 20 ms by default.
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the
+ * name of this class or
+ * the package after creating this project, you must also update the
+ * build.gradle file in the
+ * project. The TimedRobot class will poll the CommandScheduler every 20 ms by
+ * default.
  * This poll speed can be changed, but it is not recommended to change this.
  */
 public class Robot extends TimedRobot {
@@ -21,10 +25,10 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         System.out.println("Robot Initializing");
 
-        // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-        // autonomous chooser on the dashboard.
+        // Creating the RobotContainer
         RobotContainer robotContainer = new RobotContainer();
 
+        // Getting the commands from the RobotContainer
         autonomousCommand = robotContainer.getAutonomousCommand();
         teleopCommand = robotContainer.getTeleopCommand();
     }
@@ -32,9 +36,12 @@ public class Robot extends TimedRobot {
     /** This function is called periodically no matter the mode. */
     @Override
     public void robotPeriodic() {
-        // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-        // commands, running already-scheduled commands, removing finished or interrupted commands,
-        // and running subsystem periodic() methods.  This must be called from the robot's periodic
+        // Runs the Scheduler. This is responsible for polling buttons, adding
+        // newly-scheduled
+        // commands, running already-scheduled commands, removing finished or
+        // interrupted commands,
+        // and running subsystem periodic() methods. This must be called from the
+        // robot's periodic
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
     }
@@ -48,7 +55,8 @@ public class Robot extends TimedRobot {
 
     /** This function is called periodically during Autonomous mode. */
     @Override
-    public void autonomousPeriodic() {}
+    public void autonomousPeriodic() {
+    }
 
     /** This function is called once when the robot exits Autonomous mode. */
     @Override
@@ -65,7 +73,8 @@ public class Robot extends TimedRobot {
 
     /** This function is called periodically during Teleop mode. */
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {
+    }
 
     /** This function is called once when the robot exits Teleop mode. */
     @Override
@@ -81,11 +90,13 @@ public class Robot extends TimedRobot {
 
     /** This function is called periodically during Disabled mode. */
     @Override
-    public void disabledPeriodic() {}
+    public void disabledPeriodic() {
+    }
 
     /** This function is called once when the robot exits Disabled mode. */
     @Override
-    public void disabledExit() {}
+    public void disabledExit() {
+    }
 
     /** This function is called once when the robot enters Test mode. */
     @Override
@@ -95,11 +106,13 @@ public class Robot extends TimedRobot {
 
     /** This function is called periodically during Test mode. */
     @Override
-    public void testPeriodic() {}
+    public void testPeriodic() {
+    }
 
     /** This function is called once when the robot exits Test mode. */
     @Override
-    public void testExit() {}
+    public void testExit() {
+    }
 
     /** This function is called once when the robot enters Simulation mode. */
     @Override
@@ -109,5 +122,6 @@ public class Robot extends TimedRobot {
 
     /** This function is called periodically during Simulation mode. */
     @Override
-    public void simulationPeriodic() {}
+    public void simulationPeriodic() {
+    }
 }

@@ -4,14 +4,14 @@
 
 package frc.robot.Launcher;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.LauncherConstants;
 
@@ -61,13 +61,13 @@ public class Launcher extends SubsystemBase {
         launchPID.setI(LauncherConstants.launchI);
         launchPID.setD(LauncherConstants.launchD);
         launchPID.setFF(LauncherConstants.launchFF);
-        
+
         // Saving settings for the motors.
         feedMotor.burnFlash();
         launchMotor.burnFlash();
     }
 
-    /** 
+    /**
      * Sets the speed of the launch motor to a value in RPM.
      * 
      * @param speed The desired speed of the motor in RPM.
@@ -80,7 +80,7 @@ public class Launcher extends SubsystemBase {
         }
     }
 
-    /** 
+    /**
      * Sets the speed of the feed motor to a value in RPM.
      * 
      * @param speed The desired speed of the motor in RPM.
@@ -97,14 +97,9 @@ public class Launcher extends SubsystemBase {
      * Sets the speed of the launch and feed motors.
      * 
      * @param launchSpeed The desired speed of the launch motor in RPM
-     * @param feedSpeed The desired speed of the feed motor in RPM
+     * @param feedSpeed   The desired speed of the feed motor in RPM
      */
     public void setSpeeds(double launchSpeed, double feedSpeed) {
-        // Setting speeds for each motor
-        // launchPID.setReference(launchSpeed, ControlType.kVelocity);
-        // feedPID.setReference(feedSpeed, ControlType.kVelocity);
-
-        // This code worked, be careful using the above
         // Setting speeds for each motor
         setLaunchWheel(launchSpeed);
         setFeedWheel(feedSpeed);

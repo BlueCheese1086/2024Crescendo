@@ -1,5 +1,13 @@
 package frc.robot.Drivetrain;
 
+import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.ReplanningConfig;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -9,15 +17,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelPositions;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.util.ReplanningConfig;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 
 import frc.robot.Constants.DriveConstants;
 
@@ -42,10 +42,7 @@ public class Drivetrain extends SubsystemBase {
     private final Pose2d initPose;
     private final DifferentialDriveOdometry odometry;
 
-    /**
-     * Constructor. This method is called when an instance of the class is created. This should generally be used to set up
-     * instance variables and perform any configuration or necessary set up on hardware.
-     */
+    /** Creates a new instance of the Drivetrain subsystem. */
     public Drivetrain() {
         // Initializing the motors
         frontLeftMotor = new CANSparkMax(DriveConstants.FrontLeftID, MotorType.kBrushless);
@@ -98,9 +95,9 @@ public class Drivetrain extends SubsystemBase {
         // Setting right encoder conversion values
         rightEncoder.setPositionConversionFactor(Math.pow(Units.inchesToMeters(DriveConstants.wheelCircumference), 2) * Math.PI);
         rightEncoder.setVelocityConversionFactor(Math.pow(Units.inchesToMeters(DriveConstants.wheelCircumference), 2) * Math.PI / 60);
-        
+
         // Initializing Gyro
-        gyro = new AHRS(Port.kMXP);
+        gyro = new AHRS(DriveConstants.gyroID);
 
         // Initializing Kinematics
         kinematics = new DifferentialDriveKinematics(DriveConstants.kModuleToModuleDistance);
@@ -125,11 +122,7 @@ public class Drivetrain extends SubsystemBase {
         );
     }
 
-    /**
-     * This function runs every tick.
-     * I am using it to update the odometry of the motors,
-     * 
-     */
+    /** This function runs every tick. */
     @Override
     public void periodic() {}
 
@@ -142,14 +135,29 @@ public class Drivetrain extends SubsystemBase {
         return odometry.getPoseMeters();
     }
 
+    /**
+     * Resets the odometry of the robot to the new pose.
+     * 
+     * @param newPose The new position of the robot.
+     */
     public void resetPose(Pose2d newPose) {
         odometry.resetPosition(getAngle(), getPositions(), newPose);
     }
 
+    /**
+     * Gets the positions of each motor.
+     * 
+     * @return The positions of each motor.
+     */
     public DifferentialDriveWheelPositions getPositions() {
         return new DifferentialDriveWheelPositions(leftEncoder.getPosition(), rightEncoder.getPosition());
     }
 
+    /**
+     * Gets the speeds of the robot.
+     * 
+     * @return The speeds that the robot is moving at.
+     */
     public ChassisSpeeds getSpeeds() {
         return kinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity()));
     }
@@ -166,11 +174,11 @@ public class Drivetrain extends SubsystemBase {
     }
 
     /**
-     * Returns the current angle of the robot
+     * Returns the current angle of the robot.
      * 
      * @return The angle of the robot as a Rotation2D
      */
     public Rotation2d getAngle() {
-        return new Rotation2d();
+        return gyro.getRotation2d();
     }
 }

@@ -2,10 +2,11 @@ package frc.robot.Drivetrain.commands;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
+
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Drivetrain.Drivetrain;
 
@@ -14,11 +15,11 @@ public class ArcadeDrive extends Command {
     private Supplier<Double> xSpeedSupplier;
     private Supplier<Double> zRotateSupplier;
 
-    /** 
-     * Creates a new ArcadeDrive command. 
+    /**
+     * Creates a new ArcadeDrive command.
      * 
-     * @param drivetrain A representation of the {@link Drivetrain} class that this subsystem manipulates.
-     * @param xSpeedSupplier A supplier that will give the command the percent speed that the robot should move forward at.
+     * @param drivetrain      A representation of the {@link Drivetrain} class that this subsystem manipulates.
+     * @param xSpeedSupplier  A supplier that will give the command the percent speed that the robot should move forward at.
      * @param zRotateSupplier A supplier that will give the command the percent speed that the robot should turn at.
      */
     public ArcadeDrive(Drivetrain drivetrain, Supplier<Double> xSpeedSupplier, Supplier<Double> zRotateSupplier) {
@@ -54,13 +55,17 @@ public class ArcadeDrive extends Command {
         }
 
         // Converting the left and right speeds to ChassisSpeeds.
-        ChassisSpeeds speeds = drivetrain.kinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(leftSpeed, rightSpeed));
+        ChassisSpeeds speeds = drivetrain.kinematics
+                .toChassisSpeeds(new DifferentialDriveWheelSpeeds(leftSpeed, rightSpeed));
 
         // Giving the ChassisSpeeds to the drive function.
         drivetrain.drive(speeds);
     }
 
-    /** This function returns true when the command should end.  It runs at the same time as the {@linkplain #execute() execute()} function */
+    /**
+     * This function returns true when the command should end.
+     * It runs at the same time as the {@linkplain #execute() execute()} function.
+     */
     @Override
     public boolean isFinished() {
         return false;

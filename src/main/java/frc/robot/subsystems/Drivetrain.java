@@ -122,8 +122,8 @@ public class Drivetrain extends SubsystemBase {
    * @param rotate Z-axis rotate.
    */
   public void arcadeDrive(double speed, double rotate) {
-    m_leftFrontPID.setReference((speed - rotate) * DrivetrainSpeed, ControlType.kVelocity);
-    m_rightFrontPID.setReference((speed + rotate) * DrivetrainSpeed, ControlType.kVelocity);
+    m_leftFrontPID.setReference((speed - rotate), ControlType.kVelocity);
+    m_rightFrontPID.setReference((speed + rotate), ControlType.kVelocity);
   }
 
   public Pose2d getPose() {

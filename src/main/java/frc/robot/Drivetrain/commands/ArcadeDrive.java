@@ -2,8 +2,11 @@ package frc.robot.Drivetrain.commands;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Drivetrain.Drivetrain;
 
 public class ArcadeDrive extends Command {
@@ -33,7 +36,28 @@ public class ArcadeDrive extends Command {
     /** This function is called every time the scheduler runs while the command is scheduled. */
     @Override
     public void execute() {
-        drivetrain.arcadeDrive(xSpeedSupplier.get(), zRotateSupplier.get());
+        // Getting the values from the suppliers.
+        double xSpeed = MathUtil.applyDeadband(xSpeedSupplier.get(), DriveConstants.deadband);
+        double zRotate = MathUtil.applyDeadband(zRotateSupplier.get(), DriveConstants.deadband);
+
+        // Converting the inputs to left and right speeds.
+        double leftSpeed = xSpeed - zRotate;
+        double rightSpeed = xSpeed + zRotate;
+
+        // Saturating the inputs.
+        double greaterInput = Math.max(Math.abs(xSpeed), Math.abs(zRotate));
+        double lesserInput = Math.min(Math.abs(xSpeed), Math.abs(zRotate));
+        if (greaterInput != 0) {
+            double saturatedInput = (greaterInput + lesserInput) / greaterInput;
+            leftSpeed /= saturatedInput;
+            rightSpeed /= saturatedInput;
+        }
+
+        // Converting the left and right speeds to ChassisSpeeds.
+        ChassisSpeeds speeds = drivetrain.kinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(leftSpeed, rightSpeed));
+
+        // Giving the ChassisSpeeds to the drive function.
+        drivetrain.drive(speeds);
     }
 
     /** This function returns true when the command should end.  It runs at the same time as the {@linkplain #execute() execute()} function */

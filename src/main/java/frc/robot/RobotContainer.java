@@ -33,8 +33,8 @@ public class RobotContainer {
         // "Right Trigger" runs the feed wheel on the launcher.
         // "A" runs the launcher in reverse to collect notes.
         xbox.a().whileTrue(new RunFlywheel(launcher, -1));
-        xbox.leftTrigger().whileTrue(new RunFlywheel(launcher, 1));
-        xbox.rightTrigger().whileTrue(new RunFeed(launcher, 1).raceWith(new WaitCommand(1)));
+        xbox.leftBumper().whileTrue(new RunFlywheel(launcher, 1));
+        xbox.rightBumper().whileTrue(new RunFeed(launcher, 1).raceWith(new WaitCommand(1)));
     }
 
     /**
@@ -43,7 +43,7 @@ public class RobotContainer {
      * @return The command to run in Autonomous mode.
      */
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("Replace Me");
+        return null;//new PathPlannerAuto("2024 ''Auto''");
     }
 
     /**

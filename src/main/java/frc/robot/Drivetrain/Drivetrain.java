@@ -2,48 +2,57 @@ package frc.robot.Drivetrain;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelPositions;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI.Port;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Robot;
 
 public class Drivetrain extends SubsystemBase {
     // The motors for the drivetrain subsystem
-    CANSparkMax frontLeftMotor = new CANSparkMax(DriveConstants.FrontLeftID, MotorType.kBrushless);
-    CANSparkMax backLeftMotor = new CANSparkMax(DriveConstants.BackLeftID, MotorType.kBrushless);
-    CANSparkMax frontRightMotor = new CANSparkMax(DriveConstants.FrontRightID, MotorType.kBrushless);
-    CANSparkMax backRightMotor = new CANSparkMax(DriveConstants.BackRightID, MotorType.kBrushless);
+    private CANSparkMax frontLeftMotor;
+    private CANSparkMax backLeftMotor;
+    private CANSparkMax frontRightMotor;
+    private CANSparkMax backRightMotor;
 
     // Getting encoders for the primary (front) motors.
-    RelativeEncoder leftEncoder = frontLeftMotor.getEncoder();
-    RelativeEncoder rightEncoder = frontRightMotor.getEncoder();
+    private RelativeEncoder leftEncoder;
+    private RelativeEncoder rightEncoder;
 
-    // Sensors
-    AHRS gyro = new AHRS(Port.kMXP);
+    // Gyro
+    private AHRS gyro;
 
     // Kinematics
-    private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DriveConstants.kModuleToModuleDistance);
+    public final DifferentialDriveKinematics kinematics;
 
     // Odometry
-    private final Pose2d initPose = new Pose2d(2, 7, new Rotation2d());
-    private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), initPose);
-    private final Field2d field = new Field2d();
+    private final Pose2d initPose;
+    private final DifferentialDriveOdometry odometry;
 
     /**
      * Constructor. This method is called when an instance of the class is created. This should generally be used to set up
      * instance variables and perform any configuration or necessary set up on hardware.
      */
     public Drivetrain() {
+        // Initializing the motors
+        frontLeftMotor = new CANSparkMax(DriveConstants.FrontLeftID, MotorType.kBrushless);
+        backLeftMotor = new CANSparkMax(DriveConstants.BackLeftID, MotorType.kBrushless);
+        frontRightMotor = new CANSparkMax(DriveConstants.FrontRightID, MotorType.kBrushless);
+        backRightMotor = new CANSparkMax(DriveConstants.BackRightID, MotorType.kBrushless);
+
         // Restoring the default settings.
         frontLeftMotor.restoreFactoryDefaults();
         backLeftMotor.restoreFactoryDefaults();
@@ -77,6 +86,43 @@ public class Drivetrain extends SubsystemBase {
         backLeftMotor.burnFlash();
         frontRightMotor.burnFlash();
         backRightMotor.burnFlash();
+
+        // Initializing the Encoders
+        leftEncoder = frontLeftMotor.getEncoder();
+        rightEncoder = frontRightMotor.getEncoder();
+
+        // Setting left encoder conversion values
+        leftEncoder.setPositionConversionFactor(Math.pow(Units.inchesToMeters(DriveConstants.wheelCircumference), 2) * Math.PI);
+        leftEncoder.setVelocityConversionFactor(Math.pow(Units.inchesToMeters(DriveConstants.wheelCircumference), 2) * Math.PI / 60);
+
+        // Setting right encoder conversion values
+        rightEncoder.setPositionConversionFactor(Math.pow(Units.inchesToMeters(DriveConstants.wheelCircumference), 2) * Math.PI);
+        rightEncoder.setVelocityConversionFactor(Math.pow(Units.inchesToMeters(DriveConstants.wheelCircumference), 2) * Math.PI / 60);
+        
+        // Initializing Gyro
+        gyro = new AHRS(Port.kMXP);
+
+        // Initializing Kinematics
+        kinematics = new DifferentialDriveKinematics(DriveConstants.kModuleToModuleDistance);
+        initPose = new Pose2d(2, 7, new Rotation2d());
+        odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), initPose);
+
+        // Implementing PathPlanner
+        AutoBuilder.configureRamsete(
+            this::getPose,
+            this::resetPose,
+            this::getSpeeds,
+            this::drive,
+            new ReplanningConfig(),
+            () -> {
+                if (DriverStation.getAlliance().isPresent()) {
+                    return DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
+                }
+
+                return false;
+            },
+            null
+        );
     }
 
     /**
@@ -88,39 +134,35 @@ public class Drivetrain extends SubsystemBase {
     public void periodic() {}
 
     /**
-     * Drives the robot at the desired forward speed combined with the rotational speed.
+     * Gets the pose of the robot.
      * 
-     * @param xSpeed The desired forward speed of the robot.
-     * @param zRotation The desired rotational speed of the robot.
+     * @return A Pose2d representing the robot's position.
      */
-    public void arcadeDrive(double xSpeed, double zRotation) {
-        // Applies a deadband to the inputs.
-        MathUtil.applyDeadband(xSpeed, DriveConstants.deadband);
-        MathUtil.applyDeadband(zRotation, DriveConstants.deadband);
+    public Pose2d getPose() {
+        return odometry.getPoseMeters();
+    }
 
-        // Squares the inputs (while preserving the sign) to increase fine control while permitting full power.
-        xSpeed = Math.abs(xSpeed) * xSpeed;
-        zRotation = Math.abs(zRotation) * zRotation;
+    public void resetPose(Pose2d newPose) {
+        odometry.resetPosition(getAngle(), getPositions(), newPose);
+    }
 
-        // Creates the saturated speeds of the motors
-        double leftSpeed = xSpeed - zRotation;
-        double rightSpeed = xSpeed + zRotation;
+    public DifferentialDriveWheelPositions getPositions() {
+        return new DifferentialDriveWheelPositions(leftEncoder.getPosition(), rightEncoder.getPosition());
+    }
 
-        // Finds the maximum possible value of throttle + turn along the vector that the joystick is pointing, and then desaturates the wheel speeds.
-        double greaterInput = Math.max(Math.abs(xSpeed), Math.abs(zRotation));
-        double lesserInput = Math.min(Math.abs(xSpeed), Math.abs(zRotation));
-        if (greaterInput == 0.0) {
-            leftSpeed = 0;
-            rightSpeed = 0;
-        } else {
-            double saturatedInput = (greaterInput + lesserInput) / greaterInput;
-            leftSpeed /= saturatedInput;
-            rightSpeed /= saturatedInput;
-        }
+    public ChassisSpeeds getSpeeds() {
+        return kinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity()));
+    }
 
-        // Sets the speed of the motors.
-        frontLeftMotor.set(leftSpeed * DriveConstants.maxSpeed);
-        frontRightMotor.set(rightSpeed * DriveConstants.maxSpeed);
+    /**
+     * Drives the robot at the desired ChassisSpeeds.
+     * 
+     * @param speeds The ChassisSpeeds object to drive at.
+     */
+    public void drive(ChassisSpeeds speeds) {
+        DifferentialDriveWheelSpeeds diffSpeeds = kinematics.toWheelSpeeds(speeds);
+        frontLeftMotor.set(diffSpeeds.leftMetersPerSecond * DriveConstants.maxSpeed);
+        frontRightMotor.set(diffSpeeds.rightMetersPerSecond * DriveConstants.maxSpeed);
     }
 
     /**

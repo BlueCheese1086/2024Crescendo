@@ -19,27 +19,26 @@ public final class Constants {
         public static final int frontLeftCancoderID = 9;
         public static final double frontLeftOffset = 0.007;
 
-        public static final int frontRightTurnID = 7;
-        public static final int frontRightDriveID = 8;
-        public static final int frontRightCancoderID = 8;
-        public static final double frontRightOffset = 0.498;
-
         public static final int backLeftTurnID = 3;
         public static final int backLeftDriveID = 4;
         public static final int backLeftCancoderID = 1;
         public static final double backLeftOffset = 0.079;
+
+        public static final int frontRightTurnID = 7;
+        public static final int frontRightDriveID = 8;
+        public static final int frontRightCancoderID = 8;
+        public static final double frontRightOffset = 0.498;
 
         public static final int backRightTurnID = 5;
         public static final int backRightDriveID = 6;
         public static final int backRightCancoderID = 0;
         public static final double backRightOffset = 0.594;
 
-        // Gyro ID
         public static final int gyroID = 2;
 
         // Speeds the robot can move at
         public static final double maxDriveSpeed = 0.25; // Meters/second
-        public static final double maxTurnSpeed = 11; // Radians/second
+        public static final double maxTurnSpeed = 5; // Radians/second
 
         // The threshold of values where the robot will ignore joystick input. (including negatives)
         public static final double deadband = 0.2;
@@ -49,11 +48,15 @@ public final class Constants {
         public static final double driveRatio = 5.14;
 
         // Wheel Circumference
-        public static final double wheelCircumference = Units.inchesToMeters(4 * Math.PI); // Meters
+        public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI; // Meters
+
+        // Encoder Conversion Factors
+        public static final double drivePosConversionFactor = DriveConstants.wheelCircumference / DriveConstants.driveRatio;
+        public static final double turnPosConversionFactor = 360 / DriveConstants.turnRatio;
 
         // Kinematics
-        public static final double kModuleToModuleDistance = Units.inchesToMeters(12); // Meters
-        public static final double kModuleToCenter = kModuleToModuleDistance / 2; // Meters
+        public static final double kModuleToModuleDistance = Units.inchesToMeters(19.5); // Meters
+        public static final double kModuleToCenter = kModuleToModuleDistance / 2.0; // Meters
 
         // Drive PID Constants
         public static final double driveP = 0.01;

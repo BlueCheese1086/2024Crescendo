@@ -22,9 +22,9 @@ import frc.robot.Constants.*;
 public class RobotContainer {
     // Defining the robot's subsystems
     private final Drivetrain drivetrain = new Drivetrain();
-    private final Launcher launcher = new Launcher();
-    private final Climb climb = new Climb();
-    private final Intake intake = new Intake();
+    // private final Launcher launcher = new Launcher();
+    // private final Climb climb = new Climb();
+    // private final Intake intake = new Intake();
     // private fina Pigeon2 gyro = new Pigeon2();
 
     // Creating instances of the xbox remotes used for driving the robot.
@@ -33,10 +33,10 @@ public class RobotContainer {
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
         // Configuring the NamedCommands for PathPlanner
-        NamedCommands.registerCommand("ShootNote", new RunLauncher(launcher, 1, 3, 0.5));
-        NamedCommands.registerCommand("RunIntake", new RunIntake(intake, 1));
-        NamedCommands.registerCommand("OpenIntake", new SetIntakeState(intake, States.OPEN));
-        NamedCommands.registerCommand("CloseIntake", new SetIntakeState(intake, States.CLOSED));
+        // NamedCommands.registerCommand("ShootNote", new RunLauncher(launcher, 1, 3, 0.5));
+        // NamedCommands.registerCommand("RunIntake", new RunIntake(intake, 1));
+        // NamedCommands.registerCommand("OpenIntake", new SetIntakeState(intake, States.OPEN));
+        // NamedCommands.registerCommand("CloseIntake", new SetIntakeState(intake, States.CLOSED));
 
         // Configuring the trigger bindings
         configureBindings();
@@ -55,16 +55,16 @@ public class RobotContainer {
         // Right Trigger moves the right tower down.
         // POV Up opens the intake.
         // POV down closes the intake.
-        xbox.a().whileTrue(new RunIntake(intake, 1));
-        xbox.b().whileTrue(new RunIntake(intake, -1));
-        xbox.x().toggleOnTrue(new RunFlywheel(launcher, 1));
-        xbox.y().whileTrue(new RunFeed(launcher, 1).raceWith(new WaitCommand(1)));
-        xbox.leftBumper().whileTrue(new RunLeftClimb(climb, 1));
-        xbox.leftTrigger().whileTrue(new RunLeftClimb(climb, -1));
-        xbox.rightBumper().whileTrue(new RunRightClimb(climb, 1));
-        xbox.rightTrigger().whileTrue(new RunRightClimb(climb, -1));
-        xbox.povUp().onTrue(new SetIntakeState(intake, States.OPEN));
-        xbox.povDown().onTrue(new SetIntakeState(intake, States.CLOSED));
+        // xbox.a().whileTrue(new RunIntake(intake, 1));
+        // xbox.b().whileTrue(new RunIntake(intake, -1));
+        // xbox.x().toggleOnTrue(new RunFlywheel(launcher, 1));
+        // xbox.y().whileTrue(new RunFeed(launcher, 1).raceWith(new WaitCommand(1)));
+        // xbox.leftBumper().whileTrue(new RunLeftClimb(climb, 1));
+        // xbox.leftTrigger().whileTrue(new RunLeftClimb(climb, -1));
+        // xbox.rightBumper().whileTrue(new RunRightClimb(climb, 1));
+        // xbox.rightTrigger().whileTrue(new RunRightClimb(climb, -1));
+        // xbox.povUp().onTrue(new SetIntakeState(intake, States.OPEN));
+        // xbox.povDown().onTrue(new SetIntakeState(intake, States.CLOSED));
     }
 
     /**
@@ -73,7 +73,7 @@ public class RobotContainer {
      * @return The command to run in Autonomous mode.
      */
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("2024 Auto");
+        return null;//new PathPlannerAuto("2024 Auto");
     }
 
     /**
@@ -83,8 +83,8 @@ public class RobotContainer {
      */
     public Command getTeleopCommand() {
         return new SwerveDrive(drivetrain,
-            () -> MathUtil.applyDeadband( xbox.getLeftX(), DriveConstants.deadband),
             () -> MathUtil.applyDeadband( xbox.getLeftY(), DriveConstants.deadband),
+            () -> MathUtil.applyDeadband( xbox.getLeftX(), DriveConstants.deadband),
             () -> MathUtil.applyDeadband(xbox.getRightX(), DriveConstants.deadband)
         );
     }

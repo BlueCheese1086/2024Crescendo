@@ -78,15 +78,15 @@ public class Drivetrain extends SubsystemBase {
     m_rightBack.follow(m_rightFront);
     m_leftBack.follow(m_leftFront);
 
-    m_leftFrontPID.setP(0.0001);
+    m_leftFrontPID.setP(0.25);
     m_leftFrontPID.setI(0.0);
     m_leftFrontPID.setD(0.0);
-    m_leftFrontPID.setFF(0.01);
+    m_leftFrontPID.setFF(0.0);
 
-    m_rightFrontPID.setP(0.0001);
+    m_rightFrontPID.setP(0.25);
     m_rightFrontPID.setI(0.0);
     m_rightFrontPID.setD(0.0);
-    m_rightFrontPID.setFF(0.01);
+    m_rightFrontPID.setFF(0.0);
 
     m_rightFrontEncoder.setPositionConversionFactor(Units.inchesToMeters(6) * Math.PI);
     m_leftFrontEncoder.setPositionConversionFactor(Units.inchesToMeters(6) * Math.PI);
@@ -122,8 +122,20 @@ public class Drivetrain extends SubsystemBase {
    * @param rotate Z-axis rotate.
    */
   public void arcadeDrive(double speed, double rotate) {
-    m_leftFrontPID.setReference((speed - rotate), ControlType.kVelocity);
-    m_rightFrontPID.setReference((speed + rotate), ControlType.kVelocity);
+    double leftSpeed = speed - rotate;
+    double rightSpeed = speed + rotate;
+
+    double greaterInput = Math.max(Math.abs(speed), Math.abs(rotate));
+    double lesserInput = Math.min(Math.abs(speed), Math.abs(rotate));
+
+    if (greaterInput != 0) {
+      double saturatedInput = (greaterInput + lesserInput) / greaterInput;
+      leftSpeed /= saturatedInput;
+      rightSpeed /= saturatedInput;
+    }
+
+    m_leftFrontPID.setReference(leftSpeed * DrivetrainSpeed, ControlType.kVelocity);
+    m_rightFrontPID.setReference(rightSpeed * DrivetrainSpeed, ControlType.kVelocity);
   }
 
   public Pose2d getPose() {

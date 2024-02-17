@@ -71,5 +71,13 @@ public final class Constants {
         // The max speed for each motor in RPM
         public static final int feedSpeed = 15000; // Not quite the max speed, but it is necessary to launch the note
         public static final int launchSpeed = 5500;
+
+        // Wheel Specs
+        public static final double wheelRadius = Units.inchesToMeters(2);
+        public static final double wheelCircumference = Math.pow(wheelRadius, 2) * Math.PI;
+
+        // Conversion factors for R/M to M/S
+        public static final double feedConversionFactor = wheelCircumference; // Nothing to divide by because gear ratios are 1:1
+        public static final double launchConversionFactor = wheelCircumference;
     }
 }

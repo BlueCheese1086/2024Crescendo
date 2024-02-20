@@ -122,7 +122,7 @@ public class SwerveModule2 extends SubsystemBase {
      * @return Rotation2d of the current module angle
      */
     public Rotation2d getAngle() {
-        return Rotation2d.fromDegrees((turnEnc.getPosition() % 360 + 360) % 360);
+        return Rotation2d.fromDegrees(turnEnc.getPosition() % 360);
     }
 
     /**

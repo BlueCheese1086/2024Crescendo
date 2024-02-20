@@ -39,7 +39,7 @@ public class Drivetrain extends SubsystemBase {
     public final DifferentialDriveKinematics kinematics;
 
     // Odometry
-    private final Pose2d initPose;
+    // private final Pose2d initPose;
     private final DifferentialDriveOdometry odometry;
 
     /** Creates a new instance of the Drivetrain subsystem. */
@@ -101,8 +101,8 @@ public class Drivetrain extends SubsystemBase {
 
         // Initializing Kinematics
         kinematics = new DifferentialDriveKinematics(DriveConstants.kModuleToModuleDistance);
-        initPose = new Pose2d(2, 7, new Rotation2d());
-        odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), initPose);
+        // initPose = new Pose2d(2, 7, new Rotation2d());
+        odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
 
         // Implementing PathPlanner
         AutoBuilder.configureRamsete(
@@ -122,9 +122,14 @@ public class Drivetrain extends SubsystemBase {
         );
     }
 
-    /** This function runs every tick. */
+    /** 
+     * This function runs every tick.
+     * Right now, I am only using it to update the state of the odometry.
+    */
     @Override
-    public void periodic() {}
+    public void periodic() {
+        odometry.update(getAngle(), getPositions());
+    }
 
     /**
      * Gets the pose of the robot.
@@ -145,24 +150,6 @@ public class Drivetrain extends SubsystemBase {
     }
 
     /**
-     * Gets the positions of each motor.
-     * 
-     * @return The positions of each motor.
-     */
-    public DifferentialDriveWheelPositions getPositions() {
-        return new DifferentialDriveWheelPositions(leftEncoder.getPosition(), rightEncoder.getPosition());
-    }
-
-    /**
-     * Gets the speeds of the robot.
-     * 
-     * @return The speeds that the robot is moving at.
-     */
-    public ChassisSpeeds getSpeeds() {
-        return kinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity()));
-    }
-
-    /**
      * Drives the robot at the desired ChassisSpeeds.
      * 
      * @param speeds The ChassisSpeeds object to drive at.
@@ -180,5 +167,23 @@ public class Drivetrain extends SubsystemBase {
      */
     public Rotation2d getAngle() {
         return gyro.getRotation2d();
+    }
+
+    /**
+     * Gets the positions of each motor.
+     * 
+     * @return The positions of each motor.
+     */
+    public DifferentialDriveWheelPositions getPositions() {
+        return new DifferentialDriveWheelPositions(leftEncoder.getPosition(), rightEncoder.getPosition());
+    }
+
+    /**
+     * Gets the speeds of the robot.
+     * 
+     * @return The speeds that the robot is moving at.
+     */
+    public ChassisSpeeds getSpeeds() {
+        return kinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity()));
     }
 }

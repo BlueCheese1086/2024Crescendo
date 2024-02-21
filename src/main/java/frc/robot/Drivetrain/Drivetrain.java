@@ -17,6 +17,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelPositions;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.DriveConstants;
@@ -40,6 +41,7 @@ public class Drivetrain extends SubsystemBase {
 
     // Odometry
     // private final Pose2d initPose;
+    private Pose2d pose;
     private final DifferentialDriveOdometry odometry;
 
     /** Creates a new instance of the Drivetrain subsystem. */
@@ -101,6 +103,8 @@ public class Drivetrain extends SubsystemBase {
 
         // Initializing Kinematics
         kinematics = new DifferentialDriveKinematics(DriveConstants.kModuleToModuleDistance);
+
+        // Initializing Odometry
         // initPose = new Pose2d(2, 7, new Rotation2d());
         odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
 
@@ -111,13 +115,7 @@ public class Drivetrain extends SubsystemBase {
             this::getSpeeds,
             this::drive,
             new ReplanningConfig(),
-            () -> {
-                if (DriverStation.getAlliance().isPresent()) {
-                    return DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
-                }
-
-                return false;
-            },
+            () -> DriverStation.getAlliance().isPresent() && (DriverStation.getAlliance().get() == DriverStation.Alliance.Red),
             this
         );
     }
@@ -128,7 +126,7 @@ public class Drivetrain extends SubsystemBase {
     */
     @Override
     public void periodic() {
-        odometry.update(getAngle(), getPositions());
+        this.pose = odometry.update(getAngle(), getPositions());
     }
 
     /**
@@ -137,7 +135,7 @@ public class Drivetrain extends SubsystemBase {
      * @return A Pose2d representing the robot's position.
      */
     public Pose2d getPose() {
-        return odometry.getPoseMeters();
+        return this.pose;
     }
 
     /**
@@ -146,7 +144,11 @@ public class Drivetrain extends SubsystemBase {
      * @param newPose The new position of the robot.
      */
     public void resetPose(Pose2d newPose) {
-        odometry.resetPosition(getAngle(), getPositions(), newPose);
+        // Resetting encoders
+        leftEncoder.setPosition(0);
+        rightEncoder.setPosition(0);
+
+        odometry.resetPosition(getAngle(), leftEncoder.getPosition(), rightEncoder.getPosition(), newPose);
     }
 
     /**
@@ -156,8 +158,10 @@ public class Drivetrain extends SubsystemBase {
      */
     public void drive(ChassisSpeeds speeds) {
         DifferentialDriveWheelSpeeds diffSpeeds = kinematics.toWheelSpeeds(speeds);
-        frontLeftMotor.set(diffSpeeds.leftMetersPerSecond * DriveConstants.maxSpeed);
-        frontRightMotor.set(diffSpeeds.rightMetersPerSecond * DriveConstants.maxSpeed);
+        SmartDashboard.putNumber("Left Speed", diffSpeeds.leftMetersPerSecond);
+        SmartDashboard.putNumber("Right Speed", diffSpeeds.rightMetersPerSecond);
+        // frontLeftMotor.set(diffSpeeds.leftMetersPerSecond * DriveConstants.maxSpeed);
+        // frontRightMotor.set(diffSpeeds.rightMetersPerSecond * DriveConstants.maxSpeed);
     }
 
     /**

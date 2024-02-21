@@ -46,7 +46,7 @@ public class RobotContainer {
      * @return The command to run in Autonomous mode.
      */
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("Kitbot");
+        return new PathPlannerAuto("KitbotAuto");
     }
 
     /**

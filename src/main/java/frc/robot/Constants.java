@@ -76,29 +76,29 @@ public final class Constants {
         public static final int frontID = 11;
         public static final int backID = 12;
 
-        public static final double kP = 0.0;
+        public static final double kP = 0.0001;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
-        public static final double kFF = 0.0;
+        public static final double kFF = 0.01;
 
     }
 
     public static final class IntakeConstants {
 
-        public static final int rollerID = 0;
-        public static final int angleID = 0;
+        public static final int rollerID = 31;
+        public static final int angleID = 32;
 
         public static final double rollersVelocityConversionFactor = 1.0;
 
         public static final double angleOffset = 0.0;
-        public static final double anglePositionConverstionFactor = 1.0;
+        public static final double anglePositionConverstionFactor = Math.PI/2.0/((48.0/44.0)*(48.0/24.0));
 
-        public static final double kPRoller = 0.0;
+        public static final double kPRoller = 1.0;
         public static final double kIRoller = 0.0;
         public static final double kDRoller = 0.0;
         public static final double kFFRoller = 0.0;
 
-        public static final double kPAngle = 0.0;
+        public static final double kPAngle = 1.0;
         public static final double kIAngle = 0.0;
         public static final double kDAngle = 0.0;
         public static final double kFFAngle = 0.0;

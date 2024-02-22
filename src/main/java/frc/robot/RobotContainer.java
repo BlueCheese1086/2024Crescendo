@@ -26,13 +26,11 @@ public class RobotContainer {
 
 	CommandXboxController primary, secondary;
 	ControllableConfiguration climbDown = new ControllableConfiguration("Climb", "ClimbIsDown", false);
-
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
 		// Configure the trigger bindings
-
 
 
 		primary = new CommandXboxController(0);
@@ -65,7 +63,7 @@ public class RobotContainer {
 		secondary.x().whileTrue(new RunShooter(-5500, -5500, shooter));
 
 		secondary.pov(0).onTrue(new SetClimbPos(1, 1, climb));
-		secondary.pov(180).onTrue(new SetClimbPos(1, 1, climb));
+		secondary.pov(180).onTrue(new SetClimbPos(0, 0, climb));
 		secondary.pov(-1).onTrue(new InstantCommand(() -> {
 			climb.stopMotors();
 		}, climb));

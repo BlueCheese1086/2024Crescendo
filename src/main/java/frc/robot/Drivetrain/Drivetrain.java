@@ -76,6 +76,9 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
     }
 
     public void initialize() {
+        for (int i = 0; i < states.length; i++) {
+            states[i] = new SwerveModuleState();
+        }
         for (SwerveModule m : modules) {
             m.initializeEncoder();
         }

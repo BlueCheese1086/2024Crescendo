@@ -49,7 +49,7 @@ public class Shooter extends SubsystemBase implements IntializedSubsystem {
         frontPID.setD(ShooterConstants.kD);
         frontPID.setFF(ShooterConstants.kFF);
 
-        backPID = front.getPIDController();
+        backPID = back.getPIDController();
         backPID.setP(ShooterConstants.kP);
         backPID.setI(ShooterConstants.kI);
         backPID.setD(ShooterConstants.kD);

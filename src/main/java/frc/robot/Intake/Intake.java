@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import Util.DebugPID;
 import Util.IntializedSubsystem;
 
 import com.revrobotics.CANSparkBase.ControlType;
@@ -14,6 +15,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
@@ -32,8 +34,11 @@ public class Intake extends SubsystemBase implements IntializedSubsystem {
         rollers.restoreFactoryDefaults();
         angle.restoreFactoryDefaults();
 
-        rollers.setInverted(false);
-        angle.setInverted(false);
+        rollers.setSmartCurrentLimit(40);
+        angle.setSmartCurrentLimit(20);
+
+        rollers.setInverted(true);
+        angle.setInverted(true);
 
         rollers.setIdleMode(IdleMode.kCoast);
         angle.setIdleMode(IdleMode.kCoast);
@@ -53,6 +58,7 @@ public class Intake extends SubsystemBase implements IntializedSubsystem {
         rollersPID.setFF(IntakeConstants.kFFRoller);
 
         anglePID = rollers.getPIDController();
+        anglePID.setFeedbackDevice(angleEnc);
         anglePID.setP(IntakeConstants.kPAngle);
         anglePID.setI(IntakeConstants.kIAngle);
         anglePID.setD(IntakeConstants.kDAngle);
@@ -60,6 +66,9 @@ public class Intake extends SubsystemBase implements IntializedSubsystem {
 
         rollers.burnFlash();
         angle.burnFlash();
+
+        new DebugPID(rollersPID, "IntakeRollers");
+        new DebugPID(anglePID, "IntakeAngle");
     }
 
     public void initialize() {
@@ -79,6 +88,9 @@ public class Intake extends SubsystemBase implements IntializedSubsystem {
         Logger.recordOutput("Intake/Angle/BusVoltage", angle.getBusVoltage());
         Logger.recordOutput("Intake/Angle/Velocity", angleEnc.getVelocity());
         Logger.recordOutput("Intake/Angle/Temperature", angle.getMotorTemperature());
+
+        SmartDashboard.putNumber("Intake/Angle", angleEnc.getPosition());
+        SmartDashboard.putNumber("Intake/RollerSpeed", rollersEnc.getVelocity());
         
     }
 
@@ -88,6 +100,14 @@ public class Intake extends SubsystemBase implements IntializedSubsystem {
 
     public void setRollerSpeed(double rpm) {
         rollersPID.setReference(rpm, ControlType.kVelocity);
+    }
+
+    public void stopRollers() {
+        rollers.stopMotor();
+    }
+
+    public void stopAngle() {
+        angle.stopMotor();
     }
 
     public void stop() {

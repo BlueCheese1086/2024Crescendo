@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.SPI.Port;
 
 /** Contains most of the configurations that the robot depends on. */
 public final class Constants {
@@ -19,7 +18,7 @@ public final class Constants {
         public static final int BackRightID = 3;
 
         // IDs for sensors
-        public static final Port gyroID = Port.kMXP;
+        public static final int gyroID = 2;
 
         // Speeds the robot can move at
         public static final double maxSpeed = 0.5;
@@ -36,6 +35,9 @@ public final class Constants {
 
         // Wheel Circumference
         public static final double wheelCircumference = Units.inchesToMeters(4 * Math.PI);
+
+        // Gear Ratio
+        public static final double gearRatio = 10.71;
 
         // Kinematics
         public static final double kModuleToModuleDistance = Units.inchesToMeters(19.750);

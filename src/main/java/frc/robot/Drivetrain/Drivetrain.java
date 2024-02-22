@@ -1,6 +1,6 @@
 package frc.robot.Drivetrain;
 
-import com.kauailabs.navx.frc.AHRS;
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -15,8 +15,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelPositions;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -34,7 +34,7 @@ public class Drivetrain extends SubsystemBase {
     private RelativeEncoder rightEncoder;
 
     // Gyro
-    private AHRS gyro;
+    private PigeonIMU gyro;
 
     // Kinematics
     public final DifferentialDriveKinematics kinematics;
@@ -42,6 +42,7 @@ public class Drivetrain extends SubsystemBase {
     // Odometry
     // private final Pose2d initPose;
     private Pose2d pose;
+    private Field2d field = new Field2d();
     private final DifferentialDriveOdometry odometry;
 
     /** Creates a new instance of the Drivetrain subsystem. */
@@ -80,33 +81,38 @@ public class Drivetrain extends SubsystemBase {
         frontRightMotor.setIdleMode(IdleMode.kBrake);
         backRightMotor.setIdleMode(IdleMode.kBrake);
 
-        // Saving the settings
+        // Initializing the encoders
+        leftEncoder = frontLeftMotor.getEncoder();
+        rightEncoder = frontRightMotor.getEncoder();
+
+        // Resetting encoders
+        leftEncoder.setPosition(0);
+        rightEncoder.setPosition(0);
+
+        // Setting left encoder conversion values
+        leftEncoder.setPositionConversionFactor(DriveConstants.wheelCircumference / DriveConstants.gearRatio);
+        leftEncoder.setVelocityConversionFactor(DriveConstants.wheelCircumference / DriveConstants.gearRatio / 60);
+
+        // Setting right encoder conversion values
+        rightEncoder.setPositionConversionFactor(DriveConstants.wheelCircumference / DriveConstants.gearRatio);
+        rightEncoder.setVelocityConversionFactor(DriveConstants.wheelCircumference / DriveConstants.gearRatio / 60);
+
+        // Saving the sparkmax settings
         frontLeftMotor.burnFlash();
         backLeftMotor.burnFlash();
         frontRightMotor.burnFlash();
         backRightMotor.burnFlash();
 
-        // Initializing the Encoders
-        leftEncoder = frontLeftMotor.getEncoder();
-        rightEncoder = frontRightMotor.getEncoder();
-
-        // Setting left encoder conversion values
-        leftEncoder.setPositionConversionFactor(Math.pow(Units.inchesToMeters(DriveConstants.wheelCircumference), 2) * Math.PI);
-        leftEncoder.setVelocityConversionFactor(Math.pow(Units.inchesToMeters(DriveConstants.wheelCircumference), 2) * Math.PI / 60);
-
-        // Setting right encoder conversion values
-        rightEncoder.setPositionConversionFactor(Math.pow(Units.inchesToMeters(DriveConstants.wheelCircumference), 2) * Math.PI);
-        rightEncoder.setVelocityConversionFactor(Math.pow(Units.inchesToMeters(DriveConstants.wheelCircumference), 2) * Math.PI / 60);
-
         // Initializing Gyro
-        gyro = new AHRS(DriveConstants.gyroID);
+        gyro = new PigeonIMU(DriveConstants.gyroID);
 
         // Initializing Kinematics
         kinematics = new DifferentialDriveKinematics(DriveConstants.kModuleToModuleDistance);
 
         // Initializing Odometry
         // initPose = new Pose2d(2, 7, new Rotation2d());
-        odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+        pose = new Pose2d(2, 7, Rotation2d.fromDegrees(gyro.getYaw()));
+        odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(gyro.getYaw()), leftEncoder.getPosition(), rightEncoder.getPosition(), pose);
 
         // Implementing PathPlanner
         AutoBuilder.configureRamsete(
@@ -126,7 +132,17 @@ public class Drivetrain extends SubsystemBase {
     */
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Left Position (from getPositions())", getPositions().leftMeters);
+        SmartDashboard.putNumber("Right Position (from getPositions())", getPositions().rightMeters);
+        SmartDashboard.putNumber("Left Position (from encoder)", leftEncoder.getPosition());
+        SmartDashboard.putNumber("Right Position (from encoder)", rightEncoder.getPosition());
+        SmartDashboard.putNumber("Change in Left Position", getPositions().leftMeters - leftEncoder.getPosition());
+        SmartDashboard.putNumber("Change in Right Position", getPositions().rightMeters - rightEncoder.getPosition());
+
+        SmartDashboard.putNumber("Angle", gyro.getYaw());
         this.pose = odometry.update(getAngle(), getPositions());
+        field.setRobotPose(pose);
+        SmartDashboard.putData("Field", field);
     }
 
     /**
@@ -145,8 +161,8 @@ public class Drivetrain extends SubsystemBase {
      */
     public void resetPose(Pose2d newPose) {
         // Resetting encoders
-        leftEncoder.setPosition(0);
-        rightEncoder.setPosition(0);
+        // leftEncoder.setPosition(0);
+        // rightEncoder.setPosition(0);
 
         odometry.resetPosition(getAngle(), leftEncoder.getPosition(), rightEncoder.getPosition(), newPose);
     }
@@ -158,10 +174,8 @@ public class Drivetrain extends SubsystemBase {
      */
     public void drive(ChassisSpeeds speeds) {
         DifferentialDriveWheelSpeeds diffSpeeds = kinematics.toWheelSpeeds(speeds);
-        SmartDashboard.putNumber("Left Speed", diffSpeeds.leftMetersPerSecond);
-        SmartDashboard.putNumber("Right Speed", diffSpeeds.rightMetersPerSecond);
-        // frontLeftMotor.set(diffSpeeds.leftMetersPerSecond * DriveConstants.maxSpeed);
-        // frontRightMotor.set(diffSpeeds.rightMetersPerSecond * DriveConstants.maxSpeed);
+        frontLeftMotor.set(diffSpeeds.leftMetersPerSecond * DriveConstants.maxSpeed);
+        frontRightMotor.set(diffSpeeds.rightMetersPerSecond * DriveConstants.maxSpeed);
     }
 
     /**
@@ -170,7 +184,7 @@ public class Drivetrain extends SubsystemBase {
      * @return The angle of the robot as a Rotation2D
      */
     public Rotation2d getAngle() {
-        return gyro.getRotation2d();
+        return Rotation2d.fromDegrees(gyro.getYaw());
     }
 
     /**

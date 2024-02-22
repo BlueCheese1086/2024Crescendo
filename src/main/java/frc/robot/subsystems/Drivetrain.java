@@ -4,22 +4,24 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.DrivetrainConstants.*;
+import static frc.robot.Constants.DrivetrainConstants.DrivetrainLimits;
+import static frc.robot.Constants.DrivetrainConstants.LeftBackMotor;
+import static frc.robot.Constants.DrivetrainConstants.LeftFrontMotor;
+import static frc.robot.Constants.DrivetrainConstants.RightBackMotor;
+import static frc.robot.Constants.DrivetrainConstants.RightFrontMotor;
 
 import java.util.Optional;
-import java.util.concurrent.CancellationException;
-
-import com.kauailabs.navx.frc.AHRS;
-
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.ReplanningConfig;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
+
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -30,7 +32,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.SPI.Port;
 
 /**
  * Drivetrain subsystem controlled with arcade-style inputs.
@@ -48,7 +49,7 @@ public class Drivetrain extends SubsystemBase {
   RelativeEncoder m_leftFrontEncoder = m_leftFront.getEncoder();
 
   Pose2d m_pose = new Pose2d();
-  AHRS m_ahrs = new AHRS(Port.kMXP);
+  WPI_PigeonIMU m_pigeon = new WPI_PigeonIMU(0);
 
   public DifferentialDriveKinematics m_differentialKinematics = new DifferentialDriveKinematics(Units.inchesToMeters(21.5));
   DifferentialDriveOdometry m_differentialOdometry;
@@ -94,7 +95,7 @@ public class Drivetrain extends SubsystemBase {
     m_rightFrontEncoder.setVelocityConversionFactor(Units.inchesToMeters(6) * Math.PI / 10.75 / 60);
     m_leftFrontEncoder.setVelocityConversionFactor(Units.inchesToMeters(6) * Math.PI / 10.75 / 60);
 
-    m_differentialOdometry = new DifferentialDriveOdometry(m_ahrs.getRotation2d(), m_leftFrontEncoder.getPosition(), m_rightFrontEncoder.getPosition());
+    m_differentialOdometry = new DifferentialDriveOdometry(m_pigeon.getRotation2d(), m_leftFrontEncoder.getPosition(), m_rightFrontEncoder.getPosition());
 
     AutoBuilder.configureRamsete(
       this::getPose,
@@ -114,7 +115,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void periodic() {
-    m_differentialOdometry.update(m_ahrs.getRotation2d(), m_leftFrontEncoder.getPosition(), m_rightFrontEncoder.getPosition());
+    m_differentialOdometry.update(m_pigeon.getRotation2d(), m_leftFrontEncoder.getPosition(), m_rightFrontEncoder.getPosition());
   }
 
   public Pose2d getPose() {
@@ -122,7 +123,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetPose(Pose2d pose) {
-    m_differentialOdometry.resetPosition(m_ahrs.getRotation2d(), m_leftFrontEncoder.getPosition(), m_rightFrontEncoder.getPosition(), pose);
+    m_differentialOdometry.resetPosition(m_pigeon.getRotation2d(), m_leftFrontEncoder.getPosition(), m_rightFrontEncoder.getPosition(), pose);
   }
 
   public ChassisSpeeds getSpeeds() {

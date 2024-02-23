@@ -90,7 +90,7 @@ public final class Constants {
 
         public static final double rollersVelocityConversionFactor = 1.0;
 
-        public static final double angleOffset = 0.35;
+        public static final double angleOffset = 0.38;
         public static final double anglePositionConverstionFactor = Math.PI/2.0/((48.0/44.0)*(48.0/24.0));
 
         public static final double kPRoller = 1.0;

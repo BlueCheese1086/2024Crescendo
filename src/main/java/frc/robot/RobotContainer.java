@@ -61,8 +61,8 @@ public class RobotContainer {
 			drivetrain.initPigeon();
 		}));
 
-		secondary.rightBumper().onTrue(new SetAngle(0.31, intake));
-		secondary.leftBumper().onTrue(new SetAngle(0.1, intake));
+		secondary.rightBumper().whileTrue(new SetAngle(0.5, intake));
+		secondary.leftBumper().whileTrue(new SetAngle(0.04, intake));
 
 		secondary.y().toggleOnTrue(new RunShooter(5500.0, 0.0, shooter));
 		secondary.a().whileTrue(new RunShooter(5500.0, 15000, shooter));

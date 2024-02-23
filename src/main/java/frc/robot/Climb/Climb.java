@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import Util.IntializedSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimbConstants;
 
@@ -69,8 +70,12 @@ public class Climb extends SubsystemBase implements IntializedSubsystem {
     }
 
     public void periodic() {
-        if (leftEnc.getPosition() >= ClimbConstants.maxHeight) left.stopMotor();
-        if (rightEnc.getPosition() >= ClimbConstants.maxHeight) right.stopMotor();
+        if (leftEnc.getPosition() > ClimbConstants.maxHeight) left.stopMotor();
+        if (rightEnc.getPosition() > ClimbConstants.maxHeight) right.stopMotor();
+
+        SmartDashboard.putNumber("Climb/LeftPOS", leftEnc.getPosition());
+        SmartDashboard.putNumber("Climb/RightPOS", rightEnc.getPosition());
+
         // TODO
         // Telemetry
         // Logging
@@ -82,8 +87,8 @@ public class Climb extends SubsystemBase implements IntializedSubsystem {
      * @param rightHeight
      */
     public void set0to1Position(double leftHeight, double rightHeight) {
-        leftPID.setReference(leftHeight * ClimbConstants.climbConversionFactor, ControlType.kPosition);
-        rightPID.setReference(rightHeight * ClimbConstants.climbConversionFactor, ControlType.kPosition);
+        leftPID.setReference(leftHeight * ClimbConstants.maxHeight, ControlType.kPosition);
+        rightPID.setReference(rightHeight * ClimbConstants.maxHeight, ControlType.kPosition);
     }
 
     public void stopMotors() {

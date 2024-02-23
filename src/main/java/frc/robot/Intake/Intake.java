@@ -50,7 +50,7 @@ public class Intake extends SubsystemBase implements IntializedSubsystem {
         angleEnc.setVelocityConversionFactor(IntakeConstants.anglePositionConverstionFactor / 60.0);
         angleEnc.setPositionConversionFactor(IntakeConstants.anglePositionConverstionFactor);
         angleEnc.setZeroOffset(IntakeConstants.angleOffset);
-        angleEnc.setInverted(false);
+        angleEnc.setInverted(true);
 
 
         rollersPID = rollers.getPIDController();

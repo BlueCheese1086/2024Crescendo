@@ -93,6 +93,8 @@ public final class Constants {
         public static final double angleOffset = 0.38;
         public static final double anglePositionConverstionFactor = Math.PI/2.0/((48.0/44.0)*(48.0/24.0));
 
+        public static final double STOWED_ANGLE = 0.0;
+
         public static final double kPRoller = 1.0;
         public static final double kIRoller = 0.0;
         public static final double kDRoller = 0.0;
@@ -111,14 +113,14 @@ public final class Constants {
         public static final int rightID = 22;
 
         public static final double climbGearboxRatio = 25.0;
-        public static final double climbConversionFactor = Units.inchesToMeters(1.5) / climbGearboxRatio;
+        public static final double climbConversionFactor = Units.inchesToMeters(1.5*Math.PI) / climbGearboxRatio;
 
         public static final double maxHeight = Units.inchesToMeters(17.5);
 
-        public static final double kP = 5.0;
+        public static final double kP = 1.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
-        public static final double kFF = 0.0;
+        public static final double kFF = 25.58;
 
     }
 

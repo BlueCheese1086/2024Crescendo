@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Climb.Climb;
 import frc.robot.Climb.Commands.SetClimbPos;
 import frc.robot.Drivetrain.Drivetrain;
@@ -65,7 +64,6 @@ public class RobotContainer {
 
 		secondary.a().whileTrue(new SetAngle(0.5, intake).alongWith(new RunRollers(true, intake)));
 		secondary.b().whileTrue(new SetAngle(0.5, intake).alongWith(new RunRollers(false, intake)));
-		secondary.pov(180).whileTrue(new SetAngle(0.04, intake));
 
 
 		secondary.y().toggleOnTrue(new RunShooter(5500.0, 0.0, shooter));

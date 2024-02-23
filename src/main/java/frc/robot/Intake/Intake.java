@@ -57,7 +57,7 @@ public class Intake extends SubsystemBase implements IntializedSubsystem {
         rollersPID.setD(IntakeConstants.kDRoller);
         rollersPID.setFF(IntakeConstants.kFFRoller);
 
-        anglePID = rollers.getPIDController();
+        anglePID = angle.getPIDController();
         anglePID.setFeedbackDevice(angleEnc);
         anglePID.setP(IntakeConstants.kPAngle);
         anglePID.setI(IntakeConstants.kIAngle);

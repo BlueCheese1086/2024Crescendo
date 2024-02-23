@@ -17,4 +17,9 @@ public class SetIntakeState extends Command {
     public void execute() {
         intake.setAccess(state);
     }
+
+    @Override
+    public void end(boolean interrupted) {
+        intake.setAccess(States.AMP);
+    }
 }

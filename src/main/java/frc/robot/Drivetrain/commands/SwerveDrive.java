@@ -10,7 +10,7 @@ import frc.robot.Drivetrain.Drivetrain;
 public class SwerveDrive extends Command {
     private Drivetrain drivetrain;
     private Supplier<Double> xTraverseSupplier;
-    private Supplier<Double> zTraverseSupplier;
+    private Supplier<Double> yTraverseSupplier;
     private Supplier<Double> zRotateSupplier;
 
     /** 
@@ -20,10 +20,10 @@ public class SwerveDrive extends Command {
      * @param xSpeedSupplier A supplier that will give the command the percent speed that the robot should move forward at.
      * @param zRotateSupplier A supplier that will give the command the percent speed that the robot should turn at.
      */
-    public SwerveDrive(Drivetrain drivetrain, Supplier<Double> xTraverseSupplier, Supplier<Double> zTraverseSupplier, Supplier<Double> zRotateSupplier) {
+    public SwerveDrive(Drivetrain drivetrain, Supplier<Double> xTraverseSupplier, Supplier<Double> yTraverseSupplier, Supplier<Double> zRotateSupplier) {
         this.drivetrain = drivetrain;
         this.xTraverseSupplier = xTraverseSupplier;
-        this.zTraverseSupplier = zTraverseSupplier;
+        this.yTraverseSupplier = yTraverseSupplier;
         this.zRotateSupplier = zRotateSupplier;
 
         addRequirements(drivetrain);
@@ -37,7 +37,7 @@ public class SwerveDrive extends Command {
         // of the robot to adjust the turn angle as needed
         ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
             xTraverseSupplier.get() * DriveConstants.maxDriveSpeed,
-            zTraverseSupplier.get() * DriveConstants.maxDriveSpeed,
+            yTraverseSupplier.get() * DriveConstants.maxDriveSpeed,
             zRotateSupplier.get() * DriveConstants.maxTurnSpeed,
             drivetrain.getAngle()
         );

@@ -99,7 +99,9 @@ public class SwerveModule extends SubsystemBase {
     @Override
     public void periodic() {
         // Updating the position of the Swerve Module
-        SmartDashboard.putNumber(name, cancoder.get());
+        SmartDashboard.putNumber(String.format("/Drivetrain/%s/Distance", name), getDistance());
+        SmartDashboard.putNumber(String.format("/Drivetrain/%s/Velocity", name), getVelocity());
+        SmartDashboard.putNumber(String.format("/Drivetrain/%s/Angle", name), getAngle().getDegrees());
     }
 
     /** Initializes the turn encoders to match the cancoder. */

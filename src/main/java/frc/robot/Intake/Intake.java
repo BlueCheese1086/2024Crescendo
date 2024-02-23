@@ -8,13 +8,15 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
     // Enum for setpoints
     public enum States {
-        OPEN(-0.25),
+        AMP(0),
+        OPEN(0),
         CLOSED(0);
 
         public final double value;
@@ -72,6 +74,13 @@ public class Intake extends SubsystemBase {
         roller.burnFlash();
     }
 
+    /** Runs every 20 ms */
+    public void periodic() {
+        SmartDashboard.putNumber("/Intake/Access/Position", accessEncoder.getPosition());
+        SmartDashboard.putNumber("/Intake/Access/Speed", access.get());
+        SmartDashboard.putNumber("/Intake/Roller/Speed", roller.get());
+    }
+
     /**
      * Sets the speed of the roller in % speed
      * 
@@ -85,7 +94,21 @@ public class Intake extends SubsystemBase {
         }
     }
 
+    /**
+     * Sets the state of the intake (open, closed, amp)
+     * @param state
+     */
     public void setAccess(States state) {
-        accessPID.setReference(state.value, ControlType.kPosition);
+        // For now, open moves up, closed moves down, amp is not moving.
+        switch (state) {
+            case OPEN:
+                access.set(0.2);
+            case CLOSED:
+                access.set(-0.2);
+            case AMP:
+                access.set(0);
+        }
+        // Want this to work with setpoints
+        // accessPID.setReference(state.value, ControlType.kPosition);
     }
 }

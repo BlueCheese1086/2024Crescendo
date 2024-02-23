@@ -56,13 +56,13 @@ public class RobotContainer {
         // Right Trigger moves the right tower down.
         // POV Up opens the intake.
         // POV down closes the intake.
-        joystick.button(0).whileTrue(new RunIntake(intake, 0.25)); // A
-        joystick.button(0).whileTrue(new RunIntake(intake, -0.25)); // B
-        joystick.button(0).toggleOnTrue(new RunFlywheel(launcher, 1)); // X
-        joystick.button(0).whileTrue(new RunFeed(launcher, 1).raceWith(new WaitCommand(1))); // Y
-        joystick.button(0).whileTrue(new RunLeftClimb(climb, 0.25)); // Left Bumper
+        joystick.button(1).whileTrue(new RunIntake(intake, 0.25)); // A
+        joystick.button(2).whileTrue(new RunIntake(intake, -0.25)); // B
+        joystick.button(3).toggleOnTrue(new RunFlywheel(launcher, 1)); // X
+        joystick.button(4).whileTrue(new RunFeed(launcher, 1).raceWith(new WaitCommand(1))); // Y
+        joystick.button(5).whileTrue(new RunLeftClimb(climb, 0.25)); // Left Bumper
         joystick.axisGreaterThan(2, 0.5).whileTrue(new RunLeftClimb(climb, -0.25)); // Left Trigger
-        joystick.button(0).whileTrue(new RunRightClimb(climb, 0.25)); // Right Bumper
+        joystick.button(6).whileTrue(new RunRightClimb(climb, 0.25)); // Right Bumper
         joystick.axisGreaterThan(3, 0.5).whileTrue(new RunRightClimb(climb, -0.25)); // Right Trigger
         joystick.povUp().whileTrue(new SetIntakeState(intake, States.OPEN)); // POV Down
         joystick.povDown().whileTrue(new SetIntakeState(intake, States.CLOSED)); // POV Up

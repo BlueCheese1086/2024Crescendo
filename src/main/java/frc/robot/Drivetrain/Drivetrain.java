@@ -3,10 +3,12 @@ package frc.robot.Drivetrain;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.ReplanningConfig;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -32,6 +34,10 @@ public class Drivetrain extends SubsystemBase {
     // Getting encoders for the primary (front) motors.
     private RelativeEncoder leftEncoder;
     private RelativeEncoder rightEncoder;
+
+    // Getting pids for the primary (front) motors.
+    private SparkPIDController leftPID;
+    private SparkPIDController rightPID;
 
     // Gyro
     private PigeonIMU gyro;
@@ -97,6 +103,22 @@ public class Drivetrain extends SubsystemBase {
         rightEncoder.setPositionConversionFactor(DriveConstants.wheelCircumference / DriveConstants.gearRatio);
         rightEncoder.setVelocityConversionFactor(DriveConstants.wheelCircumference / DriveConstants.gearRatio / 60);
 
+        // Initializing the PIDs
+        leftPID = frontLeftMotor.getPIDController();
+        rightPID = frontRightMotor.getPIDController();
+
+        // Setting values for the left PID
+        leftPID.setP(0.25);
+        leftPID.setI(0);
+        leftPID.setD(0);
+        leftPID.setFF(0);
+
+        // Setting values for the right PID
+        rightPID.setP(0.25);
+        rightPID.setI(0);
+        rightPID.setD(0);
+        rightPID.setFF(0);
+
         // Saving the sparkmax settings
         frontLeftMotor.burnFlash();
         backLeftMotor.burnFlash();
@@ -105,6 +127,7 @@ public class Drivetrain extends SubsystemBase {
 
         // Initializing Gyro
         gyro = new PigeonIMU(DriveConstants.gyroID);
+        gyro.setYaw(0);
 
         // Initializing Kinematics
         kinematics = new DifferentialDriveKinematics(DriveConstants.kModuleToModuleDistance);
@@ -132,14 +155,7 @@ public class Drivetrain extends SubsystemBase {
     */
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Left Position (from getPositions())", getPositions().leftMeters);
-        SmartDashboard.putNumber("Right Position (from getPositions())", getPositions().rightMeters);
-        SmartDashboard.putNumber("Left Position (from encoder)", leftEncoder.getPosition());
-        SmartDashboard.putNumber("Right Position (from encoder)", rightEncoder.getPosition());
-        SmartDashboard.putNumber("Change in Left Position", getPositions().leftMeters - leftEncoder.getPosition());
-        SmartDashboard.putNumber("Change in Right Position", getPositions().rightMeters - rightEncoder.getPosition());
-
-        SmartDashboard.putNumber("Angle", gyro.getYaw());
+        SmartDashboard.putNumber("Angle", getAngle().getDegrees());
         this.pose = odometry.update(getAngle(), getPositions());
         field.setRobotPose(pose);
         SmartDashboard.putData("Field", field);
@@ -174,8 +190,11 @@ public class Drivetrain extends SubsystemBase {
      */
     public void drive(ChassisSpeeds speeds) {
         DifferentialDriveWheelSpeeds diffSpeeds = kinematics.toWheelSpeeds(speeds);
-        frontLeftMotor.set(diffSpeeds.leftMetersPerSecond * DriveConstants.maxSpeed);
-        frontRightMotor.set(diffSpeeds.rightMetersPerSecond * DriveConstants.maxSpeed);
+        SmartDashboard.putNumber("Left Speed", diffSpeeds.leftMetersPerSecond);
+        SmartDashboard.putNumber("Right Speed", diffSpeeds.rightMetersPerSecond);
+
+        leftPID.setReference(diffSpeeds.leftMetersPerSecond, ControlType.kVelocity);
+        rightPID.setReference(diffSpeeds.rightMetersPerSecond, ControlType.kVelocity);
     }
 
     /**

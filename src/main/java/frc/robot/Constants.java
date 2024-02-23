@@ -12,10 +12,10 @@ public final class Constants {
 
     public static class DriveConstants {
         // CAN IDs for motor controllers
-        public static final int FrontLeftID = 2;
-        public static final int BackLeftID = 1;
-        public static final int FrontRightID = 4;
-        public static final int BackRightID = 3;
+        public static final int FrontLeftID = 1;
+        public static final int BackLeftID = 2;
+        public static final int FrontRightID = 3;
+        public static final int BackRightID = 4;
 
         // IDs for sensors
         public static final int gyroID = 2;

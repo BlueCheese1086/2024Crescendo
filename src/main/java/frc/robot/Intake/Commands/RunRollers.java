@@ -13,13 +13,12 @@ public class RunRollers extends Command {
         this.in = in;
         this.intake = intake;
 
-        addRequirements(intake);
     }
 
     public void initialize() {}
 
     public void execute() {
-        intake.setRollerSpeed(in ? 1000.0 : -1000.0);
+        intake.setRollerSpeed(in ? 3000.0 : -3000.0);
     }
 
     public boolean isFinished() {

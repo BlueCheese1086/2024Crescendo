@@ -13,7 +13,6 @@ public class SetAngle extends Command {
         this.angle = angle;
         this.intake = intake;
 
-        addRequirements(intake);
     }
 
     public void initialize() {}

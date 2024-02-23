@@ -11,11 +11,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Climb.Climb;
 import frc.robot.Climb.Commands.SetClimbPos;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.Drivetrain.Commands.DefaultDrive;
 import frc.robot.Intake.Intake;
+import frc.robot.Intake.Commands.RunRollers;
 import frc.robot.Intake.Commands.SetAngle;
 import frc.robot.Shooter.Shooter;
 import frc.robot.Shooter.Commands.RunShooter;
@@ -61,18 +63,19 @@ public class RobotContainer {
 			drivetrain.initPigeon();
 		}));
 
-		secondary.rightBumper().whileTrue(new SetAngle(0.5, intake));
-		secondary.leftBumper().whileTrue(new SetAngle(0.04, intake));
+		secondary.a().whileTrue(new SetAngle(0.5, intake).alongWith(new RunRollers(true, intake)));
+		secondary.b().whileTrue(new SetAngle(0.5, intake).alongWith(new RunRollers(false, intake)));
+		secondary.pov(180).whileTrue(new SetAngle(0.04, intake));
+
 
 		secondary.y().toggleOnTrue(new RunShooter(5500.0, 0.0, shooter));
-		secondary.a().whileTrue(new RunShooter(5500.0, 15000, shooter));
-		secondary.x().whileTrue(new RunShooter(-5500, -5500, shooter));
+		secondary.x().whileTrue(new RunShooter(5500.0, 15000, shooter));
+		secondary.pov(90).whileTrue(new RunShooter(-5500, -5500, shooter));
 
-		secondary.pov(0).onTrue(new SetClimbPos(1, 1, climb));
-		secondary.pov(180).onTrue(new SetClimbPos(0, 0, climb));
-		secondary.pov(-1).onTrue(new InstantCommand(() -> {
-			climb.stopMotors();
-		}, climb));
+		secondary.rightTrigger(0.1).whileTrue(new SetClimbPos(-1, 0, climb));
+		secondary.leftTrigger(0.1).whileTrue(new SetClimbPos(0, -1, climb));
+		secondary.rightBumper().whileTrue(new SetClimbPos(-1, 1, climb));
+		secondary.leftBumper().whileTrue(new SetClimbPos(1, -1, climb));
 
 	}
 

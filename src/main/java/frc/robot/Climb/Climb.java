@@ -48,7 +48,7 @@ public class Climb extends SubsystemBase implements IntializedSubsystem {
         leftPID.setD(ClimbConstants.kD);
         leftPID.setFF(ClimbConstants.kFF);
 
-        rightPID = left.getPIDController();
+        rightPID = right.getPIDController();
         rightPID.setP(ClimbConstants.kP);
         rightPID.setI(ClimbConstants.kI);
         rightPID.setD(ClimbConstants.kD);
@@ -87,8 +87,8 @@ public class Climb extends SubsystemBase implements IntializedSubsystem {
      * @param rightHeight
      */
     public void set0to1Position(double leftHeight, double rightHeight) {
-        leftPID.setReference(leftHeight * ClimbConstants.maxHeight, ControlType.kPosition);
-        rightPID.setReference(rightHeight * ClimbConstants.maxHeight, ControlType.kPosition);
+        if (leftHeight >= 0.0) leftPID.setReference(leftHeight * ClimbConstants.maxHeight, ControlType.kPosition);
+        if (rightHeight >= 0.0) rightPID.setReference(rightHeight * ClimbConstants.maxHeight, ControlType.kPosition);
     }
 
     public void stopMotors() {

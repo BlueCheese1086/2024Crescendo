@@ -96,12 +96,12 @@ public final class Constants {
         public static final double kPRoller = 1.0;
         public static final double kIRoller = 0.0;
         public static final double kDRoller = 0.0;
-        public static final double kFFRoller = 0.0;
+        public static final double kFFRoller = 1.5;
 
-        public static final double kPAngle = 1.0;
+        public static final double kPAngle = 20.0;
         public static final double kIAngle = 0.0;
         public static final double kDAngle = 0.0;
-        public static final double kFFAngle = 0.0;
+        public static final double kFFAngle = 4.0;
 
     }
 
@@ -115,7 +115,7 @@ public final class Constants {
 
         public static final double maxHeight = Units.inchesToMeters(17.5);
 
-        public static final double kP = 1.0;
+        public static final double kP = 5.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
         public static final double kFF = 0.0;

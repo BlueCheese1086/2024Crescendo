@@ -14,7 +14,7 @@ public class SetClimbPos extends Command {
         this.rightPos = rightPos;
 
         this.climb = climb;
-        addRequirements(climb);
+        // addRequirements(climb);
     }
 
     public void initialize() {}

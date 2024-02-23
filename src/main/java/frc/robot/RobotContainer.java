@@ -15,6 +15,7 @@ import frc.robot.Climb.Climb;
 import frc.robot.Climb.Commands.SetClimbPos;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.Drivetrain.Commands.DefaultDrive;
+import frc.robot.Intake.Intake;
 import frc.robot.Shooter.Shooter;
 import frc.robot.Shooter.Commands.RunShooter;
 
@@ -23,6 +24,7 @@ public class RobotContainer {
 	Drivetrain drivetrain = new Drivetrain();
 	Climb climb = new Climb();
 	Shooter shooter = new Shooter();
+	Intake intake = new Intake();
 
 	CommandXboxController primary, secondary;
 	ControllableConfiguration climbDown = new ControllableConfiguration("Climb", "ClimbIsDown", false);

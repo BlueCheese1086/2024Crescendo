@@ -47,9 +47,11 @@ public class Intake extends SubsystemBase implements IntializedSubsystem {
         rollersEnc.setVelocityConversionFactor(IntakeConstants.rollersVelocityConversionFactor);
 
         angleEnc = angle.getAbsoluteEncoder(Type.kDutyCycle);
-        angleEnc.setZeroOffset(IntakeConstants.angleOffset);
         angleEnc.setVelocityConversionFactor(IntakeConstants.anglePositionConverstionFactor / 60.0);
         angleEnc.setPositionConversionFactor(IntakeConstants.anglePositionConverstionFactor);
+        angleEnc.setZeroOffset(IntakeConstants.angleOffset);
+        angleEnc.setInverted(false);
+
 
         rollersPID = rollers.getPIDController();
         rollersPID.setP(IntakeConstants.kPRoller);

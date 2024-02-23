@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -13,26 +14,34 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
     public static class DriveConstants {
-        // Motor IDs and offsets
-        public static final int frontLeftTurnID = 1;
-        public static final int frontLeftDriveID = 2;
-        public static final int frontLeftCancoderID = 9;
-        public static final double frontLeftOffset = 0.007;
+        // Front Left Module Constants
+        public static final int flTurnID = 1;
+        public static final int flDriveID = 2;
+        public static final int flCancoderID = 9;
+        public static final double flOffset = 0.007;
+        public static final Translation2d flPosition = new Translation2d(DriveConstants.kModuleToCenter, DriveConstants.kModuleToCenter);
 
-        public static final int backLeftTurnID = 3;
-        public static final int backLeftDriveID = 4;
-        public static final int backLeftCancoderID = 1;
-        public static final double backLeftOffset = 0.079;
+        // Front Right Module Constants
 
-        public static final int frontRightTurnID = 7;
-        public static final int frontRightDriveID = 8;
-        public static final int frontRightCancoderID = 8;
-        public static final double frontRightOffset = 0.498;
+        public static final int frTurnID = 7;
+        public static final int frDriveID = 8;
+        public static final int frCancoderID = 8;
+        public static final double frOffset = 0.498;
+        public static final Translation2d frPosition = new Translation2d(DriveConstants.kModuleToCenter, -DriveConstants.kModuleToCenter);
 
-        public static final int backRightTurnID = 5;
-        public static final int backRightDriveID = 6;
-        public static final int backRightCancoderID = 0;
-        public static final double backRightOffset = 0.594;
+        // Back Left Module Constants
+        public static final int blTurnID = 3;
+        public static final int blDriveID = 4;
+        public static final int blCancoderID = 1;
+        public static final double blOffset = 0.079;
+        public static final Translation2d blPosition = new Translation2d(-DriveConstants.kModuleToCenter, DriveConstants.kModuleToCenter);
+
+        // Back Right Module Constants
+        public static final int brTurnID = 5;
+        public static final int brDriveID = 6;
+        public static final int brCancoderID = 0;
+        public static final double brOffset = 0.594;
+        public static final Translation2d brPosition = new Translation2d(-DriveConstants.kModuleToCenter, -DriveConstants.kModuleToCenter);
 
         public static final int gyroID = 2;
 

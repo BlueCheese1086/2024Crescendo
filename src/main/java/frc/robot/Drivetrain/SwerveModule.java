@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -16,125 +17,166 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
 public class SwerveModule extends SubsystemBase {
+    // Analog Encoder + offset
+    private final DutyCycleEncoder cancoder;
+    private final double offset;
 
-    /*           backLeft    frontLeft
-     *                 x_____x
-     *                 |     |
-     * --------shooter-----------intake--- x-axis
-     *                 |_____|
-     *                 x     x
-     *           backRight   frontRight
-     */
-    
-    private final String name;
+    // Motors
+    private final CANSparkMax driveMotor;
+    private final CANSparkMax turnMotor;
 
-    private final CANSparkMax drive, turn;
-    private final RelativeEncoder driveRelEnc, turnRelEnc;
-    private final SparkPIDController drivePID, turnPID;
+    // Motor Encoders
+    private final RelativeEncoder driveEnc;
+    private final RelativeEncoder turnEnc;
 
-    private final DutyCycleEncoder absEncoder;
-    private final double encOffset;
+    // Spark PID Controllers
+    private final SparkPIDController drivePID;
+    private final SparkPIDController turnPID;
 
-    public SwerveModule(String name, int driveID, int turnID, int encID, double encOffset) {
+    // Public vars
+    public String name;
 
+    public SwerveModule(String name, int driveId, int turnId, int channel, double offset) {
+        // Setting the name of the Swerve Module
         this.name = name;
 
-        drive = new CANSparkMax(driveID, MotorType.kBrushless);
-        turn = new CANSparkMax(turnID, MotorType.kBrushless);
+        // Initializing the cancoder and saving its offset.
+        cancoder = new DutyCycleEncoder(new DigitalInput(channel));
+        this.offset = offset;
 
-        absEncoder = new DutyCycleEncoder(new DigitalInput(encID));
-        this.encOffset = encOffset;
+        // Initializing the motors.
+        driveMotor = new CANSparkMax(driveId, MotorType.kBrushless);
+        turnMotor = new CANSparkMax(turnId, MotorType.kBrushless);
 
-        drive.restoreFactoryDefaults();
-        turn.restoreFactoryDefaults();
+        // Resetting the settings of the motors.
+        driveMotor.restoreFactoryDefaults();
+        turnMotor.restoreFactoryDefaults();
 
-        drive.setInverted(false);
-        turn.setInverted(false);
+        // Inverting the motors as necessary.
+        driveMotor.setInverted(false);
+        turnMotor.setInverted(false);
 
-        drive.setIdleMode(IdleMode.kCoast);
-        turn.setIdleMode(IdleMode.kCoast);
+        // Putting the motors into Coast mode.
+        driveMotor.setIdleMode(IdleMode.kCoast);
+        turnMotor.setIdleMode(IdleMode.kCoast);
 
-        driveRelEnc = drive.getEncoder();
-        driveRelEnc.setPositionConversionFactor(DriveConstants.drivePosConversionFactor);
-        driveRelEnc.setVelocityConversionFactor(DriveConstants.drivePosConversionFactor / 60.0);
+        // Gettting the encoders of each motor.
+        driveEnc = driveMotor.getEncoder();
+        turnEnc = turnMotor.getEncoder();
 
-        turnRelEnc = turn.getEncoder();
-        turnRelEnc.setPositionConversionFactor(DriveConstants.turnPosConversionFactor);
-        turnRelEnc.setVelocityConversionFactor(DriveConstants.turnPosConversionFactor / 60.0);
+        // Resetting the positions of each encoder.
+        driveEnc.setPosition(0);
+        turnEnc.setPosition(0);
+
+        // Setting RPM conversions for each encoder.
+        driveEnc.setVelocityConversionFactor(DriveConstants.wheelCircumference / DriveConstants.driveRatio / 60);
+        driveEnc.setPositionConversionFactor(DriveConstants.wheelCircumference / DriveConstants.driveRatio);
+        turnEnc.setVelocityConversionFactor(360.0 / DriveConstants.turnRatio / 60);
+        turnEnc.setPositionConversionFactor(360.0 / DriveConstants.turnRatio);
         
-        drivePID = drive.getPIDController();
-        drivePID.setP(DriveConstants.driveP, 0);
-        drivePID.setI(DriveConstants.driveI, 0);
-        drivePID.setD(DriveConstants.driveD, 0);
-        drivePID.setFF(DriveConstants.driveFF, 0);
+        // Getting the PID Controllers of each motor.
+        drivePID = driveMotor.getPIDController();
+        turnPID = turnMotor.getPIDController();
 
-        turnPID = turn.getPIDController();
-        turnPID.setP(DriveConstants.turnP, 0);
-        turnPID.setI(DriveConstants.turnI, 0);
-        turnPID.setD(DriveConstants.turnD, 0);
-        turnPID.setFF(DriveConstants.turnFF, 0);
+        // Setting PIDFF calues for the drive motor.
+        drivePID.setP(DriveConstants.driveP);
+        drivePID.setI(DriveConstants.driveI);
+        drivePID.setD(DriveConstants.driveD);
+        drivePID.setFF(DriveConstants.driveFF);
+        
+        // Setting PIDFF values for the turn motor.
+        turnPID.setP(DriveConstants.turnP);
+        turnPID.setI(DriveConstants.turnI);
+        turnPID.setD(DriveConstants.turnD);
+        turnPID.setFF(DriveConstants.turnFF);
 
-        drive.burnFlash();
-        turn.burnFlash();
+        // Saving the settings.
+        driveMotor.burnFlash();
+        turnMotor.burnFlash();
     }
 
+    /** Runs every 20 ms */
+    @Override
     public void periodic() {
-        SmartDashboard.putNumber(name + "/AbsPosition", absEncoder.getAbsolutePosition());
-        SmartDashboard.putNumber(name + "/TurnAngle", getHeading());
-        SmartDashboard.putNumber(name + "/WheelSpeed", driveRelEnc.getVelocity());
-        
+        // Updating the position of the Swerve Module
+        SmartDashboard.putNumber(name, cancoder.get());
     }
 
-    public void initializeEncoder() {
-        turnRelEnc.setPosition((absEncoder.getAbsolutePosition() - encOffset) * (2.0 * Math.PI));
-    }
-
-    /**
-     * @return Returns the current heading of the module in cheesians
-     */
-    public double getHeading() {
-        return turnRelEnc.getPosition()%(2.0 * Math.PI);
+    /** Initializes the turn encoders to match the cancoder. */
+    public void initEncoder() {
+        turnEnc.setPosition((cancoder.getAbsolutePosition() - offset) * 360.0);
     }
 
     /**
-     * Used to enable continuous motion (prevents the module from spinning 360 degrees going from -180 to 180)
-     * @param angle The desired angle of the module
-     * @return The input angle to the turn PID
+     * Gets the distance the module has traveled.
+     * 
+     * @return How far the module has traveled in meters.
      */
-    public double getAdjustedAngle(double angle) {
-        double theta = getHeading() - angle;
-
-        if (theta >= Math.PI) {
-            theta-=(2.0 * Math.PI);
-        }
-        if (theta <= -Math.PI) {
-            theta+=(2.0 * Math.PI);
-        }
-
-        return turnRelEnc.getPosition() - theta;
+    public double getDistance() {
+        return driveEnc.getPosition();
     }
 
+    /**
+     * Gets the velocity that the module is running at.
+     * 
+     * @return The velocity of the motor in meters/second.
+     */
+    public double getVelocity() {
+        return driveEnc.getVelocity();
+    }
+
+    /**
+     * Gets the current module angle based on relative encoder
+     * 
+     * @return Rotation2d of the current module angle
+     */
+    public Rotation2d getAngle() {
+        return Rotation2d.fromDegrees(turnEnc.getPosition() % 360);
+    }
+
+    /**
+     * Calculate the angle motor setpoint based on the desired angle and the current
+     * angle measurement
+     * 
+     * @return Returns the calculated delta angle
+     */
+    public double getAdjustedAngle(double targetAngle) {
+        double theta = getAngle().getDegrees() - targetAngle;
+
+        if (theta > 180)  theta -= 360;
+        if (theta < -180) theta += 360;
+
+        return turnEnc.getPosition() - theta;
+    }
+
+    /**
+     * Sets the module to the desired state
+     * 
+     * @param state The desired state
+     */
     public void setState(SwerveModuleState state) {
-        SwerveModuleState optimizedState = SwerveModuleState.optimize(state, new Rotation2d(getHeading()));
+        state = SwerveModuleState.optimize(state, getAngle());
 
-        double desiredAngle = optimizedState.angle.getRadians();
-        double adjustedAngle = getAdjustedAngle(desiredAngle);
-
-        turnPID.setReference(adjustedAngle, ControlType.kPosition, 0);
-        drivePID.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity, 0);
+        drivePID.setReference(state.speedMetersPerSecond, ControlType.kVelocity);
+        System.out.println(name + ": " + state.angle.getDegrees());
+        turnPID.setReference(getAdjustedAngle(state.angle.getDegrees()), ControlType.kPosition);
     }
 
-    public CANSparkMax getDrive() {
-        return drive;
+    /**
+     * Gets the current state of the swerve module.
+     * 
+     * @return The state of the swerve module (m/s, rot2d)
+     */
+    public SwerveModuleState getState() {
+        return new SwerveModuleState(getVelocity(), getAngle());
     }
 
-    public CANSparkMax getTurn() {
-        return turn;
+    /**
+     * Gets the current position of the swerve module.
+     * 
+     * @return The position of the swerve module (m, rot2d)
+     */
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(getDistance(), getAngle());
     }
-
-    public void stop() {
-        drive.stopMotor();
-        turn.stopMotor();
-    }
-
 }

@@ -16,6 +16,7 @@ import frc.robot.Climb.Commands.SetClimbPos;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.Drivetrain.Commands.DefaultDrive;
 import frc.robot.Intake.Intake;
+import frc.robot.Intake.Commands.IntakeForShooter;
 import frc.robot.Intake.Commands.RunRollers;
 import frc.robot.Intake.Commands.SetAngle;
 import frc.robot.Shooter.Shooter;
@@ -62,9 +63,11 @@ public class RobotContainer {
 			drivetrain.initPigeon();
 		}));
 
-		secondary.a().whileTrue(new SetAngle(0.5, intake).alongWith(new RunRollers(true, intake)));
-		secondary.b().whileTrue(new SetAngle(0.5, intake).alongWith(new RunRollers(false, intake)));
+		// secondary.a().whileTrue(new SetAngle(0.5, intake).alongWith(new RunRollers(true, intake)));
+		// secondary.b().whileTrue(new SetAngle(0.5, intake).alongWith(new RunRollers(false, intake)));
 
+		secondary.a().whileTrue(new IntakeForShooter(intake));
+		secondary.b().whileTrue(new SetAngle(0.5, intake).alongWith(new RunRollers(false, intake)));
 
 		secondary.y().toggleOnTrue(new RunShooter(5500.0, 0.0, shooter));
 		secondary.x().whileTrue(new RunShooter(5500.0, 15000, shooter));

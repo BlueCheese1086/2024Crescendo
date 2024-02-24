@@ -2,6 +2,8 @@ package frc.robot.Drivetrain;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.pathfinding.LocalADStar;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -21,7 +23,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import frc.robot.Constants.DriveConstants;
 
 public class Drivetrain extends SubsystemBase {
@@ -130,10 +131,10 @@ public class Drivetrain extends SubsystemBase {
         gyro.setYaw(0);
 
         // Initializing Kinematics
-        kinematics = new DifferentialDriveKinematics(DriveConstants.kModuleToModuleDistance);
+        kinematics = new DifferentialDriveKinematics(DriveConstants.trackWidth);
 
         // Initializing Odometry
-        initPose = new Pose2d(2, 7, new Rotation2d());
+        initPose = new Pose2d(2, 6, new Rotation2d());
         pose = initPose;
         odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(gyro.getYaw()), leftEncoder.getPosition(), rightEncoder.getPosition(), pose);
 
@@ -158,6 +159,7 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Angle", getAngle().getDegrees());
         this.pose = odometry.update(getAngle(), getPositions());
         field.setRobotPose(pose);
+        
         SmartDashboard.putData("Field", field);
     }
 
@@ -167,7 +169,7 @@ public class Drivetrain extends SubsystemBase {
      * @return A Pose2d representing the robot's position.
      */
     public Pose2d getPose() {
-        return this.pose;
+        return odometry.getPoseMeters();
     }
 
     /**
@@ -176,13 +178,6 @@ public class Drivetrain extends SubsystemBase {
      * @param newPose The new position of the robot.
      */
     public void resetPose(Pose2d newPose) {
-        // Resetting encoders
-        leftEncoder.setPosition(0);
-        rightEncoder.setPosition(0);
-
-        // Resetting gyro
-        gyro.setYaw(0);
-
         // Resetting position
         odometry.resetPosition(getAngle(), leftEncoder.getPosition(), rightEncoder.getPosition(), newPose);
     }

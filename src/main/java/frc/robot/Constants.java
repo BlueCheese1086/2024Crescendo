@@ -22,7 +22,7 @@ public final class Constants {
         public static final double deadband = 0.2;
 
         // Current (amps) limit for drivetrain motors
-        public static final int currentLimit = 35;
+        public static final int currentLimit = 20;
 
         // Wheel Circumference
         public static final double wheelCircumference = Units.inchesToMeters(4 * Math.PI);
@@ -31,8 +31,7 @@ public final class Constants {
         public static final double gearRatio = 10.71;
 
         // Kinematics
-        public static final double kModuleToModuleDistance = Units.inchesToMeters(19.750);
-        public static final double kModuleToCenter = kModuleToModuleDistance / 2;
+        public static final double trackWidth = Units.inchesToMeters(21);
 
         // Encoder conversion factors (R to M and RPM to MPS)
         public static final double posConversionFactor = wheelCircumference / gearRatio;

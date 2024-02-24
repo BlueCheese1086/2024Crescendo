@@ -38,23 +38,24 @@ public class Drivetrain extends SubsystemBase {
     private SwerveModulePosition[] positions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
 
     // Kinematics
-    private ChassisSpeeds speeds = new ChassisSpeeds(0.0, 0.0, 0.0);
     private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(DriveConstants.flPosition, DriveConstants.frPosition, DriveConstants.blPosition, DriveConstants.brPosition);
 
     // Odometry
     private Pose2d pose = new Pose2d(1.23, 6.25, Rotation2d.fromDegrees(32.62));
-    private SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, getAngle(), positions, pose);
+    private SwerveDriveOdometry odometry;
     private Field2d field = new Field2d();
 
     public Drivetrain() {
         // Resetting the angle of the gyro.
         gyro.setYaw(0);
-        
 
         // Initializing the turn encoders on each swerve module. 
         for (int i = 0; i < modules.length; i++) {
             modules[i].initEncoder();
         }
+
+        // Initializing the odometry
+        odometry = new SwerveDriveOdometry(kinematics, getAngle(), positions, pose);
 
         // Creating an AutoBuilder for PathPlanner
         AutoBuilder.configureHolonomic(
@@ -63,8 +64,8 @@ public class Drivetrain extends SubsystemBase {
             this::getSpeeds,
             this::drive,
             new HolonomicPathFollowerConfig(
-                new PIDConstants(DriveConstants.driveP, DriveConstants.driveI, DriveConstants.driveD),
-                new PIDConstants(DriveConstants.turnP, DriveConstants.turnI, DriveConstants.turnD),
+                new PIDConstants(DriveConstants.driveP, DriveConstants.driveI, DriveConstants.driveD), // try without these?
+                new PIDConstants(DriveConstants.turnP, DriveConstants.turnI, DriveConstants.turnD), // try without these?
                 DriveConstants.maxDriveSpeed,
                 DriveConstants.kModuleToCenter,
                 new ReplanningConfig()
@@ -82,7 +83,6 @@ public class Drivetrain extends SubsystemBase {
         // Updating the States and Positions of each swerve module
         for (int i = 0; i < modules.length; i++) {
             positions[i] = modules[i].getPosition();
-            speeds = kinematics.toChassisSpeeds(states);
         }
 
         // Updating odometry
@@ -121,7 +121,7 @@ public class Drivetrain extends SubsystemBase {
      * @return An estimated pose of the robot.
      */
     public Pose2d getPose() {
-        return this.pose;
+        return odometry.getPoseMeters();
     }
 
     /**
@@ -143,7 +143,7 @@ public class Drivetrain extends SubsystemBase {
      * @return the speeds of the robot.
      */
     public ChassisSpeeds getSpeeds() {
-        return this.speeds;
+        return kinematics.toChassisSpeeds(states);
     }
 
     /**
@@ -152,11 +152,14 @@ public class Drivetrain extends SubsystemBase {
      * @param speeds The desired ChassisSpeeds
      */
     public void drive(ChassisSpeeds speeds) {
+        // Don't know what exactly this does, but I saw it in somebody else's code.
+        // speeds = ChassisSpeeds.discretize(speeds, 0.02);
+
         // Converting ChassisSpeeds to SwerveModuleStates.
         states = kinematics.toSwerveModuleStates(speeds);
-
-        SmartDashboard.putNumber("Angle from ChassisSpeeds", speeds.omegaRadiansPerSecond);
-        SmartDashboard.putNumber("Angle from kinematics", states[1].angle.getDegrees());
+        
+        // Enforcing the max speed
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.maxDriveSpeed);
 
         // Setting the state of each swerve module.
         for (int i = 0; i < 4; i++) {

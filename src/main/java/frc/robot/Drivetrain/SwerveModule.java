@@ -56,6 +56,10 @@ public class SwerveModule extends SubsystemBase {
         driveMotor.setInverted(false);
         turnMotor.setInverted(false);
 
+        // Enabling voltage compensation
+        driveMotor.enableVoltageCompensation(12);
+        turnMotor.enableVoltageCompensation(12);
+
         // Putting the motors into Coast mode.
         driveMotor.setIdleMode(IdleMode.kCoast);
         turnMotor.setIdleMode(IdleMode.kCoast);
@@ -107,6 +111,7 @@ public class SwerveModule extends SubsystemBase {
     /** Initializes the turn encoders to match the cancoder. */
     public void initEncoder() {
         turnEnc.setPosition((cancoder.getAbsolutePosition() - offset) * 2 * Math.PI);
+        turnEnc.setPosition(0);
     }
 
     /**

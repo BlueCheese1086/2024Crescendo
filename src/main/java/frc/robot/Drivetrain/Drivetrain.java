@@ -54,10 +54,10 @@ public class Drivetrain extends SubsystemBase {
     /** Creates a new instance of the Drivetrain subsystem. */
     public Drivetrain() {
         // Initializing the motors
-        frontLeftMotor = new CANSparkMax(DriveConstants.FrontLeftID, MotorType.kBrushless);
-        backLeftMotor = new CANSparkMax(DriveConstants.BackLeftID, MotorType.kBrushless);
-        frontRightMotor = new CANSparkMax(DriveConstants.FrontRightID, MotorType.kBrushless);
-        backRightMotor = new CANSparkMax(DriveConstants.BackRightID, MotorType.kBrushless);
+        frontLeftMotor = new CANSparkMax(DriveConstants.frontLeftID, MotorType.kBrushless);
+        backLeftMotor = new CANSparkMax(DriveConstants.backLeftID, MotorType.kBrushless);
+        frontRightMotor = new CANSparkMax(DriveConstants.frontRightID, MotorType.kBrushless);
+        backRightMotor = new CANSparkMax(DriveConstants.backRightID, MotorType.kBrushless);
 
         // Restoring the default settings.
         frontLeftMotor.restoreFactoryDefaults();
@@ -96,12 +96,12 @@ public class Drivetrain extends SubsystemBase {
         rightEncoder.setPosition(0);
 
         // Setting left encoder conversion values
-        leftEncoder.setPositionConversionFactor(DriveConstants.wheelCircumference / DriveConstants.gearRatio);
-        leftEncoder.setVelocityConversionFactor(DriveConstants.wheelCircumference / DriveConstants.gearRatio / 60);
+        leftEncoder.setPositionConversionFactor(DriveConstants.posConversionFactor);
+        leftEncoder.setVelocityConversionFactor(DriveConstants.velConversionFactor);
 
         // Setting right encoder conversion values
-        rightEncoder.setPositionConversionFactor(DriveConstants.wheelCircumference / DriveConstants.gearRatio);
-        rightEncoder.setVelocityConversionFactor(DriveConstants.wheelCircumference / DriveConstants.gearRatio / 60);
+        rightEncoder.setPositionConversionFactor(DriveConstants.posConversionFactor);
+        rightEncoder.setVelocityConversionFactor(DriveConstants.velConversionFactor);
 
         // Initializing the PIDs
         leftPID = frontLeftMotor.getPIDController();

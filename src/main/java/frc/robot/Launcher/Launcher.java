@@ -71,6 +71,7 @@ public class Launcher extends SubsystemBase {
         // Has two different max speeds in case we use the launcher as an intake.
         if (speed > 0) {
             // Maybe try with kDutyCycle?  Would set const to 3
+            // Or try setting voltage to 1.  It may have worked for Mechanical Advantage.
             feedPID.setReference(speed * LauncherConstants.maxFeedOutSpeed, ControlType.kVelocity);
         } else if (speed < 0) {
             feedPID.setReference(speed * LauncherConstants.maxFeedInSpeed, ControlType.kVelocity);

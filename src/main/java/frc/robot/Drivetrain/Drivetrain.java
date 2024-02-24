@@ -46,7 +46,7 @@ public class Drivetrain extends SubsystemBase {
     public final DifferentialDriveKinematics kinematics;
 
     // Odometry
-    // private final Pose2d initPose;
+    public final Pose2d initPose;
     private Pose2d pose;
     private Field2d field = new Field2d();
     private final DifferentialDriveOdometry odometry;
@@ -133,8 +133,8 @@ public class Drivetrain extends SubsystemBase {
         kinematics = new DifferentialDriveKinematics(DriveConstants.kModuleToModuleDistance);
 
         // Initializing Odometry
-        // initPose = new Pose2d(2, 7, new Rotation2d());
-        pose = new Pose2d(2, 7, Rotation2d.fromDegrees(gyro.getYaw()));
+        initPose = new Pose2d(2, 7, new Rotation2d());
+        pose = initPose;
         odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(gyro.getYaw()), leftEncoder.getPosition(), rightEncoder.getPosition(), pose);
 
         // Implementing PathPlanner
@@ -177,9 +177,13 @@ public class Drivetrain extends SubsystemBase {
      */
     public void resetPose(Pose2d newPose) {
         // Resetting encoders
-        // leftEncoder.setPosition(0);
-        // rightEncoder.setPosition(0);
+        leftEncoder.setPosition(0);
+        rightEncoder.setPosition(0);
 
+        // Resetting gyro
+        gyro.setYaw(0);
+
+        // Resetting position
         odometry.resetPosition(getAngle(), leftEncoder.getPosition(), rightEncoder.getPosition(), newPose);
     }
 

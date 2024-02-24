@@ -65,7 +65,7 @@ public final class Constants {
         public static final double launchFF = 0.01;
 
         // The max speed for each motor in RPM
-        public static final int feedSpeed = 15000; // Not quite the max speed, but it is necessary to launch the note
+        public static final int feedSpeed = 5500;
         public static final int launchSpeed = 5500;
 
         // Wheel Specs

@@ -5,10 +5,8 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.Drivetrain.commands.ArcadeDrive;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.Launcher.commands.RunFeed;
@@ -21,13 +19,13 @@ public class RobotContainer {
     private final Launcher launcher = new Launcher();
 
     // Creating instances of the xbox remotes used for driving the robot.
-    private final CommandXboxController xbox = new CommandXboxController(OperatorConstants.PrimaryPort);
+    private final CommandXboxController xbox = new CommandXboxController(0);
 
     /**
      * The container for the robot. Contains subsystems, IO devices, and commands.
      */
     public RobotContainer() {
-        NamedCommands.registerCommand("RunFeed", new RunFeed(launcher, 3));
+        NamedCommands.registerCommand("RunFeed", new RunFeed(launcher, 1));
         NamedCommands.registerCommand("RunFlywheel", new RunFlywheel(launcher, 1));
 
         // Configuring the trigger bindings
@@ -37,13 +35,14 @@ public class RobotContainer {
     /** Creates button bindings for the necessary functions. */
     private void configureBindings() {
         // Assigning operations to each button.
+        // "A" runs the launcher in reverse to collect notes.
+        // "B" resets the encoders and odometry.
         // "Left Bumper" runs the flywheel on the launcher.
         // "Right Bumper" runs the feed wheel on the launcher.
-        // "A" runs the launcher in reverse to collect notes.
         xbox.a().whileTrue(new RunFlywheel(launcher, -1));
         xbox.b().onTrue(new InstantCommand(() -> {drivetrain.resetPose(drivetrain.initPose);}));
         xbox.leftBumper().whileTrue(new RunFlywheel(launcher, 1));
-        xbox.rightBumper().whileTrue(new RunFeed(launcher, 3).raceWith(new WaitCommand(1)));
+        xbox.rightBumper().whileTrue(new RunFeed(launcher, 1));
     }
 
     /**
@@ -61,6 +60,6 @@ public class RobotContainer {
      * @return The command to run in Teleop mode.
      */
     public Command getTeleopCommand() {
-        return new ArcadeDrive(drivetrain, () -> -xbox.getLeftY(), () -> xbox.getRightX());
+        return new ArcadeDrive(drivetrain, () -> xbox.getLeftY(), () -> xbox.getRightX());
     }
 }

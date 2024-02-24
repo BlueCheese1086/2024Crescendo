@@ -34,10 +34,11 @@ public class RobotContainer {
     public RobotContainer() {
         // Not Implementing PathPlanner until the robot can run normally.
         // Configuring the NamedCommands for PathPlanner
-        // NamedCommands.registerCommand("ShootNote", new RunLauncher(launcher, 1, 3, 0.5));
-        // NamedCommands.registerCommand("RunIntake", new RunIntake(intake, 1));
-        // NamedCommands.registerCommand("OpenIntake", new SetIntakeState(intake, States.OPEN));
-        // NamedCommands.registerCommand("CloseIntake", new SetIntakeState(intake, States.CLOSED));
+        NamedCommands.registerCommand("RunFeed", new RunFeed(launcher, 3));
+        NamedCommands.registerCommand("RunFlywheel", new RunFlywheel(launcher, 1));
+        NamedCommands.registerCommand("RunIntake", new RunIntake(intake, 1));
+        NamedCommands.registerCommand("OpenIntake", new SetIntakeState(intake, States.OPEN));
+        NamedCommands.registerCommand("CloseIntake", new SetIntakeState(intake, States.CLOSED));
 
         // Configuring the trigger bindings
         configureBindings();
@@ -74,7 +75,7 @@ public class RobotContainer {
      * @return The command to run in Autonomous mode.
      */
     public Command getAutonomousCommand() {
-        return null;//new PathPlannerAuto("2024 Auto");
+        return new PathPlannerAuto("2024 Auto");
     }
 
     /**

@@ -45,8 +45,8 @@ public class Launcher extends SubsystemBase {
         feedMotor.setIdleMode(IdleMode.kCoast);
         launchMotor.setIdleMode(IdleMode.kCoast);
 
-        feedMotor.setInverted(true);
-        launchMotor.setInverted(true);
+        feedMotor.setInverted(false);
+        launchMotor.setInverted(false);
     }
 
     /** 

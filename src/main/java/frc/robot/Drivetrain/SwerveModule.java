@@ -69,10 +69,10 @@ public class SwerveModule extends SubsystemBase {
         turnEnc.setPosition(0);
 
         // Setting RPM conversions for each encoder.
-        driveEnc.setVelocityConversionFactor(DriveConstants.wheelCircumference / DriveConstants.driveRatio / 60);
-        driveEnc.setPositionConversionFactor(DriveConstants.wheelCircumference / DriveConstants.driveRatio);
-        turnEnc.setVelocityConversionFactor(360.0 / DriveConstants.turnRatio / 60);
-        turnEnc.setPositionConversionFactor(360.0 / DriveConstants.turnRatio);
+        driveEnc.setVelocityConversionFactor(DriveConstants.drivePosConversionFactor / 60);
+        driveEnc.setPositionConversionFactor(DriveConstants.drivePosConversionFactor);
+        turnEnc.setVelocityConversionFactor(DriveConstants.turnPosConversionFactor / 60);
+        turnEnc.setPositionConversionFactor(DriveConstants.turnPosConversionFactor);
         
         // Getting the PID Controllers of each motor.
         drivePID = driveMotor.getPIDController();
@@ -106,7 +106,7 @@ public class SwerveModule extends SubsystemBase {
 
     /** Initializes the turn encoders to match the cancoder. */
     public void initEncoder() {
-        turnEnc.setPosition((cancoder.getAbsolutePosition() - offset) * 360.0);
+        turnEnc.setPosition((cancoder.getAbsolutePosition() - offset) * 2 * Math.PI);
     }
 
     /**
@@ -133,7 +133,7 @@ public class SwerveModule extends SubsystemBase {
      * @return Rotation2d of the current module angle
      */
     public Rotation2d getAngle() {
-        return Rotation2d.fromDegrees(turnEnc.getPosition() % 360);
+        return Rotation2d.fromRadians(turnEnc.getPosition() % (2 * Math.PI));
     }
 
     /**
@@ -143,10 +143,14 @@ public class SwerveModule extends SubsystemBase {
      * @return Returns the calculated delta angle
      */
     public double getAdjustedAngle(double targetAngle) {
-        double theta = getAngle().getDegrees() - targetAngle;
+        double theta = getAngle().getRadians() - targetAngle;
 
-        if (theta > 180)  theta -= 360;
-        if (theta < -180) theta += 360;
+        if (theta >= Math.PI) {
+            theta-=(2.0 * Math.PI);
+        }
+        if (theta <= -Math.PI) {
+            theta+=(2.0 * Math.PI);
+        }
 
         return turnEnc.getPosition() - theta;
     }
@@ -160,8 +164,8 @@ public class SwerveModule extends SubsystemBase {
         state = SwerveModuleState.optimize(state, getAngle());
 
         drivePID.setReference(state.speedMetersPerSecond, ControlType.kVelocity);
-        System.out.println(name + ": " + state.angle.getDegrees());
-        turnPID.setReference(getAdjustedAngle(state.angle.getDegrees()), ControlType.kPosition);
+        System.out.println(name + ": " + state.angle.getRadians());
+        turnPID.setReference(getAdjustedAngle(state.angle.getRadians()), ControlType.kPosition);
     }
 
     /**

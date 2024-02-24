@@ -43,8 +43,8 @@ public class Intake extends SubsystemBase {
         roller.restoreFactoryDefaults();
 
         // Setting an amp limit.
-        access.setSmartCurrentLimit(35);
-        roller.setSmartCurrentLimit(35);
+        access.setSmartCurrentLimit(15);
+        roller.setSmartCurrentLimit(15);
 
         // Enabling voltage compansation.
         access.enableVoltageCompensation(12);

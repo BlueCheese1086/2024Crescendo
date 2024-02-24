@@ -3,6 +3,7 @@ package frc.robot.Drivetrain.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Drivetrain.Drivetrain;
@@ -35,12 +36,14 @@ public class SwerveDrive extends Command {
         // This is a very helpful class that will take my axes and automatically converts them into
         // the speed and angle that the motors need to be at.  It also takes in the current angle
         // of the robot to adjust the turn angle as needed
-        ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+        ChassisSpeeds speeds = ChassisSpeeds.fromRobotRelativeSpeeds(
             xTraverseSupplier.get() * DriveConstants.maxDriveSpeed,
             yTraverseSupplier.get() * DriveConstants.maxDriveSpeed,
             zRotateSupplier.get() * DriveConstants.maxTurnSpeed,
             drivetrain.getAngle()
         );
+
+        SmartDashboard.putNumber("zRotate", zRotateSupplier.get());
 
         drivetrain.drive(speeds);
     }

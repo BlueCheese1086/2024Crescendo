@@ -81,7 +81,6 @@ public class Drivetrain extends SubsystemBase {
     public void periodic() {
         // Updating the States and Positions of each swerve module
         for (int i = 0; i < modules.length; i++) {
-            states[i] = modules[i].getState();
             positions[i] = modules[i].getPosition();
             speeds = kinematics.toChassisSpeeds(states);
         }
@@ -154,7 +153,10 @@ public class Drivetrain extends SubsystemBase {
      */
     public void drive(ChassisSpeeds speeds) {
         // Converting ChassisSpeeds to SwerveModuleStates.
-        SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
+        states = kinematics.toSwerveModuleStates(speeds);
+
+        SmartDashboard.putNumber("Angle from ChassisSpeeds", speeds.omegaRadiansPerSecond);
+        SmartDashboard.putNumber("Angle from kinematics", states[1].angle.getDegrees());
 
         // Setting the state of each swerve module.
         for (int i = 0; i < 4; i++) {

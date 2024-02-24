@@ -47,7 +47,7 @@ public final class Constants {
 
         // Speeds the robot can move at
         public static final double maxDriveSpeed = 0.25; // Meters/second
-        public static final double maxTurnSpeed = 5; // Radians/second
+        public static final double maxTurnSpeed = 11; // Radians/second
 
         // The threshold of values where the robot will ignore joystick input. (including negatives)
         public static final double deadband = 0.2;
@@ -61,7 +61,7 @@ public final class Constants {
 
         // Encoder Conversion Factors
         public static final double drivePosConversionFactor = DriveConstants.wheelCircumference / DriveConstants.driveRatio;
-        public static final double turnPosConversionFactor = 360 / DriveConstants.turnRatio;
+        public static final double turnPosConversionFactor = Math.PI * 2.0 / DriveConstants.turnRatio;
 
         // Kinematics
         public static final double kModuleToModuleDistance = Units.inchesToMeters(19.5); // Meters
@@ -121,8 +121,8 @@ public final class Constants {
 
     public static class IntakeConstants {
         // Motor IDs
-        public static final int accessID = 31;
-        public static final int rollerID = 32;
+        public static final int accessID = 32;
+        public static final int rollerID = 31;
 
         // Gear Ratios
         public static final double accessRatio = 26.18;

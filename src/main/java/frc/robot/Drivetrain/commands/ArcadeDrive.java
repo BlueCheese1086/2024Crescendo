@@ -38,8 +38,8 @@ public class ArcadeDrive extends Command {
     @Override
     public void execute() {
         // Getting the values from the suppliers.
-        double xSpeed = MathUtil.applyDeadband(xSpeedSupplier.get(), DriveConstants.deadband);
-        double zRotate = MathUtil.applyDeadband(zRotateSupplier.get(), DriveConstants.deadband);
+        double xSpeed = MathUtil.applyDeadband(xSpeedSupplier.get(), DriveConstants.deadband) * DriveConstants.maxDriveSpeed;
+        double zRotate = MathUtil.applyDeadband(zRotateSupplier.get(), DriveConstants.deadband) * DriveConstants.maxTurnSpeed;
 
         // Converting the inputs to left and right speeds.
         double leftSpeed = xSpeed - zRotate;

@@ -89,9 +89,7 @@ public class Intake extends SubsystemBase {
     public void setSpeed(double speed) {
         MathUtil.applyDeadband(accessEncoder.getPosition() - 70, 2);
 
-        if (accessEncoder.getPosition() == States.OPEN.value) {
-            roller.set(speed * IntakeConstants.maxSpeed);
-        }
+        roller.set(speed * IntakeConstants.maxSpeed);
     }
 
     /**

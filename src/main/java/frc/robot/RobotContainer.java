@@ -1,15 +1,9 @@
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.pathfinding.LocalADStar;
-import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.Drivetrain.commands.ArcadeDrive;
@@ -30,8 +24,6 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, IO devices, and commands.
      */
     public RobotContainer() {
-        Pathfinding.setPathfinder(new LocalADStar());
-
         NamedCommands.registerCommand("RunFeed", new RunFeed(launcher, 1));
         NamedCommands.registerCommand("RunFlywheel", new RunFlywheel(launcher, 1));
 
@@ -57,9 +49,7 @@ public class RobotContainer {
      * @return The command to run in Autonomous mode.
      */
     public Command getAutonomousCommand() {
-        Pose2d targetPose = new Pose2d(3, 6, new Rotation2d());
-        PathConstraints constraints = new PathConstraints(0.5, 1, 10, 3);
-        return AutoBuilder.pathfindToPose(targetPose, constraints);
+        return new PathPlannerAuto("KitbotAuto");
     }
 
     /**
@@ -68,6 +58,6 @@ public class RobotContainer {
      * @return The command to run in Teleop mode.
      */
     public Command getTeleopCommand() {
-        return new ArcadeDrive(drivetrain, () -> xbox.getLeftY(), () -> xbox.getRightX());
+        return new ArcadeDrive(drivetrain, () -> -xbox.getLeftY(), () -> xbox.getRightX());
     }
 }

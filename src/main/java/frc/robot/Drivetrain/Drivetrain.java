@@ -2,8 +2,6 @@ package frc.robot.Drivetrain;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.pathfinding.LocalADStar;
-import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -12,6 +10,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -21,11 +20,22 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelPositions;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
 public class Drivetrain extends SubsystemBase {
+    enum InitPoses {
+        BLUE(new Pose2d(2, 6, new Rotation2d())),
+        RED(new Pose2d(14.592, 6, new Rotation2d(Math.PI)));
+
+        public Pose2d pose;
+
+        InitPoses(Pose2d pose) {
+            this.pose = pose;
+        }
+    }
     // The motors for the drivetrain subsystem
     private CANSparkMax frontLeftMotor;
     private CANSparkMax backLeftMotor;
@@ -51,6 +61,8 @@ public class Drivetrain extends SubsystemBase {
     private Pose2d pose;
     private Field2d field = new Field2d();
     private final DifferentialDriveOdometry odometry;
+    private final DifferentialDrivePoseEstimator estimator;
+    private FieldObject2d fieldObj = field.getObject("Odometry");
 
     /** Creates a new instance of the Drivetrain subsystem. */
     public Drivetrain() {
@@ -137,6 +149,9 @@ public class Drivetrain extends SubsystemBase {
         initPose = new Pose2d(2, 6, new Rotation2d());
         pose = initPose;
         odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(gyro.getYaw()), leftEncoder.getPosition(), rightEncoder.getPosition(), pose);
+        estimator = new DifferentialDrivePoseEstimator(kinematics, getAngle(), leftEncoder.getPosition(), rightEncoder.getPosition(), initPose);
+        // odometry = new DifferentialDriveOdometry(new Rotation2d(), 0, 0);
+        // maybe use getAngle when creating initPose
 
         // Implementing PathPlanner
         AutoBuilder.configureRamsete(
@@ -144,8 +159,12 @@ public class Drivetrain extends SubsystemBase {
             this::resetPose,
             this::getSpeeds,
             this::drive,
+            0.25, // Straight PID P
+            0.5, // Turn PID P
             new ReplanningConfig(),
             () -> DriverStation.getAlliance().isPresent() && (DriverStation.getAlliance().get() == DriverStation.Alliance.Red),
+            // Watch initpose when alliance is red.  robot may go to the wrong side of the field.
+            // NOTE: Driverstation defaults to red.
             this
         );
     }
@@ -155,11 +174,15 @@ public class Drivetrain extends SubsystemBase {
      * Right now, I am only using it to update the state of the odometry.
     */
     @Override
-    public void periodic() {
+    public void periodic() {        
         SmartDashboard.putNumber("Angle", getAngle().getDegrees());
-        this.pose = odometry.update(getAngle(), getPositions());
-        field.setRobotPose(pose);
-        
+
+        Pose2d estimatedPose = estimator.update(getAngle(), getPositions());
+        field.setRobotPose(estimatedPose);
+
+        Pose2d odometryPose = odometry.update(getAngle(), getPositions());
+        fieldObj.setPose(odometryPose);
+
         SmartDashboard.putData("Field", field);
     }
 
@@ -169,7 +192,7 @@ public class Drivetrain extends SubsystemBase {
      * @return A Pose2d representing the robot's position.
      */
     public Pose2d getPose() {
-        return odometry.getPoseMeters();
+        return estimator.getEstimatedPosition();
     }
 
     /**
@@ -194,6 +217,13 @@ public class Drivetrain extends SubsystemBase {
 
         leftPID.setReference(diffSpeeds.leftMetersPerSecond, ControlType.kVelocity);
         rightPID.setReference(diffSpeeds.rightMetersPerSecond, ControlType.kVelocity);
+        // Set out yardstick and test P value.
+        // If robot overshoots the 1 meter mark, lower p.  reverse if undershot
+        // add d if there is a minor overshoot.
+        // add i for "smoothness", probably shouldn't use though
+        // tune on carpet
+        // be careful for canter
+        // Do the same test for angular PID
     }
 
     /**

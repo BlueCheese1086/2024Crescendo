@@ -22,7 +22,7 @@ public final class Constants {
         public static final double deadband = 0.2;
 
         // Current (amps) limit for drivetrain motors
-        public static final int currentLimit = 20;
+        public static final int currentLimit = 35;
 
         // Wheel Circumference
         public static final double wheelCircumference = Units.inchesToMeters(4 * Math.PI);

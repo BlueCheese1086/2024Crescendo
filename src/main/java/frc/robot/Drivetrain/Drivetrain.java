@@ -1,6 +1,5 @@
 package frc.robot.Drivetrain;
 
-import com.ctre.phoenix.sensors.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -16,12 +15,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Sensors.Gyro;
 
 public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
 
@@ -53,9 +52,9 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
         new SwerveModuleState(0.0, new Rotation2d(Math.PI/4.0)),
     };
 
-    private final SwerveDriveOdometry odometry;
+    private SwerveDriveOdometry odometry;
 
-    private final Pigeon2 gyro;
+    private final Gyro gyro;
 
     public Drivetrain() {
         frontLeft = new SwerveModule(
@@ -94,13 +93,11 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
             new Translation2d(-DriveConstants.moduleToModuleDistanceMeters/2.0, -DriveConstants.moduleToModuleDistanceMeters/2.0)
         );
 
-        gyro = new Pigeon2(DriveConstants.pigeonID);
+        gyro = Gyro.getInstance();
 
         for (int i = 0; i < positions.length; i++) {
             positions[i] = new SwerveModulePosition();
         }
-
-        odometry = new SwerveDriveOdometry(kinematics, getYaw(), positions);
 
         AutoBuilder.configureHolonomic(
             this::getPose,
@@ -127,12 +124,14 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
         for (SwerveModule m : modules) {
             m.initializeEncoder();
         }
-        gyro.setYaw(180);
+        gyro.initGyro();
+        odometry = new SwerveDriveOdometry(kinematics, getYaw(), positions);
     }
 
     public void periodic() {
         for (int i = 0; i < modules.length; i++) {
             positions[i] = modules[i].getPosition();
+            states[i] = modules[i].getState();
         }
 
         odometry.update(getYaw(), positions);
@@ -160,25 +159,21 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
         return kinematics.toChassisSpeeds(states);
     }
 
-    public void initPigeon() {
-        gyro.setYaw(0.0);
-        // if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
-        //     gyro.setYaw(0.0);
-        // } else {
-        //     gyro.setYaw(180.0);
-        // }
-    }
-
     public Rotation2d getYaw() {
         return Rotation2d.fromDegrees(gyro.getYaw());
     }
 
     public void drive(ChassisSpeeds speeds) {
-        ChassisSpeeds newSpeeds = new ChassisSpeeds(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, -speeds.omegaRadiansPerSecond);
-        states = kinematics.toSwerveModuleStates(newSpeeds);
+        ChassisSpeeds currentSpeeds = kinematics.toChassisSpeeds(states);
+        double currentRotation = gyro.getYawVelocity();
+        ChassisSpeeds newSpeeds = new ChassisSpeeds(
+            speeds.vxMetersPerSecond + 0.5 * (currentSpeeds.vxMetersPerSecond - speeds.vxMetersPerSecond), 
+            speeds.vyMetersPerSecond + 0.5 * (currentSpeeds.vyMetersPerSecond - speeds.vyMetersPerSecond), 
+            speeds.omegaRadiansPerSecond + 0.5 * (currentRotation - speeds.omegaRadiansPerSecond));
+        SwerveModuleState[] desiredStates = kinematics.toSwerveModuleStates(newSpeeds);
 
         for (int i = 0; i < modules.length; i++) {
-            modules[i].setState(states[i]);
+            modules[i].setState(desiredStates[i]);
         }
     }
 

@@ -37,9 +37,11 @@ public class DefaultDrive extends Command {
             return;
         }
 
+        double mult = marioKart.getAsBoolean() ? 1.0 : 0.0;
+
         drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
-            x_trans.getAsDouble() * (DriveConstants.maxWheelVelocity),// + (marioKart.getAsBoolean() ? Math.signum(x_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-speeds.vxMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0)), 
-            y_trans.getAsDouble() * (DriveConstants.maxWheelVelocity),// + (marioKart.getAsBoolean() ? Math.signum(y_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-speeds.vyMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0)),
+            x_trans.getAsDouble() * (DriveConstants.maxWheelVelocity) + mult * (DriveConstants.maxWheelVelocity - drivetrain.getSpeeds().vxMetersPerSecond),
+            y_trans.getAsDouble() * (DriveConstants.maxWheelVelocity) + mult * (DriveConstants.maxWheelVelocity - drivetrain.getSpeeds().vyMetersPerSecond),
             z_rot.getAsDouble() * DriveConstants.maxRotationalVelocity, 
             drivetrain.getYaw()));
     }

@@ -10,14 +10,14 @@ import com.pathplanner.lib.auto.NamedCommands;
 import Util.ControllableConfiguration;
 import Util.IntializedSubsystem;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Climb.Climb;
 import frc.robot.Climb.Commands.SetClimbPos;
 import frc.robot.Constants.IntakeConstants;
@@ -27,6 +27,7 @@ import frc.robot.Intake.Intake;
 import frc.robot.Intake.Commands.IntakeForShooter;
 import frc.robot.Intake.Commands.RunRollers;
 import frc.robot.Intake.Commands.SetAngle;
+import frc.robot.Sensors.Gyro;
 import frc.robot.Shooter.Shooter;
 import frc.robot.Shooter.Commands.RunShooter;
 
@@ -51,10 +52,6 @@ public class RobotContainer {
 		secondary = new CommandXboxController(1);
 		// secondary = primary;
 
-		for (SubsystemBase s : new SubsystemBase[]{drivetrain, climb, shooter}) {
-			((IntializedSubsystem) s).initialize();
-		}
-
 		NamedCommands.registerCommand("Intake", new IntakeForShooter(intake));
 		NamedCommands.registerCommand("Shoot", new RunShooter(5500, 15000, secondary, shooter));
 
@@ -78,8 +75,14 @@ public class RobotContainer {
 
 	private void configureBindings() {
 
+		new Trigger(() -> DriverStation.isDSAttached()).onTrue(new InstantCommand(() -> {
+			for (SubsystemBase s : new SubsystemBase[]{drivetrain, climb, shooter}) {
+				((IntializedSubsystem) s).initialize();
+			}
+		}));
+
 		primary.leftStick().onTrue(new InstantCommand(() -> {
-			drivetrain.initPigeon();
+			Gyro.getInstance().setAngle(0.0);
 		}));
 
 		// secondary.a().whileTrue(new SetAngle(0.5, intake).alongWith(new RunRollers(true, intake)));
@@ -108,9 +111,14 @@ public class RobotContainer {
 		}
 	}
 
+	public void setGyroAngle() {
+		Gyro.getInstance().setAngle(drivetrain.getPose().getRotation().getDegrees());
+	}
+
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
 		return autoChooser.getSelected();
 		// return new PrintCommand("Hello WOrld");
 	}
+
 }

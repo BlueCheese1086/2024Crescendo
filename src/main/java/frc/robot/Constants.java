@@ -45,9 +45,9 @@ public final class Constants {
 
         public static final double turnRatio = 0.0;
         public static final double driveRatio = 0.0;
-        public static final double wheelCircumpherence = Units.inchesToMeters(4.0) * Math.PI;
+        public static final double wheelCircumpherence = Units.inchesToMeters(4.0 * Math.PI);
 
-        public static final double maxWheelVelocity = Units.inchesToMeters(19.8);
+        public static final double maxWheelVelocity = Units.feetToMeters(19.8);
         public static final double maxRotationalVelocity = maxWheelVelocity/moduleToCenterDistance;
 
     }
@@ -62,9 +62,9 @@ public final class Constants {
         public static final double kPDriveVelo = 0.01;
         public static final double kIDriveVelo = 0.0;
         public static final double kDDriveVelo = 0.0;
-        public static final double kFFDriveVelo = 1.96;
+        public static final double kFFDriveVelo = 0.2;
 
-        public static final double wheelCircumpherence = Units.inchesToMeters(4.0) * Math.PI;
+        public static final double wheelCircumpherence = Units.inchesToMeters(4.0 * Math.PI);
 
         public static final double drivePosConversionFactor = wheelCircumpherence / 5.14;
         public static final double steerPosConversionFactor = Math.PI * 2.0 / 12.8;
@@ -90,19 +90,19 @@ public final class Constants {
 
         public static final double rollersVelocityConversionFactor = 1.0;
 
-        public static final double angleOffset = 0.38;
-        public static final double anglePositionConverstionFactor = Math.PI/2.0/((48.0/44.0)*(48.0/24.0));
+        public static final double angleOffset = 2.0;
+        public static final double anglePositionConverstionFactor = Math.PI * 2.0/((48.0/44.0)*(48.0/24.0));
 
-        public static final double STOWED_ANGLE = 0.0;
+        public static final double STOWED_ANGLE = 2.4;
 
-        public static final double kPRoller = 1.0;
+        public static final double kPRoller = 0.002;
         public static final double kIRoller = 0.0;
         public static final double kDRoller = 0.0;
         public static final double kFFRoller = 1.5;
 
-        public static final double kPAngle = 20.0;
+        public static final double kPAngle = 4.5;
         public static final double kIAngle = 0.0;
-        public static final double kDAngle = 0.0;
+        public static final double kDAngle = 0.5;
         public static final double kFFAngle = 4.0;
 
     }
@@ -117,7 +117,7 @@ public final class Constants {
 
         public static final double maxHeight = Units.inchesToMeters(17.5);
 
-        public static final double kP = 1.0;
+        public static final double kP = 15.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
         public static final double kFF = 25.58;

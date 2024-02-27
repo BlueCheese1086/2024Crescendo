@@ -5,15 +5,16 @@ import org.littletonrobotics.junction.Logger;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 
 import Util.DebugPID;
 import Util.IntializedSubsystem;
 
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,22 +27,21 @@ public class Intake extends SubsystemBase implements IntializedSubsystem {
     private final CANSparkMax angle = new CANSparkMax(IntakeConstants.angleID, MotorType.kBrushless);
 
     private final RelativeEncoder rollersEnc;
-    private final AbsoluteEncoder angleEnc;
+    private final RelativeEncoder angleEnc;
+    private final AbsoluteEncoder angleAbs;
 
     private final PIDController rollersPID;
     private final PIDController anglePID;
-    private final ArmFeedforward angleFeedforward;
+    private final SparkPIDController angleVoltageController;
+
     private final SimpleMotorFeedforward rollersFeedforward;
 
     public Intake() {
         rollers.restoreFactoryDefaults();
         angle.restoreFactoryDefaults();
 
-        rollers.setSmartCurrentLimit(40);
-        angle.setSmartCurrentLimit(20);
-
-        rollers.setInverted(true);
-        angle.setInverted(true);
+        rollers.setInverted(false);
+        angle.setInverted(false);
 
         rollers.setIdleMode(IdleMode.kCoast);
         angle.setIdleMode(IdleMode.kCoast);
@@ -49,25 +49,30 @@ public class Intake extends SubsystemBase implements IntializedSubsystem {
         rollersEnc = rollers.getEncoder();
         rollersEnc.setVelocityConversionFactor(IntakeConstants.rollersVelocityConversionFactor);
 
-        angleEnc = angle.getAbsoluteEncoder(Type.kDutyCycle);
-        angleEnc.setVelocityConversionFactor(IntakeConstants.anglePositionConverstionFactor / 60.0);
-        angleEnc.setPositionConversionFactor(IntakeConstants.anglePositionConverstionFactor);
-        angleEnc.setZeroOffset(IntakeConstants.angleOffset);
-        angleEnc.setInverted(true);
+        angleAbs = angle.getAbsoluteEncoder(Type.kDutyCycle);
+        angleAbs.setVelocityConversionFactor(IntakeConstants.anglePositionConverstionFactor / 60.0);
+        angleAbs.setPositionConversionFactor(IntakeConstants.anglePositionConverstionFactor);
+        angleAbs.setZeroOffset(IntakeConstants.angleOffset);
+        angleAbs.setInverted(false);
 
+        angleEnc = angle.getEncoder();
+        angleEnc.setPositionConversionFactor(2.0 * Math.PI / 54.55);
+        angleEnc.setVelocityConversionFactor(2.0 * Math.PI / 54.55 / 60.0);
+        angleEnc.setPosition(angleAbs.getPosition());
+
+        angleVoltageController = angle.getPIDController();
+        angleVoltageController.setP(1.0);
 
         rollersPID = new PIDController(IntakeConstants.kPRoller, IntakeConstants.kIRoller, IntakeConstants.kDRoller);
-
         anglePID = new PIDController(IntakeConstants.kPAngle, IntakeConstants.kIAngle, IntakeConstants.kDAngle);
 
-        angleFeedforward = new ArmFeedforward(0.05, 1.07, 0.51);
-        rollersFeedforward = new SimpleMotorFeedforward(1.0, 0.26, 2.22);
+        rollersFeedforward = new SimpleMotorFeedforward(0.0, 0.003, 0.0);
 
         rollers.burnFlash();
         angle.burnFlash();
 
-        new DebugPID(rollersPID, "IntakeRollers");
-        new DebugPID(anglePID, "IntakeAngle");
+        // new DebugPID(rollersPID, "IntakeRollers");
+        // new DebugPID(anglePID, "IntakeAngle");
     }
 
     public void initialize() {}
@@ -86,8 +91,10 @@ public class Intake extends SubsystemBase implements IntializedSubsystem {
         Logger.recordOutput("Intake/Angle/Velocity", angleEnc.getVelocity());
         Logger.recordOutput("Intake/Angle/Temperature", angle.getMotorTemperature());
 
-        SmartDashboard.putNumber("Intake/Angle", angleEnc.getPosition());
+        SmartDashboard.putNumber("Intake/AbsAngle", angleAbs.getPosition());
         SmartDashboard.putNumber("Intake/RollerSpeed", rollersEnc.getVelocity());
+
+        SmartDashboard.putNumber("Intake/RelEnc/Measurement", angle.getEncoder().getPosition());
 
     }
 
@@ -100,12 +107,16 @@ public class Intake extends SubsystemBase implements IntializedSubsystem {
     }
 
     public void setAnglePosition(double angleRads) {
-        angle.setVoltage(anglePID.calculate(angleEnc.getPosition(), angleRads) + angleFeedforward.calculate(angleEnc.getPosition(), angleRads));
-        // anglePID.setReference(angleRads, ControlType.kPosition);
+        double desiredVoltage = anglePID.calculate(angleAbs.getPosition(), angleRads) + 1.07 * Math.cos(angleAbs.getPosition());// + anglePID.getP() * angleFeedforward.calculate(angleAbs.getPosition(), 0.0);
+        SmartDashboard.putNumber("/Intake/DesiredAngle", angleRads);
+        SmartDashboard.putNumber("/Intake/DesiredVoltage", desiredVoltage);
+        SmartDashboard.putNumber("/Intake/CurrentDraw", angle.getOutputCurrent());
+        // angle.setVoltage(desiredVoltage);
+        angleVoltageController.setReference(desiredVoltage, ControlType.kVoltage);
     }
 
     public void setRollerSpeed(double rpm) {
-        rollers.setVoltage(rollersPID.calculate(rollersEnc.getVelocity(), rpm) + rollersFeedforward.calculate(rollersEnc.getVelocity()));
+        rollers.setVoltage(rollersPID.calculate(rollersEnc.getVelocity(), rpm) + rollersFeedforward.calculate(rpm));
         // rollersPID.setReference(rpm, ControlType.kVelocity);
     }
 

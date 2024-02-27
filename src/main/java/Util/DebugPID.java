@@ -57,7 +57,7 @@ public class DebugPID extends SubsystemBase {
         kp = new ControllableConfiguration("Tuning/"+name, "P", controllerGeneric.getP());
         ki = new ControllableConfiguration("Tuning/"+name, "I", controllerGeneric.getI());
         kd = new ControllableConfiguration("Tuning/"+name, "D", controllerGeneric.getD());
-        // kff = new ControllableConfiguration("Tuning/"+name, "FF", controller.getFF());
+        kff = new ControllableConfiguration("Tuning/"+name, "FF", 0.0);
         // Shuffleboard.getTab("Debug").add(name, debug);
     }
 

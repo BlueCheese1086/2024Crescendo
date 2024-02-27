@@ -9,7 +9,9 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import Util.DebugPID;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -37,6 +39,8 @@ public class SwerveModule extends SubsystemBase {
     private final DutyCycleEncoder absEncoder;
     private final double encOffset;
 
+    private SwerveModuleState state = new SwerveModuleState();
+
     public SwerveModule(String name, int driveID, int turnID, int encID, double encOffset) {
 
         this.name = name;
@@ -57,6 +61,7 @@ public class SwerveModule extends SubsystemBase {
         turn.setIdleMode(IdleMode.kCoast);
 
         driveRelEnc = drive.getEncoder();
+        driveRelEnc.setPosition(0.0);
         driveRelEnc.setPositionConversionFactor(SwerveConstants.drivePosConversionFactor);
         driveRelEnc.setVelocityConversionFactor(SwerveConstants.drivePosConversionFactor / 60.0);
 
@@ -75,6 +80,9 @@ public class SwerveModule extends SubsystemBase {
         turnPID.setI(SwerveConstants.kITurn, 0);
         turnPID.setD(SwerveConstants.kDTurn, 0);
         turnPID.setFF(SwerveConstants.kFFTurn, 0);
+
+        // new DebugPID(drivePID, "Drive/Drive");
+        // new DebugPID(turnPID, "Drive/Turn");
 
         drive.burnFlash();
         turn.burnFlash();
@@ -96,6 +104,7 @@ public class SwerveModule extends SubsystemBase {
         SmartDashboard.putNumber(name + "/AbsPosition", absEncoder.getAbsolutePosition());
         SmartDashboard.putNumber(name + "/TurnAngle", getHeading());
         SmartDashboard.putNumber(name + "/WheelSpeed", driveRelEnc.getVelocity());
+        SmartDashboard.putNumber(name + "/StateMS", state.speedMetersPerSecond);
         
     }
 
@@ -108,6 +117,10 @@ public class SwerveModule extends SubsystemBase {
      */
     public double getHeading() {
         return turnRelEnc.getPosition()%(2.0 * Math.PI);
+    }
+
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(driveRelEnc.getPosition(), new Rotation2d(getHeading()));
     }
 
     /**
@@ -129,6 +142,7 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public void setState(SwerveModuleState state) {
+        this.state = state;
         SwerveModuleState optimizedState = SwerveModuleState.optimize(state, new Rotation2d(getHeading()));
 
         double desiredAngle = optimizedState.angle.getRadians();

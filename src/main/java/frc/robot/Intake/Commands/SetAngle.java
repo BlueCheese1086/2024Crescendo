@@ -1,7 +1,6 @@
 package frc.robot.Intake.Commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Intake.Intake;
 
 public class SetAngle extends Command {
@@ -13,7 +12,7 @@ public class SetAngle extends Command {
     public SetAngle(double angle, Intake intake) {
         this.angle = angle;
         this.intake = intake;
-
+        addRequirements(intake);
     }
 
     public void initialize() {}
@@ -28,7 +27,7 @@ public class SetAngle extends Command {
     }
 
     public void end(boolean interr) {
-        intake.setAnglePosition(IntakeConstants.STOWED_ANGLE);
+        // intake.setAnglePosition(IntakeConstants.STOWED_ANGLE);
         // intake.stopAngle();
     }
     

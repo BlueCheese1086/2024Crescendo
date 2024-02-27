@@ -7,7 +7,7 @@ public class IntakeForShooter extends ParallelCommandGroup {
 
     public IntakeForShooter(Intake intake) {
         addCommands(
-            new SetAngle(0, intake),
+            new SetAngle(0.2, intake),
             new RunRollers(true, intake)
         );
     }

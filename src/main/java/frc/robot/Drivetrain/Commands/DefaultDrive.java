@@ -32,11 +32,14 @@ public class DefaultDrive extends Command {
     public void initialize() {}
 
     public void execute() {
-        ChassisSpeeds speeds = drivetrain.getSpeeds();
+        if (x_trans.getAsDouble() == 0.0 && y_trans.getAsDouble() == 0.0 && z_rot.getAsDouble() == 0.0) {
+            drivetrain.setX();
+            return;
+        }
 
         drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
-            x_trans.getAsDouble() * (DriveConstants.maxWheelVelocity + (marioKart.getAsBoolean() ? Math.signum(x_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-speeds.vxMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0)), 
-            y_trans.getAsDouble() * (DriveConstants.maxWheelVelocity + (marioKart.getAsBoolean() ? Math.signum(y_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-speeds.vyMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0)),
+            x_trans.getAsDouble() * (DriveConstants.maxWheelVelocity),// + (marioKart.getAsBoolean() ? Math.signum(x_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-speeds.vxMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0)), 
+            y_trans.getAsDouble() * (DriveConstants.maxWheelVelocity),// + (marioKart.getAsBoolean() ? Math.signum(y_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-speeds.vyMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0)),
             z_rot.getAsDouble() * DriveConstants.maxRotationalVelocity, 
             drivetrain.getYaw()));
     }

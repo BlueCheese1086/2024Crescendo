@@ -7,6 +7,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Drivetrain.Drivetrain;
+import frc.robot.Sensors.Gyro;
 
 public class DefaultDrive extends Command {
 
@@ -43,7 +44,7 @@ public class DefaultDrive extends Command {
             x_trans.getAsDouble() * (DriveConstants.maxWheelVelocity) + mult * (DriveConstants.maxWheelVelocity - drivetrain.getSpeeds().vxMetersPerSecond),
             y_trans.getAsDouble() * (DriveConstants.maxWheelVelocity) + mult * (DriveConstants.maxWheelVelocity - drivetrain.getSpeeds().vyMetersPerSecond),
             z_rot.getAsDouble() * DriveConstants.maxRotationalVelocity, 
-            drivetrain.getYaw()));
+            Gyro.getInstance().getAngle()));
     }
 
     public boolean isFinished() {

@@ -66,10 +66,6 @@ public class Gyro extends SubsystemBase {
         return Rotation2d.fromDegrees(pigeon.getYaw());
     }
 
-    public double getYaw() {
-        return pigeon.getYaw();
-    }
-
     public double getYawVelocity() {
         return yawVelo;
     }

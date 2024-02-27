@@ -125,7 +125,7 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
             m.initializeEncoder();
         }
         gyro.initGyro();
-        odometry = new SwerveDriveOdometry(kinematics, getYaw(), positions);
+        odometry = new SwerveDriveOdometry(kinematics, gyro.getAngle(), positions);
     }
 
     public void periodic() {
@@ -134,10 +134,10 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
             states[i] = modules[i].getState();
         }
 
-        odometry.update(getYaw(), positions);
+        odometry.update(gyro.getAngle(), positions);
         field.setRobotPose(odometry.getPoseMeters());
 
-        SmartDashboard.putNumber("/Gyro", gyro.getYaw());
+        SmartDashboard.putNumber("/Gyro", gyro.getAngle().getDegrees());
         SmartDashboard.putData(field);
         SmartDashboard.putNumber("PDH/TotalCurrent", Robot.pdh.getTotalCurrent());
     }
@@ -148,7 +148,7 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
 
     public void resetPose(Pose2d p) {
         field.setRobotPose(p);
-        odometry.resetPosition(getYaw(), positions, p);
+        odometry.resetPosition(gyro.getAngle(), positions, p);
     }
     
     public SwerveModulePosition[] getPositions() {
@@ -157,10 +157,6 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
 
     public ChassisSpeeds getSpeeds() {
         return kinematics.toChassisSpeeds(states);
-    }
-
-    public Rotation2d getYaw() {
-        return Rotation2d.fromDegrees(gyro.getYaw());
     }
 
     public void drive(ChassisSpeeds speeds) {

@@ -10,7 +10,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -20,15 +19,18 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelPositions;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.AutoFinder;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 
 public class Drivetrain extends SubsystemBase {
+    // Setting the initial poses for the robot.
     enum InitPoses {
-        BLUE(new Pose2d(2, 6, new Rotation2d())),
-        RED(new Pose2d(14.592, 6, new Rotation2d(Math.PI)));
+        BLUE(new Pose2d(2, 7, new Rotation2d())),
+        //16.592 m
+        RED(new Pose2d(14.592, 7, new Rotation2d(Math.PI)));
 
         public Pose2d pose;
 
@@ -36,6 +38,7 @@ public class Drivetrain extends SubsystemBase {
             this.pose = pose;
         }
     }
+
     // The motors for the drivetrain subsystem
     private CANSparkMax frontLeftMotor;
     private CANSparkMax backLeftMotor;
@@ -57,12 +60,9 @@ public class Drivetrain extends SubsystemBase {
     public final DifferentialDriveKinematics kinematics;
 
     // Odometry
-    public final Pose2d initPose;
     private Pose2d pose;
     private Field2d field = new Field2d();
     private final DifferentialDriveOdometry odometry;
-    private final DifferentialDrivePoseEstimator estimator;
-    private FieldObject2d fieldObj = field.getObject("Odometry");
 
     /** Creates a new instance of the Drivetrain subsystem. */
     public Drivetrain() {
@@ -145,12 +145,16 @@ public class Drivetrain extends SubsystemBase {
         // Initializing Kinematics
         kinematics = new DifferentialDriveKinematics(DriveConstants.trackWidth);
 
+        // Getting alliance
+        boolean isRed = DriverStation.getAlliance().isPresent() && (DriverStation.getAlliance().get() == DriverStation.Alliance.Red);
+
+        // Initializing pose
+        // String firstPath = AutoFinder.getFirstPathName(AutoConstants.autoName);
+        // pose = AutoFinder.getInitPoseFromPathName(firstPath);
+        pose = isRed ? InitPoses.RED.pose : InitPoses.BLUE.pose;
+        
         // Initializing Odometry
-        initPose = new Pose2d(2, 6, new Rotation2d());
-        pose = initPose;
-        odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(gyro.getYaw()), leftEncoder.getPosition(), rightEncoder.getPosition(), pose);
-        estimator = new DifferentialDrivePoseEstimator(kinematics, getAngle(), leftEncoder.getPosition(), rightEncoder.getPosition(), initPose);
-        // odometry = new DifferentialDriveOdometry(new Rotation2d(), 0, 0);
+        odometry = new DifferentialDriveOdometry(getAngle(), leftEncoder.getPosition(), rightEncoder.getPosition(), pose);
         // maybe use getAngle when creating initPose
 
         // Implementing PathPlanner
@@ -159,14 +163,26 @@ public class Drivetrain extends SubsystemBase {
             this::resetPose,
             this::getSpeeds,
             this::drive,
-            0.25, // Straight PID P
-            0.5, // Turn PID P
+            0.5, // Forward PID P. (Same as motor PIDs.)
+            0.25, // Turn PID P.
             new ReplanningConfig(),
-            () -> DriverStation.getAlliance().isPresent() && (DriverStation.getAlliance().get() == DriverStation.Alliance.Red),
-            // Watch initpose when alliance is red.  robot may go to the wrong side of the field.
-            // NOTE: Driverstation defaults to red.
+            () -> isRed,
             this
         );
+
+        // Last test results:
+        // b: 0.25
+        // distance moved: 0.43m
+        // target distance: 1m
+        // To do: Increase b
+
+        // Set out yardstick and test P value.
+        // If robot overshoots the 1 meter mark, lower p.  reverse if undershot
+        // add d if there is a minor overshoot. (don't need though.)
+        // add i for "smoothness", probably shouldn't use though
+        // tune on carpet
+        // be careful for canter
+        // Do the same test for angular PID
     }
 
     /** 
@@ -175,15 +191,15 @@ public class Drivetrain extends SubsystemBase {
     */
     @Override
     public void periodic() {        
-        SmartDashboard.putNumber("Angle", getAngle().getDegrees());
-
-        Pose2d estimatedPose = estimator.update(getAngle(), getPositions());
-        field.setRobotPose(estimatedPose);
-
-        Pose2d odometryPose = odometry.update(getAngle(), getPositions());
-        fieldObj.setPose(odometryPose);
+        pose = odometry.update(getAngle(), getPositions());
+        field.setRobotPose(pose);
 
         SmartDashboard.putData("Field", field);
+        SmartDashboard.putNumber("Left Encoder", leftEncoder.getPosition());
+        SmartDashboard.putNumber("Right Encoder", rightEncoder.getPosition());
+        SmartDashboard.putBoolean("At 1m", (leftEncoder.getPosition() + rightEncoder.getPosition()) / 2 > 1);
+        SmartDashboard.putNumber("Left Speed", leftEncoder.getVelocity());
+        SmartDashboard.putNumber("Right Speed", rightEncoder.getVelocity());
     }
 
     /**
@@ -192,7 +208,7 @@ public class Drivetrain extends SubsystemBase {
      * @return A Pose2d representing the robot's position.
      */
     public Pose2d getPose() {
-        return estimator.getEstimatedPosition();
+        return this.pose;
     }
 
     /**
@@ -212,18 +228,9 @@ public class Drivetrain extends SubsystemBase {
      */
     public void drive(ChassisSpeeds speeds) {
         DifferentialDriveWheelSpeeds diffSpeeds = kinematics.toWheelSpeeds(speeds);
-        SmartDashboard.putNumber("Left Speed", diffSpeeds.leftMetersPerSecond);
-        SmartDashboard.putNumber("Right Speed", diffSpeeds.rightMetersPerSecond);
 
         leftPID.setReference(diffSpeeds.leftMetersPerSecond, ControlType.kVelocity);
         rightPID.setReference(diffSpeeds.rightMetersPerSecond, ControlType.kVelocity);
-        // Set out yardstick and test P value.
-        // If robot overshoots the 1 meter mark, lower p.  reverse if undershot
-        // add d if there is a minor overshoot.
-        // add i for "smoothness", probably shouldn't use though
-        // tune on carpet
-        // be careful for canter
-        // Do the same test for angular PID
     }
 
     /**

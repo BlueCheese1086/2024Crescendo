@@ -1,31 +1,21 @@
 package frc.robot.commands;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import com.revrobotics.RelativeEncoder;
-
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.BangBangController;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.driveSubsystem;
-import frc.robot.subsystems.*;
+import frc.robot.Constants.DriveConstants;
 
-public class Align extends Command{
+public class AlignYaw extends Command{
 
     private final driveSubsystem m_subsystem;
     private final boolean alignDo;
-
-    private final RelativeEncoder encoderFL;
-    private final RelativeEncoder encoderFR; 
 
     double yaw;
     double pitch;
@@ -37,17 +27,16 @@ public class Align extends Command{
 
     static BangBangController controller = new BangBangController();
     
-    public Align(driveSubsystem subsystem, boolean alignDo) {
+    public AlignYaw(driveSubsystem subsystem, boolean alignDo) {
         m_subsystem = subsystem;
         this.alignDo = alignDo;
-        encoderFL = m_subsystem.getEncoderFL();
-        encoderFR = m_subsystem.getEncoderFR();
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
-      }
+    }
       
       public void execute() {
+        SmartDashboard.putBoolean("Shift Light", false);
         result = camera.getLatestResult();
         if(result.hasTargets()){
           boolean targetThere = false;
@@ -58,32 +47,54 @@ public class Align extends Command{
               yaw = target.getYaw();
               pitch = target.getPitch();
               targetThere = true;
+              
             }
           }
           if (!targetThere) {
             yaw = 0;
           }
-          //Transform3d camToTarget = target.getBestCameraToTarget();
           SmartDashboard.putNumber("Yaw value", yaw);
           SmartDashboard.putNumber("Pitch value", pitch);
-          SmartDashboard.putNumber("Feducial ID1", targets.get(0).getFiducialId());
-          if (targets.size() > 1) {
-            SmartDashboard.putNumber("Feducial ID2", targets.get(1).getFiducialId());
-          } else {
-            SmartDashboard.putNumber("Feducial ID2", -1);
-          }
+          //Transform3d camToTarget = target.getBestCameraToTarget();
           //SmartDashboard.putNumber("X distance", camToTarget.getX());
           //SmartDashboard.putNumber("Y distance", camToTarget.getY());
           //SmartDashboard.putNumber("Z distance", camToTarget.getZ());
+          //SmartDashboard.putNumber("Feducial ID1", targets.get(0).getFiducialId());
+          /*if (targets.size() > 1) {
+            SmartDashboard.putNumber("Feducial ID2", targets.get(1).getFiducialId());
+          } else {
+            SmartDashboard.putNumber("Feducial ID2", -1);
+          }*/
         }
         else {
           yaw = 0;
           SmartDashboard.putNumber("Yaw value", yaw);
-          SmartDashboard.putNumber("Pitch value", pitch);
         }
 
         if (alignDo){
-            m_subsystem.driveAlign(yaw); //uncomment when you know that yaw works correctly
+            m_subsystem.driveAlignYaw(yaw);
         } 
+      }
+
+      @Override
+      public boolean isFinished() {
+        if(result.hasTargets()){
+          return MathUtil.applyDeadband(yaw, DriveConstants.YAW_DEADBAND) == 0 && (target.getFiducialId() == 4 || target.getFiducialId() == 7);
+        }
+        else{
+          return false;
+        }
+      }
+
+      @Override
+      public void end(boolean interrupted) {
+        if(pitch > 2.42){
+          SmartDashboard.putBoolean("Shift Light", true);
+        }
+        else{
+          SmartDashboard.putBoolean("Shift Light", false);
+        }
+        yaw = 0;
+        m_subsystem.driveAlignYaw(0);
       }
 }

@@ -5,11 +5,13 @@
 package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -18,6 +20,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -41,13 +44,20 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    NamedCommands.registerCommand("Auto Shoot", new AutoShoot(m_DriveSubsystem, m_ShooterSubsystem));
+    NamedCommands.registerCommand("Shoot", new Shoot(m_ShooterSubsystem));
+    NamedCommands.registerCommand("Intake", new Intake(m_ShooterSubsystem));
+    NamedCommands.registerCommand("AlignYaw", new AlignYaw(m_DriveSubsystem, true));
+
     // Configure the trigger bindings
     configureBindings();
 
     m_DriveSubsystem.setDefaultCommand(
-    new Drive(m_DriveSubsystem, () -> new ChassisSpeeds(MathUtil.applyDeadband(-joy.getLeftY(), DriveConstants.DEADBAND)*DriveConstants.MAX_DRIVE_SPEED, MathUtil.applyDeadband(-joy.getLeftX(), DriveConstants.DEADBAND)*DriveConstants.MAX_DRIVE_SPEED, -joy.getLeftX()*3.14))
-    //() -> MathUtil.applyDeadband((-joy.getLeftX()), DriveConstants.DEADBAND), //Rotate speed
-    //() -> MathUtil.applyDeadband((-joy.getLeftY()), DriveConstants.DEADBAND)) //Drive speed
+      new Drive(m_DriveSubsystem, () -> new ChassisSpeeds(
+        MathUtil.applyDeadband(-joy.getLeftY(), DriveConstants.DEADBAND)*DriveConstants.MAX_DRIVE_SPEED, 
+        0, 
+        MathUtil.applyDeadband(-joy.getRightX(), DriveConstants.DEADBAND)*DriveConstants.MAX_TURN_SPEED
+      ))
     );
   }
 
@@ -61,16 +71,27 @@ public class RobotContainer {
    * joysticks}
    */
   private void configureBindings() {
-    xbox.x().whileTrue(new Align(m_DriveSubsystem, true));
+    /*xbox.button(4).whileTrue(new AlignYaw(m_DriveSubsystem, true));
+    xbox.button(3).onTrue(new Shoot(m_ShooterSubsystem));
+    xbox.button(2).whileTrue(new Intake(m_ShooterSubsystem));
+    xbox.button(1).onTrue(new AutoShoot(m_DriveSubsystem, m_ShooterSubsystem));
+    xbox.pov(0).whileTrue(new TopSpeed(m_ShooterSubsystem, 0.01));
+    xbox.pov(180).whileTrue(new TopSpeed(m_ShooterSubsystem, -0.01));*/
+
+    //Normal controller:
+    xbox.x().whileTrue(new AlignYaw(m_DriveSubsystem, true));
     xbox.a().onTrue(new Shoot(m_ShooterSubsystem));
     xbox.b().whileTrue(new Intake(m_ShooterSubsystem));
+    xbox.y().onTrue(new AutoShoot(m_DriveSubsystem, m_ShooterSubsystem));
+    xbox.leftBumper().onTrue(new InstantCommand(() -> m_DriveSubsystem.resetOdometry()));
   }
 
     public Command getAutonomousCommand() {
         // Load the path you want to follow using its name in the GUI
-        PathPlannerPath path = PathPlannerPath.fromPathFile("Short Forward");
+        PathPlannerPath path = PathPlannerPath.fromPathFile("1 meter");
 
         // Create a path following command using AutoBuilder. This will also trigger event markers.
         return AutoBuilder.followPath(path);
+       // return new PathPlannerAuto("1 note");
     }
 }

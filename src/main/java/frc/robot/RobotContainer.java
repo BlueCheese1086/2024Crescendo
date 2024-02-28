@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.Drivetrain.commands.ArcadeDrive;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.Launcher.commands.RunFeed;
 import frc.robot.Launcher.commands.RunFlywheel;
@@ -35,7 +36,6 @@ public class RobotContainer {
     private void configureBindings() {
         // Assigning operations to each button.
         // "A" runs the launcher in reverse to collect notes.
-        // "B" resets the encoders and odometry.
         // "Left Bumper" runs the flywheel on the launcher.
         // "Right Bumper" runs the feed wheel on the launcher.
         xbox.a().whileTrue(new RunFlywheel(launcher, -1));
@@ -49,7 +49,7 @@ public class RobotContainer {
      * @return The command to run in Autonomous mode.
      */
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("KitbotAuto");
+        return new PathPlannerAuto("Testing Auto");
     }
 
     /**

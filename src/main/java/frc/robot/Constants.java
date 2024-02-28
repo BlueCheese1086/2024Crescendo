@@ -47,4 +47,8 @@ public final class Constants {
         public static final int feedSpeed = 1;
         public static final int launchSpeed = 1;
     }
+
+    public static class AutoConstants {
+        public static final String autoName = "KitbotAuto";
+    }
 }

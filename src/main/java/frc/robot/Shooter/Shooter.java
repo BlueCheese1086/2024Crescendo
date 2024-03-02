@@ -35,7 +35,7 @@ public class Shooter extends SubsystemBase implements IntializedSubsystem {
         back.setInverted(false);
 
         front.setIdleMode(IdleMode.kCoast);
-        back.setIdleMode(IdleMode.kCoast);
+        back.setIdleMode(IdleMode.kBrake);
 
         frontEnc = front.getEncoder();
         frontEnc.setVelocityConversionFactor(1.0);

@@ -10,14 +10,12 @@ import com.pathplanner.lib.auto.NamedCommands;
 import Util.ControllableConfiguration;
 import Util.IntializedSubsystem;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Climb.Climb;
 import frc.robot.Climb.Commands.SetClimbPos;
 import frc.robot.Constants.IntakeConstants;
@@ -50,7 +48,7 @@ public class RobotContainer {
 
 		primary = new CommandXboxController(0);
 		secondary = new CommandXboxController(1);
-		// secondary = primary;
+		secondary = primary;
 
 		NamedCommands.registerCommand("Intake", new IntakeForShooter(intake));
 		NamedCommands.registerCommand("Shoot", new RunShooter(5500, 15000, secondary, shooter));
@@ -58,6 +56,9 @@ public class RobotContainer {
 		autoChooser = AutoBuilder.buildAutoChooser();
 		SmartDashboard.putData(autoChooser);
 
+		for (SubsystemBase s : new SubsystemBase[]{drivetrain, climb, shooter}) {
+			((IntializedSubsystem) s).initialize();
+		}
 
 		drivetrain.setDefaultCommand(
 			new DefaultDrive(
@@ -75,12 +76,6 @@ public class RobotContainer {
 
 	private void configureBindings() {
 
-		new Trigger(() -> DriverStation.isDSAttached()).onTrue(new InstantCommand(() -> {
-			for (SubsystemBase s : new SubsystemBase[]{drivetrain, climb, shooter}) {
-				((IntializedSubsystem) s).initialize();
-			}
-		}));
-
 		primary.leftStick().onTrue(new InstantCommand(() -> {
 			Gyro.getInstance().setAngle(0.0);
 		}));
@@ -91,10 +86,11 @@ public class RobotContainer {
 		secondary.a().whileTrue(new IntakeForShooter(intake));
 		secondary.b().whileTrue(new RunRollers(false, intake));
 
-		secondary.y().toggleOnTrue(new RunShooter(5500.0, 0.0, secondary, shooter));
-		secondary.x().whileTrue(new RunShooter(5500.0, 5500, secondary, shooter));
+		// secondary.y().toggleOnTrue(new RunShooter(5500.0, 0.0, secondary, shooter));
+		// secondary.x().whileTrue(new RunShooter(5500.0, 5500, secondary, shooter));
 		secondary.pov(90).whileTrue(new RunShooter(-5500, -5500, secondary, shooter));
-		secondary.pov(270).whileTrue(new RunShooter(1, 1000, primary, shooter));
+		secondary.pov(180).whileTrue(new RunRollers(true, intake));
+		secondary.pov(270).whileTrue(new RunShooter(50, 500, primary, shooter));
 
 		secondary.rightTrigger(0.1).whileTrue(new SetClimbPos(-1, 0, climb));
 		secondary.leftTrigger(0.1).whileTrue(new SetClimbPos(0, -1, climb));
@@ -112,7 +108,7 @@ public class RobotContainer {
 	}
 
 	public void setGyroAngle() {
-		Gyro.getInstance().setAngle(drivetrain.getPose().getRotation().getDegrees());
+		// Gyro.getInstance().setAngle(drivetrain.getPose().getRotation().getDegrees());
 	}
 
 	public Command getAutonomousCommand() {

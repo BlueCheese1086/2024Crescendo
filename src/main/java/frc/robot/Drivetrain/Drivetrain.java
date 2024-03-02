@@ -99,6 +99,8 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
             positions[i] = new SwerveModulePosition();
         }
 
+        odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(), positions);
+
         AutoBuilder.configureHolonomic(
             this::getPose,
             this::resetPose,
@@ -114,7 +116,6 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
             () -> DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red,
             this
         );
-
     }
 
     public void initialize() {
@@ -161,11 +162,11 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
 
     public void drive(ChassisSpeeds speeds) {
         ChassisSpeeds currentSpeeds = kinematics.toChassisSpeeds(states);
-        double currentRotation = gyro.getYawVelocity();
+        double currentRotation = gyro.getYawVelocity().getRadians();
         ChassisSpeeds newSpeeds = new ChassisSpeeds(
-            speeds.vxMetersPerSecond + 0.5 * (currentSpeeds.vxMetersPerSecond - speeds.vxMetersPerSecond), 
-            speeds.vyMetersPerSecond + 0.5 * (currentSpeeds.vyMetersPerSecond - speeds.vyMetersPerSecond), 
-            speeds.omegaRadiansPerSecond + 0.5 * (currentRotation - speeds.omegaRadiansPerSecond));
+            speeds.vxMetersPerSecond + 0.01 * (currentSpeeds.vxMetersPerSecond - speeds.vxMetersPerSecond), 
+            speeds.vyMetersPerSecond + 0.01 * (currentSpeeds.vyMetersPerSecond - speeds.vyMetersPerSecond), 
+            -speeds.omegaRadiansPerSecond + 0.01 * (currentRotation - -speeds.omegaRadiansPerSecond));
         SwerveModuleState[] desiredStates = kinematics.toSwerveModuleStates(newSpeeds);
 
         for (int i = 0; i < modules.length; i++) {

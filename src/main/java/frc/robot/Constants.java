@@ -24,22 +24,22 @@ public final class Constants {
         public static final int frontLeftTurnID = 1;
         public static final int frontLeftDriveID = 2;
         public static final int frontLeftEncID = 9;
-        public static final double frontLeftOffset = 0.007;
+        public static final double frontLeftOffset = 0.003914;
 
         public static final int backLeftTurnID = 3;
         public static final int backLeftDriveID = 4;
         public static final int backLeftEncID = 1;
-        public static final double backLeftOffset = 0.079;
+        public static final double backLeftOffset = 0.080060;
 
         public static final int frontRightTurnID = 7;
         public static final int frontRightDriveID = 8;
         public static final int frontRightEncID = 8;
-        public static final double frontRightOffset = 0.498;
+        public static final double frontRightOffset = 0.498342;
 
         public static final int backRightTurnID = 5;
         public static final int backRightDriveID = 6;
         public static final int backRightEncID = 0;
-        public static final double backRightOffset = 0.594;
+        public static final double backRightOffset = 0.590329;
 
         public static final int pigeonID = 2;
 
@@ -47,7 +47,7 @@ public final class Constants {
         public static final double driveRatio = 0.0;
         public static final double wheelCircumpherence = Units.inchesToMeters(4.0 * Math.PI);
 
-        public static final double maxWheelVelocity = Units.feetToMeters(19.8);
+        public static final double maxWheelVelocity = Units.feetToMeters(5.0);// Units.feetToMeters(19.8);
         public static final double maxRotationalVelocity = maxWheelVelocity/moduleToCenterDistance;
 
     }

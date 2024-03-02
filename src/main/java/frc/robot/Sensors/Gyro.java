@@ -36,7 +36,12 @@ public class Gyro extends SubsystemBase {
     public void initGyro() {
         pigeon.configFactoryDefault();
         // The gyro is offset by 180deg
-        pigeon.setYaw(DriverStation.getAlliance().get() == Alliance.Red ? 0 : 180);
+        try {
+            pigeon.setYaw(DriverStation.getAlliance().get() == Alliance.Red ? 0 : 180);
+        } catch (Exception e) {
+            pigeon.setYaw(0.0);
+        }
+        
         yawVelo = 0.0;
         prevYaw = pigeon.getYaw();
         rollOffset = pigeon.getRoll();
@@ -46,10 +51,14 @@ public class Gyro extends SubsystemBase {
     @Override
     public void periodic() {
         timer.stop();
-        yawVelo += 0.5 * (pigeon.getYaw() - prevYaw)/timer.get();
+        yawVelo = (pigeon.getYaw() - prevYaw)/timer.get();
+        SmartDashboard.putNumber("Gyro/PrevYaw", prevYaw);
+        prevYaw = pigeon.getYaw();
 
         SmartDashboard.putNumber("Gyro/Angle", getAngle().getDegrees());
         SmartDashboard.putNumber("Gyro/Pitch", getPitch());
+        SmartDashboard.putNumber("Gyro/AngularVelocity", getYawVelocity().getDegrees());
+        SmartDashboard.putNumber("Gyro/Period", timer.get());
         SmartDashboard.putNumber("Gyro/Roll", getRoll());
         SmartDashboard.putNumber("Gyro/Yaw", pigeon.getYaw());
         SmartDashboard.putNumber("Gyro/RotationAtHeading0", getPitchAtHeading(new Rotation2d()).getDegrees());
@@ -66,8 +75,8 @@ public class Gyro extends SubsystemBase {
         return Rotation2d.fromDegrees(pigeon.getYaw());
     }
 
-    public double getYawVelocity() {
-        return yawVelo;
+    public Rotation2d getYawVelocity() {
+        return Rotation2d.fromDegrees(yawVelo);
     }
 
     public double getPitch() {

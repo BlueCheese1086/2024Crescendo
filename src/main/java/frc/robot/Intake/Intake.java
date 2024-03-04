@@ -43,7 +43,7 @@ public class Intake extends SubsystemBase implements IntializedSubsystem {
         angle.setInverted(false);
 
         rollers.setIdleMode(IdleMode.kCoast);
-        angle.setIdleMode(IdleMode.kCoast);
+        angle.setIdleMode(IdleMode.kBrake);
 
         rollersEnc = rollers.getEncoder();
         rollersEnc.setVelocityConversionFactor(IntakeConstants.rollersVelocityConversionFactor);

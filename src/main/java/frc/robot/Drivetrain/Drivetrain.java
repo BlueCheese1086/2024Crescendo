@@ -162,7 +162,7 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
 
     public void drive(ChassisSpeeds speeds) {
         ChassisSpeeds currentSpeeds = kinematics.toChassisSpeeds(states);
-        double currentRotation = gyro.getYawVelocity().getRadians();
+        double currentRotation = gyro.getYawVelocity().getDegrees();
         ChassisSpeeds newSpeeds = new ChassisSpeeds(
             speeds.vxMetersPerSecond + 0.01 * (currentSpeeds.vxMetersPerSecond - speeds.vxMetersPerSecond), 
             speeds.vyMetersPerSecond + 0.01 * (currentSpeeds.vyMetersPerSecond - speeds.vyMetersPerSecond), 

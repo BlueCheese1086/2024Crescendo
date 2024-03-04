@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import Util.DebugPID;
 import Util.IntializedSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -53,6 +54,9 @@ public class Climb extends SubsystemBase implements IntializedSubsystem {
         rightPID.setI(ClimbConstants.kI);
         rightPID.setD(ClimbConstants.kD);
         rightPID.setFF(ClimbConstants.kFF);
+
+        new DebugPID(leftPID, "Climb/LeftPID");
+        new DebugPID(rightPID, "Climb/RightPID");
 
         left.burnFlash();
         right.burnFlash();

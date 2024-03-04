@@ -53,11 +53,14 @@ public class SwerveModule extends SubsystemBase {
         drive.restoreFactoryDefaults();
         turn.restoreFactoryDefaults();
 
+        drive.setSmartCurrentLimit(60);
+        turn.setSmartCurrentLimit(30);
+
         drive.setInverted(false);
         turn.setInverted(false);
 
         drive.setIdleMode(IdleMode.kCoast);
-        turn.setIdleMode(IdleMode.kCoast);
+        turn.setIdleMode(IdleMode.kBrake);
 
         driveRelEnc = drive.getEncoder();
         driveRelEnc.setPosition(0.0);
@@ -108,7 +111,8 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public void initializeEncoder() {
-        turnRelEnc.setPosition((absEncoder.getAbsolutePosition() - encOffset) * (2.0 * Math.PI));
+        turnRelEnc.setPosition(0.0);
+        // turnRelEnc.setPosition((absEncoder.getAbsolutePosition() - encOffset) * (2.0 * Math.PI));
     }
 
     /**

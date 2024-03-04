@@ -48,7 +48,7 @@ public class RobotContainer {
 
 		primary = new CommandXboxController(0);
 		secondary = new CommandXboxController(1);
-		secondary = primary;
+		// secondary = primary;
 
 		NamedCommands.registerCommand("Intake", new IntakeForShooter(intake));
 		NamedCommands.registerCommand("Shoot", new RunShooter(5500, 15000, secondary, shooter));
@@ -86,8 +86,8 @@ public class RobotContainer {
 		secondary.a().whileTrue(new IntakeForShooter(intake));
 		secondary.b().whileTrue(new RunRollers(false, intake));
 
-		// secondary.y().toggleOnTrue(new RunShooter(5500.0, 0.0, secondary, shooter));
-		// secondary.x().whileTrue(new RunShooter(5500.0, 5500, secondary, shooter));
+		secondary.y().toggleOnTrue(new RunShooter(5500.0, 0.0, secondary, shooter));
+		secondary.x().whileTrue(new RunShooter(5500.0, 5500, secondary, shooter));
 		secondary.pov(90).whileTrue(new RunShooter(-5500, -5500, secondary, shooter));
 		secondary.pov(180).whileTrue(new RunRollers(true, intake));
 		secondary.pov(270).whileTrue(new RunShooter(50, 500, primary, shooter));

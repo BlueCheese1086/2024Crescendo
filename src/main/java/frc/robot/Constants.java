@@ -24,30 +24,28 @@ public final class Constants {
         public static final int frontLeftTurnID = 1;
         public static final int frontLeftDriveID = 2;
         public static final int frontLeftEncID = 9;
-        public static final double frontLeftOffset = 0.003914;
+        public static final double frontLeftOffset = 0.0;
 
         public static final int backLeftTurnID = 3;
         public static final int backLeftDriveID = 4;
         public static final int backLeftEncID = 1;
-        public static final double backLeftOffset = 0.080060;
+        public static final double backLeftOffset = 0.0;
 
         public static final int frontRightTurnID = 7;
         public static final int frontRightDriveID = 8;
         public static final int frontRightEncID = 8;
-        public static final double frontRightOffset = 0.498342;
+        public static final double frontRightOffset = 0.0;
 
         public static final int backRightTurnID = 5;
         public static final int backRightDriveID = 6;
         public static final int backRightEncID = 0;
-        public static final double backRightOffset = 0.590329;
+        public static final double backRightOffset = 0.0;
 
         public static final int pigeonID = 2;
 
-        public static final double turnRatio = 0.0;
-        public static final double driveRatio = 0.0;
         public static final double wheelCircumpherence = Units.inchesToMeters(4.0 * Math.PI);
 
-        public static final double maxWheelVelocity = Units.feetToMeters(5.0);// Units.feetToMeters(19.8);
+        public static final double maxWheelVelocity = Units.feetToMeters(19.8);
         public static final double maxRotationalVelocity = maxWheelVelocity/moduleToCenterDistance;
 
     }
@@ -115,12 +113,12 @@ public final class Constants {
         public static final double climbGearboxRatio = 25.0;
         public static final double climbConversionFactor = Units.inchesToMeters(1.5*Math.PI) / climbGearboxRatio;
 
-        public static final double maxHeight = Units.inchesToMeters(17.5);
+        public static final double maxHeight = Units.inchesToMeters(18);
 
-        public static final double kP = 15.0;
+        public static final double kP = 7.5;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
-        public static final double kFF = 25.58;
+        public static final double kFF = 0.0;
 
     }
 

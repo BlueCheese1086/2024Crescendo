@@ -21,7 +21,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
-import com.ctre.phoenix.sensors.WPI_PigeonIMU;
+import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -29,73 +29,80 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
  * Drivetrain subsystem controlled with arcade-style inputs.
  */
 public class Drivetrain extends SubsystemBase {
-  CANSparkMax m_rightFront = new CANSparkMax(RightFrontMotor, MotorType.kBrushless);
-  CANSparkMax m_rightBack = new CANSparkMax(RightBackMotor, MotorType.kBrushless);
-  CANSparkMax m_leftFront = new CANSparkMax(LeftFrontMotor, MotorType.kBrushless);
-  CANSparkMax m_leftBack = new CANSparkMax(LeftBackMotor, MotorType.kBrushless);
+  CANSparkMax rightFront = new CANSparkMax(RightFrontMotor, MotorType.kBrushless);
+  CANSparkMax rightBack = new CANSparkMax(RightBackMotor, MotorType.kBrushless);
+  CANSparkMax leftFront = new CANSparkMax(LeftFrontMotor, MotorType.kBrushless);
+  CANSparkMax leftBack = new CANSparkMax(LeftBackMotor, MotorType.kBrushless);
 
-  SparkPIDController m_rightFrontPID = m_rightFront.getPIDController();
-  SparkPIDController m_leftFrontPID = m_leftFront.getPIDController();
+  SparkPIDController rightFrontPID = rightFront.getPIDController();
+  SparkPIDController leftFrontPID = leftFront.getPIDController();
 
-  RelativeEncoder m_rightFrontEncoder = m_rightFront.getEncoder();
-  RelativeEncoder m_leftFrontEncoder = m_leftFront.getEncoder();
+  RelativeEncoder rightFrontEncoder = rightFront.getEncoder();
+  RelativeEncoder leftFrontEncoder = leftFront.getEncoder();
 
-  Pose2d m_pose = new Pose2d();
-  WPI_PigeonIMU m_pigeon = new WPI_PigeonIMU(0);
+  Pose2d pose = new Pose2d();
+  Pigeon2 pigeon = new Pigeon2(0);
 
-  public DifferentialDriveKinematics m_differentialKinematics = new DifferentialDriveKinematics(Units.inchesToMeters(21.5));
-  DifferentialDriveOdometry m_differentialOdometry;
+  DifferentialDriveKinematics differentialKinematics = new DifferentialDriveKinematics(Units.inchesToMeters(21.5));
+  DifferentialDriveOdometry differentialOdometry;
+
+  Field2d field = new Field2d();
 
   /**
    * Creates a new Drivetrain subsystem.
    */
   public Drivetrain() {
-    m_rightFront.restoreFactoryDefaults();
-    m_rightBack.restoreFactoryDefaults();
-    m_leftFront.restoreFactoryDefaults();
-    m_leftBack.restoreFactoryDefaults();
+    rightFront.restoreFactoryDefaults();
+    rightBack.restoreFactoryDefaults();
+    leftFront.restoreFactoryDefaults();
+    leftBack.restoreFactoryDefaults();
 
-    m_leftFront.setSmartCurrentLimit(DrivetrainLimits);
-    m_leftBack.setSmartCurrentLimit(DrivetrainLimits);
-    m_rightFront.setSmartCurrentLimit(DrivetrainLimits);
-    m_rightBack.setSmartCurrentLimit(DrivetrainLimits);
+    leftFront.setSmartCurrentLimit(DrivetrainLimits);
+    leftBack.setSmartCurrentLimit(DrivetrainLimits);
+    rightFront.setSmartCurrentLimit(DrivetrainLimits);
+    rightBack.setSmartCurrentLimit(DrivetrainLimits);
 
-    m_leftFront.setIdleMode(IdleMode.kBrake);
-    m_leftBack.setIdleMode(IdleMode.kBrake);
-    m_rightFront.setIdleMode(IdleMode.kBrake);
-    m_rightBack.setIdleMode(IdleMode.kBrake);
+    leftFront.setIdleMode(IdleMode.kBrake);
+    leftBack.setIdleMode(IdleMode.kBrake);
+    rightFront.setIdleMode(IdleMode.kBrake);
+    rightBack.setIdleMode(IdleMode.kBrake);
 
-    m_rightFront.setInverted(true);
-    m_leftFront.setInverted(false);
+    rightFront.setInverted(true);
+    leftFront.setInverted(false);
 
-    m_rightBack.follow(m_rightFront);
-    m_leftBack.follow(m_leftFront);
+    rightBack.follow(rightFront);
+    leftBack.follow(leftFront);
 
-    m_leftFrontPID.setP(0.25);
-    m_leftFrontPID.setI(0.0);
-    m_leftFrontPID.setD(0.0);
-    m_leftFrontPID.setFF(0.0);
+    leftFrontPID.setP(0.25);
+    leftFrontPID.setI(0.0);
+    leftFrontPID.setD(0.0);
+    leftFrontPID.setFF(0.0);
 
-    m_rightFrontPID.setP(0.25);
-    m_rightFrontPID.setI(0.0);
-    m_rightFrontPID.setD(0.0);
-    m_rightFrontPID.setFF(0.0);
+    rightFrontPID.setP(0.25);
+    rightFrontPID.setI(0.0);
+    rightFrontPID.setD(0.0);
+    rightFrontPID.setFF(0.0);
 
-    m_rightFrontEncoder.setPositionConversionFactor(Units.inchesToMeters(6) * Math.PI / 10.75);
-    m_leftFrontEncoder.setPositionConversionFactor(Units.inchesToMeters(6) * Math.PI / 10.75);
+    rightFrontEncoder.setPositionConversionFactor(Units.inchesToMeters(6) * Math.PI / 10.75);
+    leftFrontEncoder.setPositionConversionFactor(Units.inchesToMeters(6) * Math.PI / 10.75);
 
-    m_rightFrontEncoder.setVelocityConversionFactor(Units.inchesToMeters(6) * Math.PI / 10.75 / 60);
-    m_leftFrontEncoder.setVelocityConversionFactor(Units.inchesToMeters(6) * Math.PI / 10.75 / 60);
+    rightFrontEncoder.setVelocityConversionFactor(Units.inchesToMeters(6) * Math.PI / 10.75 / 60);
+    leftFrontEncoder.setVelocityConversionFactor(Units.inchesToMeters(6) * Math.PI / 10.75 / 60);
 
-    m_differentialOdometry = new DifferentialDriveOdometry(m_pigeon.getRotation2d(), m_leftFrontEncoder.getPosition(), m_rightFrontEncoder.getPosition());
+    pigeon.setYaw(0);
+
+    differentialOdometry = new DifferentialDriveOdometry(pigeon.getRotation2d(), leftFrontEncoder.getPosition(), rightFrontEncoder.getPosition());
 
     AutoBuilder.configureRamsete(
       this::getPose,
@@ -112,33 +119,41 @@ public class Drivetrain extends SubsystemBase {
       },
       this
     );
+
+    SmartDashboard.putData("Field", field);
   }
 
   public void periodic() {
-    m_differentialOdometry.update(m_pigeon.getRotation2d(), m_leftFrontEncoder.getPosition(), m_rightFrontEncoder.getPosition());
+    differentialOdometry.update(pigeon.getRotation2d(), leftFrontEncoder.getPosition(), rightFrontEncoder.getPosition());
+    SmartDashboard.putNumber("Left Speed", leftFrontEncoder.getVelocity());
+    SmartDashboard.putNumber("Right Speed", rightFrontEncoder.getVelocity());
+    SmartDashboard.putNumber("Angle", pigeon.getRotation2d().getDegrees());
+    field.setRobotPose(pose);
   }
 
   public Pose2d getPose() {
-    return m_differentialOdometry.getPoseMeters();
+    return differentialOdometry.getPoseMeters();
   }
 
   public void resetPose(Pose2d pose) {
-    m_differentialOdometry.resetPosition(m_pigeon.getRotation2d(), m_leftFrontEncoder.getPosition(), m_rightFrontEncoder.getPosition(), pose);
+    differentialOdometry.resetPosition(pigeon.getRotation2d(), leftFrontEncoder.getPosition(), rightFrontEncoder.getPosition(), pose);
   }
 
   public ChassisSpeeds getSpeeds() {
-    return m_differentialKinematics.toChassisSpeeds(
+    return differentialKinematics.toChassisSpeeds(
       new DifferentialDriveWheelSpeeds(
-        m_leftFrontEncoder.getVelocity(),
-        m_rightFrontEncoder.getVelocity()
+        leftFrontEncoder.getVelocity(),
+        rightFrontEncoder.getVelocity()
       )
     );
   }
 
   public void setSpeeds(ChassisSpeeds speeds) {
-    DifferentialDriveWheelSpeeds wheelSpeeds = m_differentialKinematics.toWheelSpeeds(speeds);
+    DifferentialDriveWheelSpeeds wheelSpeeds = differentialKinematics.toWheelSpeeds(speeds);
+    SmartDashboard.putNumber("Left Speed Setpoint", wheelSpeeds.leftMetersPerSecond);
+    SmartDashboard.putNumber("Right Speed Setpoint", wheelSpeeds.rightMetersPerSecond);
 
-    m_leftFrontPID.setReference(wheelSpeeds.leftMetersPerSecond, ControlType.kVelocity);
-    m_rightFrontPID.setReference(wheelSpeeds.rightMetersPerSecond, ControlType.kVelocity);
+    leftFrontPID.setReference(wheelSpeeds.leftMetersPerSecond, ControlType.kVelocity);
+    rightFrontPID.setReference(wheelSpeeds.rightMetersPerSecond, ControlType.kVelocity);
   }
 }

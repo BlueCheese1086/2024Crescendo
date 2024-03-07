@@ -15,19 +15,17 @@ import java.util.function.Supplier;
  */
 public class Drive extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Drivetrain m_drivetrain;
-  private final Supplier<Double> m_speedSupplier;
-  private final Supplier<Double> m_rotateSupplier;
+  private final Drivetrain drivetrain;
+  private final Supplier<ChassisSpeeds> speedSupplier;
 
   /**
    * Creates a new Drive command.
    *
    * @param drivetrain Drivetrain subsystem.
    */
-  public Drive(Drivetrain drivetrain, Supplier<Double> speedSupplier, Supplier<Double> rotateSupplier) {
-    m_drivetrain = drivetrain;
-    m_speedSupplier = speedSupplier;
-    m_rotateSupplier = rotateSupplier;
+  public Drive(Drivetrain drivetrain, Supplier<ChassisSpeeds> speedSupplier) {
+    this.drivetrain = drivetrain;
+    this.speedSupplier = speedSupplier;
     // Declare drivetrain subsystem dependency.
     addRequirements(drivetrain);
   }
@@ -35,22 +33,7 @@ public class Drive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double speed = m_speedSupplier.get();
-    double rotate = m_rotateSupplier.get();
-
-    double leftSpeed = speed - rotate;
-    double rightSpeed = speed + rotate;
-
-    double greaterInput = Math.max(Math.abs(speed), Math.abs(rotate));
-    double lesserInput = Math.min(Math.abs(speed), Math.abs(rotate));
-    if (greaterInput != 0) {
-      double saturatedInput = (greaterInput + lesserInput) / greaterInput;
-      leftSpeed /= saturatedInput;
-      rightSpeed /= saturatedInput;
-    }
-
-    ChassisSpeeds speeds = m_drivetrain.m_differentialKinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(leftSpeed, rightSpeed));
-    m_drivetrain.setSpeeds(speeds);  
+    drivetrain.setSpeeds(speedSupplier.get());  
   }
 
   // Returns true when the command should end.

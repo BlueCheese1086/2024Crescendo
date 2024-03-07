@@ -15,7 +15,11 @@ import frc.robot.subsystems.Launcher;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+
+import static frc.robot.Constants.DrivetrainConstants.DrivetrainSpeed;
+
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Joystick;
 
 /**
@@ -25,13 +29,13 @@ import edu.wpi.first.wpilibj.Joystick;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private final Drivetrain m_drivetrain = new Drivetrain();
-  private final Launcher m_launcher = new Launcher();
+  private final Drivetrain drivetrain = new Drivetrain();
+  private final Launcher launcher = new Launcher();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed.
-  // private final CommandXboxController m_driverController =
+  // private final CommandXboxController driverController =
   //     new CommandXboxController(OperatorConstants.kDriverControllerPort);
-  private final Joystick m_driverController =
+  private final Joystick driverController =
       new Joystick(OperatorConstants.kDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -50,17 +54,20 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_drivetrain.setDefaultCommand(
+    drivetrain.setDefaultCommand(
       new Drive(
-        m_drivetrain, 
-        () -> MathUtil.applyDeadband(-m_driverController.getRawAxis(1), 0.2), 
-        () -> MathUtil.applyDeadband(-m_driverController.getRawAxis(4), 0.2)
+        drivetrain,
+        () -> new ChassisSpeeds( 
+          MathUtil.applyDeadband(-driverController.getRawAxis(1), 0.2) * DrivetrainSpeed,
+          0,
+          MathUtil.applyDeadband(-driverController.getRawAxis(2), 0.2) * DrivetrainSpeed
+        )
       )
     );
 
-    new Trigger(() -> m_driverController.getRawButton(5)).whileTrue(new Flywheel(m_launcher));
-    new Trigger(() -> m_driverController.getRawButton(6)).whileTrue(new Launch(m_launcher));
-    new Trigger(() -> m_driverController.getRawButton(1)).whileTrue(new Intake(m_launcher));
+    new Trigger(() -> driverController.getRawButton(5)).whileTrue(new Flywheel(launcher));
+    new Trigger(() -> driverController.getRawButton(6)).whileTrue(new Launch(launcher));
+    new Trigger(() -> driverController.getRawButton(1)).whileTrue(new Intake(launcher));
   }
 
   /**
@@ -70,6 +77,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_drivetrain);
+    return Autos.exampleAuto(drivetrain);
   }
 }

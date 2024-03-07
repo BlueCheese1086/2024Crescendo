@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public class Intake extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Launcher m_launcher;
+  private final Launcher launcher;
 
   /**
    * Creates a new Intake command.
@@ -22,7 +22,7 @@ public class Intake extends Command {
    * @param launcher Launcher subsystem.
    */
   public Intake(Launcher launcher) {
-    m_launcher = launcher;
+    this.launcher = launcher;
     // Declare launcher subsystem dependency.
     addRequirements(launcher);
   }
@@ -30,16 +30,16 @@ public class Intake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_launcher.setLower(IntakeSpeed);
-    m_launcher.setUpper(IntakeSpeed);
+    launcher.setLower(IntakeSpeed);
+    launcher.setUpper(IntakeSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     // Stop the wheels; control systems are unnecessary.
-    m_launcher.stopLower();
-    m_launcher.stopUpper();
+    launcher.stopLower();
+    launcher.stopUpper();
   }
 
   // Returns true when the command should end.

@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public class Launch extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Launcher m_launcher;
+  private final Launcher launcher;
 
   /**
    * Creates a new Launch command.
@@ -22,7 +22,7 @@ public class Launch extends Command {
    * @param launcher Launcher subsystem.
    */
   public Launch(Launcher launcher) {
-    m_launcher = launcher;
+    this.launcher = launcher;
     // Declare launcher subsystem dependency.
     addRequirements(launcher);
   }
@@ -30,14 +30,14 @@ public class Launch extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_launcher.setLower(FeedSpeed);
+    launcher.setLower(FeedSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     // Stop the wheel; control systems are unnecessary.
-    m_launcher.stopLower();
+    launcher.stopLower();
   }
 
   // Returns true when the command should end.

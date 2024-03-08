@@ -90,6 +90,9 @@ public class SwerveModule extends SubsystemBase {
         turn.burnFlash();
     }
 
+    /**
+     * Publishes telemetry
+     */
     public void periodic() {
         // TODO
         // Telemetry
@@ -110,9 +113,11 @@ public class SwerveModule extends SubsystemBase {
         
     }
 
+    /**
+     * Sets the relative encoder to the value measured by the absolute encoder
+     */
     public void initializeEncoder() {
-        turnRelEnc.setPosition(0.0);
-        // turnRelEnc.setPosition((absEncoder.getAbsolutePosition() - encOffset) * (2.0 * Math.PI));
+        turnRelEnc.setPosition((absEncoder.getAbsolutePosition() - encOffset) * (2.0 * Math.PI));
     }
 
     /**
@@ -122,6 +127,9 @@ public class SwerveModule extends SubsystemBase {
         return turnRelEnc.getPosition()%(2.0 * Math.PI);
     }
 
+    /**
+     * @return Returns the position of the module
+     */
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(driveRelEnc.getPosition(), new Rotation2d(getHeading()));
     }
@@ -144,6 +152,10 @@ public class SwerveModule extends SubsystemBase {
         return turnRelEnc.getPosition() - theta;
     }
 
+    /**
+     * Sets the desired state of the module with a feedback controller
+     * @param state The desired state of the module
+     */
     public void setState(SwerveModuleState state) {
         this.state = state;
         SwerveModuleState optimizedState = SwerveModuleState.optimize(state, new Rotation2d(getHeading()));
@@ -155,18 +167,44 @@ public class SwerveModule extends SubsystemBase {
         drivePID.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity, 0);
     }
 
+    /**
+     * @return Returns the current state of the module
+     */
     public SwerveModuleState getState() {
         return new SwerveModuleState(driveRelEnc.getVelocity(), new Rotation2d(getHeading()));
     }
 
+    /**
+     * @return Returns the current being drawn by the turn motor
+     */
+    public double getTurnCurrent() {
+        return turn.getOutputCurrent();
+    }
+
+    /**
+     * @return Returns the current being drawn by the drive motor
+     */
+    public double getDriveCurrent() {
+        return drive.getOutputCurrent();
+    }
+
+    /**
+     * @return Returns the drive motor instance
+     */
     public CANSparkMax getDrive() {
         return drive;
     }
 
+    /**
+     * @return Returns the turn motor instance
+     */
     public CANSparkMax getTurn() {
         return turn;
     }
 
+    /**
+     * Stops the turn and drive motors
+     */
     public void stop() {
         drive.stopMotor();
         turn.stopMotor();

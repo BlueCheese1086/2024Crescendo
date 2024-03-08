@@ -5,6 +5,9 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import Util.IntializedSubsystem;
+import Util.PowerManaged;
+
+import java.util.Objects;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -15,7 +18,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
-public class Shooter extends SubsystemBase implements IntializedSubsystem {
+public class Shooter extends SubsystemBase implements IntializedSubsystem, PowerManaged {
 
     private final CANSparkMax front = new CANSparkMax(ShooterConstants.frontID, MotorType.kBrushless);
     private final CANSparkMax back = new CANSparkMax(ShooterConstants.backID, MotorType.kBrushless);
@@ -25,8 +28,15 @@ public class Shooter extends SubsystemBase implements IntializedSubsystem {
 
     private final SparkPIDController frontPID;
     private final SparkPIDController backPID;
+
+    private static Shooter instance;
+
+    public static Shooter getInstance() {
+        if (Objects.isNull(instance)) instance = new Shooter();
+        return instance;
+    }
     
-    public Shooter() {
+    private Shooter() {
 
         front.restoreFactoryDefaults();
         back.restoreFactoryDefaults();
@@ -78,6 +88,10 @@ public class Shooter extends SubsystemBase implements IntializedSubsystem {
         Logger.recordOutput("Shooter/Back/Velocity", backEnc.getVelocity());
         Logger.recordOutput("Shooter/Back/Temperature", back.getMotorTemperature());
         
+    }
+
+    public double getTotalCurrent() {
+        return front.getOutputCurrent() + back.getOutputCurrent();
     }
 
     public void setMotorVels(double frontRPM, double backRPM) {

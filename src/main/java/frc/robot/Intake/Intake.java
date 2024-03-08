@@ -1,5 +1,7 @@
 package frc.robot.Intake;
 
+import java.util.Objects;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.AbsoluteEncoder;
@@ -8,6 +10,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import Util.IntializedSubsystem;
+import Util.PowerManaged;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -20,7 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
-public class Intake extends SubsystemBase implements IntializedSubsystem {
+public class Intake extends SubsystemBase implements IntializedSubsystem, PowerManaged {
 
     private final CANSparkMax rollers = new CANSparkMax(IntakeConstants.rollerID, MotorType.kBrushless);
     private final CANSparkMax angle = new CANSparkMax(IntakeConstants.angleID, MotorType.kBrushless);
@@ -35,7 +38,15 @@ public class Intake extends SubsystemBase implements IntializedSubsystem {
 
     private final SimpleMotorFeedforward rollersFeedforward;
 
-    public Intake() {
+    private static Intake instance;
+
+    public static Intake getInstance() {
+        if (Objects.isNull(instance)) instance = new Intake();
+        return instance;
+    }
+
+    private Intake() {
+
         rollers.restoreFactoryDefaults();
         angle.restoreFactoryDefaults();
 
@@ -95,6 +106,10 @@ public class Intake extends SubsystemBase implements IntializedSubsystem {
 
         SmartDashboard.putNumber("Intake/RelEnc/Measurement", angle.getEncoder().getPosition());
 
+    }
+
+    public double getTotalCurrent() {
+        return angle.getOutputCurrent() + rollers.getOutputCurrent();
     }
 
     public RelativeEncoder getRollerEncoder() {

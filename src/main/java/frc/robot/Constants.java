@@ -122,4 +122,11 @@ public final class Constants {
 
     }
 
+    public static final class LEDConstants {
+
+        public static final int PWM_PORT = 0;
+        public static final int LENGTH = 255;
+
+    }
+
 }

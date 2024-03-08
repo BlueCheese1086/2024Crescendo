@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 
 public class Watchdog extends SubsystemBase {
 
@@ -28,7 +29,7 @@ public class Watchdog extends SubsystemBase {
     private double climbPriority = 4;
     private double shooterPriority = 3;
 
-    private PowerDistribution pdh;
+    private PowerDistribution pdh = Robot.pdh;
 
     public void periodic() {
 

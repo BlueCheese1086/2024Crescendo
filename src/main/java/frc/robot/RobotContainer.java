@@ -31,10 +31,10 @@ import frc.robot.Shooter.Commands.RunShooter;
 
 public class RobotContainer {
 
-	Drivetrain drivetrain = new Drivetrain();
-	Climb climb = new Climb();
-	Shooter shooter = new Shooter();
-	Intake intake = new Intake();
+	Drivetrain drivetrain = Drivetrain.getInstance();
+	Climb climb = Climb.getInstance();
+	Shooter shooter = Shooter.getInstance();
+	Intake intake = Intake.getInstance();
 
 	private final SendableChooser<Command> autoChooser;
 

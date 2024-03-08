@@ -3,21 +3,32 @@ package frc.robot.Climb;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+
+import java.util.Objects;
+
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import Util.DebugPID;
 import Util.IntializedSubsystem;
+import Util.PowerManaged;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimbConstants;
 
-public class Climb extends SubsystemBase implements IntializedSubsystem {
+public class Climb extends SubsystemBase implements IntializedSubsystem, PowerManaged {
     
     private final CANSparkMax left, right;
     private final RelativeEncoder leftEnc, rightEnc;
     private final SparkPIDController leftPID, rightPID;
+
+    private static Climb instance;
+
+    public static Climb getInstance() {
+        if (Objects.isNull(instance)) instance = new Climb();
+        return instance;
+    }
 
     public Climb() {
         left = new CANSparkMax(ClimbConstants.leftID, MotorType.kBrushless);
@@ -66,6 +77,10 @@ public class Climb extends SubsystemBase implements IntializedSubsystem {
     public void initialize() {
         leftEnc.setPosition(0.0);
         rightEnc.setPosition(0.0);
+    }
+
+    public double getTotalCurrent() {
+        return left.getOutputCurrent() + right.getOutputCurrent();
     }
 
     public void setEncToTop() {

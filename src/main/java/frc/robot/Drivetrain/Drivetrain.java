@@ -1,11 +1,14 @@
 package frc.robot.Drivetrain;
 
+import java.util.Objects;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import Util.IntializedSubsystem;
+import Util.PowerManaged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -20,9 +23,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.LEDs.DriverFeedback;
 import frc.robot.Sensors.Gyro;
 
-public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
+public class Drivetrain extends SubsystemBase implements IntializedSubsystem, PowerManaged {
 
     /*           backLeft    frontLeft
      *                 x_____x
@@ -53,6 +57,13 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
     };
 
     private SwerveDriveOdometry odometry;
+
+    private static Drivetrain instance;
+
+    public static Drivetrain getInstance() {
+        if (Objects.isNull(instance)) instance = new Drivetrain();
+        return instance;
+    }
 
     private final Gyro gyro;
 
@@ -118,6 +129,9 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
         );
     }
 
+    /**
+     * Initializes the subsystem: sets swerve states, intializes encoders and odometry
+     */
     public void initialize() {
         for (int i = 0; i < states.length; i++) {
             states[i] = new SwerveModuleState();
@@ -129,6 +143,10 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
         odometry = new SwerveDriveOdometry(kinematics, gyro.getAngle(), positions);
     }
 
+    /**
+     * Updates swerve module positions and odometry
+     * Publishes telemetry
+     */
     public void periodic() {
         for (int i = 0; i < modules.length; i++) {
             positions[i] = modules[i].getPosition();
@@ -143,23 +161,70 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
         SmartDashboard.putNumber("PDH/TotalCurrent", Robot.pdh.getTotalCurrent());
     }
 
+    /**
+     * @return Returns total current drawn by the turn motors
+     */
+    public double getTurnCurrent() {
+        int sum = 0;
+        for (SwerveModule m : modules) {
+            sum+=m.getTurnCurrent();
+        }
+        return sum;
+    }
+
+    /**
+     * @return Returns total current drawn by the drive motors
+     */
+    public double getDriveCurrent() {
+        int sum = 0;
+        for (SwerveModule m : modules) {
+            sum+=m.getDriveCurrent();
+        }
+        return sum;
+    }
+
+    /**
+     * @return Returns all current drawn by the drivetrain
+     */
+    public double getTotalCurrent() {
+        return getTurnCurrent() + getDriveCurrent();
+    }
+
+    /**
+     * @return Returns the robot position reported by the odometry
+     */
     public Pose2d getPose() {
         return odometry.getPoseMeters();
     }
 
+    /**
+     * Sets the odometry position and updates the gyro angle
+     * @param p The position to set odometry to
+     */
     public void resetPose(Pose2d p) {
         field.setRobotPose(p);
+        gyro.setAngle(p.getRotation().getDegrees());
         odometry.resetPosition(gyro.getAngle(), positions, p);
     }
     
+    /**
+     * @return Returns all swerve module positions in order of [FL, FR, BL, BR]
+     */
     public SwerveModulePosition[] getPositions() {
         return positions;
     }
 
+    /**
+     * @return Returns the chassis speeds reported by the measured module states
+     */
     public ChassisSpeeds getSpeeds() {
         return kinematics.toChassisSpeeds(states);
     }
 
+    /**
+     * Drives the robot at the desired speeds with an overall feedback loop to ensure the speeds are met
+     * @param speeds The desired speeds of the drivetrain
+     */
     public void drive(ChassisSpeeds speeds) {
         ChassisSpeeds currentSpeeds = kinematics.toChassisSpeeds(states);
         double currentRotation = gyro.getYawVelocity().getDegrees();
@@ -174,16 +239,25 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem {
         }
     }
 
+    /**
+     * Sets the modules in an X pattern
+     */
     public void setX() {
         for (int i = 0; i < modules.length; i++) {
             modules[i].setState(xStates[i]);
         }
     }
 
+    /**
+     * @return Returns swerve module instances
+     */
     public SwerveModule[] getModules() {
         return modules;
     }
 
+    /**
+     * Stops all modules
+     */
     public void stop() {
         for (SwerveModule m : modules) {
             m.stop();

@@ -12,8 +12,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
@@ -35,7 +34,7 @@ public class SwerveModule extends SubsystemBase {
     private final RelativeEncoder driveRelEnc, turnRelEnc;
     private final SparkPIDController drivePID, turnPID;
 
-    private final DutyCycleEncoder absEncoder;
+    private final AnalogEncoder absEncoder;
     private final double encOffset;
 
     private SwerveModuleState state = new SwerveModuleState();
@@ -47,7 +46,7 @@ public class SwerveModule extends SubsystemBase {
         drive = new CANSparkMax(driveID, MotorType.kBrushless);
         turn = new CANSparkMax(turnID, MotorType.kBrushless);
 
-        absEncoder = new DutyCycleEncoder(new DigitalInput(encID));
+        absEncoder = new AnalogEncoder(encID);
         this.encOffset = encOffset;
 
         drive.restoreFactoryDefaults();

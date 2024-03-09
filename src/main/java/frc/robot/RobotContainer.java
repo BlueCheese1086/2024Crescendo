@@ -6,6 +6,8 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.LEDManager.LEDManager;
+import frc.robot.commands.LEDActivate;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
@@ -42,6 +44,8 @@ public class RobotContainer {
 
   CommandXboxController xbox = new CommandXboxController(0);
   XboxController joy = xbox.getHID();
+
+  LEDManager leds = new LEDManager(true);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
@@ -93,6 +97,7 @@ public class RobotContainer {
         MathUtil.applyDeadband(-joy.getLeftX(), DriveConstants.DEADBAND)*DriveConstants.MAX_TURN_SPEED)));
     //xbox.y().onTrue(new AutoShoot(m_DriveSubsystem, m_ShooterSubsystem));
     xbox.leftBumper().onTrue(new InstantCommand(() -> m_DriveSubsystem.resetOdometry()));
+    xbox.start().onTrue(new LEDActivate(leds));
   }
 
     public Command getAutonomousCommand() {

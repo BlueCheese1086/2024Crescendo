@@ -50,4 +50,8 @@ public final class Constants {
 
     public static double UPPER_POWER = 1.0;
   }
+  public static class LEDConstants {
+    public static final int ledPort = 0;
+    public static final int ledCount = 120;
+  }
 }

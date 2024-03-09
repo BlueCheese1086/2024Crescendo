@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.LEDManager.LEDManager;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
@@ -39,6 +40,8 @@ public class RobotContainer {
 
   CommandXboxController xbox = new CommandXboxController(0);
   XboxController joy = xbox.getHID();
+
+  LEDManager leds = new LEDManager(true);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 

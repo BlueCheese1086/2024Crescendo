@@ -23,22 +23,22 @@ public final class Constants {
 
         public static final int frontLeftTurnID = 1;
         public static final int frontLeftDriveID = 2;
-        public static final int frontLeftEncID = 9;
+        public static final int frontLeftEncID = 0;
         public static final double frontLeftOffset = 0.0;
 
         public static final int backLeftTurnID = 3;
         public static final int backLeftDriveID = 4;
-        public static final int backLeftEncID = 1;
+        public static final int backLeftEncID = 2;
         public static final double backLeftOffset = 0.0;
 
         public static final int frontRightTurnID = 7;
         public static final int frontRightDriveID = 8;
-        public static final int frontRightEncID = 8;
+        public static final int frontRightEncID = 1;
         public static final double frontRightOffset = 0.0;
 
         public static final int backRightTurnID = 5;
         public static final int backRightDriveID = 6;
-        public static final int backRightEncID = 0;
+        public static final int backRightEncID = 3;
         public static final double backRightOffset = 0.0;
 
         public static final int pigeonID = 2;

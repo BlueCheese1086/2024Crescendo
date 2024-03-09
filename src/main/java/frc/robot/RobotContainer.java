@@ -7,8 +7,15 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Climb.Climb;
+import frc.robot.Drivetrain.Drivetrain;
+import frc.robot.Intake.Intake;
 
 public class RobotContainer {
+
+	Drivetrain drivetrain = new Drivetrain();
+	Climb climb = new Climb();
+	Intake intake = Intake.getInstance();
 
 	CommandXboxController primary, secondary;
 

@@ -62,6 +62,9 @@ public final class Constants {
         public static final double kDDriveVelo = 0.0;
         public static final double kFFDriveVelo = 0.2;
 
+        public static final double ROC_LIMIT_MULT = 0.1;
+        public static final int DRIVE_CURRENT_LIMIT = 80;
+
         public static final double wheelCircumpherence = Units.inchesToMeters(4.0 * Math.PI);
 
         public static final double drivePosConversionFactor = wheelCircumpherence / 5.14;
@@ -88,6 +91,9 @@ public final class Constants {
 
         public static final double rollersVelocityConversionFactor = 1.0;
 
+        public static final double ROLLERS_CURRENT_LIMIT = 40;
+        public static final double ANGLE_CURRENT_LIMIT = 40;
+
         public static final double angleOffset = 2.0;
         public static final double anglePositionConverstionFactor = Math.PI * 2.0/((48.0/44.0)*(48.0/24.0));
 
@@ -110,6 +116,8 @@ public final class Constants {
         public static final int leftID = 21;
         public static final int rightID = 22;
 
+        public static final double CURRENT_LIMIT = 25;
+
         public static final double climbGearboxRatio = 25.0;
         public static final double climbConversionFactor = Units.inchesToMeters(1.5*Math.PI) / climbGearboxRatio;
 
@@ -126,6 +134,19 @@ public final class Constants {
 
         public static final int PWM_PORT = 0;
         public static final int LENGTH = 255;
+
+    }
+
+    public static final class BatteryConstants {
+
+        public static final double MAX_Wh = 180.0;
+
+        public static final double START_MAX_AMPS = 275.0;
+        public static final double END_MAX_AMPS = 150.0;
+
+        public static final double AMP_PULL_ROC = (START_MAX_AMPS - END_MAX_AMPS)/MAX_Wh;
+
+        public static final double motorRpmDropoff = 100;
 
     }
 

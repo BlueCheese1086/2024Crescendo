@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import Util.Interfaces.PowerManaged;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -18,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
 
-public class SwerveModule extends SubsystemBase {
+public class SwerveModule extends SubsystemBase implements PowerManaged {
 
     /*           backLeft    frontLeft
      *                 x_____x
@@ -34,6 +35,9 @@ public class SwerveModule extends SubsystemBase {
     private final CANSparkMax drive, turn;
     private final RelativeEncoder driveRelEnc, turnRelEnc;
     private final SparkPIDController drivePID, turnPID;
+
+    private int turnCurrentLimit = 30;
+    private int driveCurrentLimit = 80;
 
     private final DutyCycleEncoder absEncoder;
     private final double encOffset;
@@ -53,8 +57,8 @@ public class SwerveModule extends SubsystemBase {
         drive.restoreFactoryDefaults();
         turn.restoreFactoryDefaults();
 
-        drive.setSmartCurrentLimit(60);
-        turn.setSmartCurrentLimit(30);
+        drive.setSmartCurrentLimit((int) driveCurrentLimit);
+        turn.setSmartCurrentLimit((int) turnCurrentLimit);
 
         drive.setInverted(false);
         turn.setInverted(false);
@@ -110,7 +114,9 @@ public class SwerveModule extends SubsystemBase {
         SmartDashboard.putNumber(name + "/TurnAngle", getHeading());
         SmartDashboard.putNumber(name + "/WheelSpeed", driveRelEnc.getVelocity());
         SmartDashboard.putNumber(name + "/StateMS", state.speedMetersPerSecond);
-        
+
+        overCurrentDetection();
+
     }
 
     /**
@@ -167,6 +173,18 @@ public class SwerveModule extends SubsystemBase {
         drivePID.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity, 0);
     }
 
+    public void overCurrentDetection() {
+        if (drive.getOutputCurrent() > driveCurrentLimit) drive.setSmartCurrentLimit(driveCurrentLimit);
+    }
+
+    public void setCurrentLimit(int a) {
+        driveCurrentLimit = a;
+    }
+
+    public double getCurrentLimit() {
+        return driveCurrentLimit;
+    }
+
     /**
      * @return Returns the current state of the module
      */
@@ -188,18 +206,8 @@ public class SwerveModule extends SubsystemBase {
         return drive.getOutputCurrent();
     }
 
-    /**
-     * @return Returns the drive motor instance
-     */
-    public CANSparkMax getDrive() {
-        return drive;
-    }
-
-    /**
-     * @return Returns the turn motor instance
-     */
-    public CANSparkMax getTurn() {
-        return turn;
+    public double getTotalCurrent() {
+        return getDriveCurrent() + getTurnCurrent();
     }
 
     /**

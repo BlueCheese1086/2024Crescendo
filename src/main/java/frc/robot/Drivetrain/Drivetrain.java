@@ -7,8 +7,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
-import Util.IntializedSubsystem;
-import Util.PowerManaged;
+import Util.Interfaces.PowerManaged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -23,10 +22,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.LEDs.DriverFeedback;
-import frc.robot.Sensors.Gyro;
+import frc.robot.SensorsAndFeedback.Gyro;
 
-public class Drivetrain extends SubsystemBase implements IntializedSubsystem, PowerManaged {
+public class Drivetrain extends SubsystemBase implements PowerManaged {
 
     /*           backLeft    frontLeft
      *                 x_____x
@@ -159,6 +157,18 @@ public class Drivetrain extends SubsystemBase implements IntializedSubsystem, Po
         SmartDashboard.putNumber("/Gyro", gyro.getAngle().getDegrees());
         SmartDashboard.putData(field);
         SmartDashboard.putNumber("PDH/TotalCurrent", Robot.pdh.getTotalCurrent());
+    }
+
+    public void overCurrentDetection() {}
+
+    public void setCurrentLimit(int limit) {
+        for (SwerveModule m : modules) {
+            m.setCurrentLimit(limit / 4);
+        }
+    }
+
+    public double getCurrentLimit() {
+        return modules[0].getCurrentLimit();
     }
 
     /**

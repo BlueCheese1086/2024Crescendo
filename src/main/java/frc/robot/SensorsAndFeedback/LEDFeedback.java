@@ -1,11 +1,11 @@
-package frc.robot.LEDs;
+package frc.robot.SensorsAndFeedback;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
 
-public class DriverFeedback extends SubsystemBase {
+public class LEDFeedback extends SubsystemBase {
 
     private final AddressableLED leds;
     private final static AddressableLEDBuffer buffer = new AddressableLEDBuffer(LEDConstants.LENGTH);
@@ -13,7 +13,7 @@ public class DriverFeedback extends SubsystemBase {
     private static int startingHue = 0;
     private static LEDMode mode = LEDMode.Rainbow;
 
-    public DriverFeedback() {
+    public LEDFeedback() {
         for (int i = 0; i < buffer.getLength(); i++) {
             buffer.setRGB(i, 255, 0, 255);
         }
@@ -35,7 +35,7 @@ public class DriverFeedback extends SubsystemBase {
     }
 
     public void setMode(LEDMode mode) {
-		DriverFeedback.mode = mode;
+		LEDFeedback.mode = mode;
 	}
 
 	public enum LEDMode {

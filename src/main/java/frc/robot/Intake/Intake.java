@@ -9,21 +9,19 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
-import Util.IntializedSubsystem;
-import Util.PowerManaged;
-
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
+import Util.Interfaces.PowerManaged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
-public class Intake extends SubsystemBase implements IntializedSubsystem, PowerManaged {
+public class Intake extends SubsystemBase implements PowerManaged {
 
     private final CANSparkMax rollers = new CANSparkMax(IntakeConstants.rollerID, MotorType.kBrushless);
     private final CANSparkMax angle = new CANSparkMax(IntakeConstants.angleID, MotorType.kBrushless);
@@ -49,6 +47,9 @@ public class Intake extends SubsystemBase implements IntializedSubsystem, PowerM
 
         rollers.restoreFactoryDefaults();
         angle.restoreFactoryDefaults();
+
+        rollers.setSmartCurrentLimit((int) IntakeConstants.ROLLERS_CURRENT_LIMIT);
+        angle.setSmartCurrentLimit((int) IntakeConstants.ANGLE_CURRENT_LIMIT);
 
         rollers.setInverted(false);
         angle.setInverted(false);
@@ -108,16 +109,11 @@ public class Intake extends SubsystemBase implements IntializedSubsystem, PowerM
 
     }
 
-    public double getTotalCurrent() {
-        return angle.getOutputCurrent() + rollers.getOutputCurrent();
-    }
+    public void overCurrentDetection() {}
 
-    public RelativeEncoder getRollerEncoder() {
-        return rollersEnc;
-    }
-
-    public double getAngle() {
-        return angleEnc.getPosition();
+    public void setCurrentLimit(int a) {
+        rollers.setSmartCurrentLimit(a);
+        angle.setSmartCurrentLimit(a);
     }
 
     public void setAnglePosition(double angleRads) {
@@ -145,6 +141,22 @@ public class Intake extends SubsystemBase implements IntializedSubsystem, PowerM
     public void stop() {
         angle.stopMotor();
         rollers.stopMotor();
+    }
+
+    public double getTotalCurrent() {
+        return angle.getOutputCurrent() + rollers.getOutputCurrent();
+    }
+
+    public double getCurrentLimit() {
+        return IntakeConstants.ANGLE_CURRENT_LIMIT + IntakeConstants.ROLLERS_CURRENT_LIMIT;
+    }
+
+    public RelativeEncoder getRollerEncoder() {
+        return rollersEnc;
+    }
+
+    public double getAngle() {
+        return angleEnc.getPosition();
     }
 
 }

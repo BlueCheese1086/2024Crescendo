@@ -11,13 +11,12 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import Util.DebugPID;
-import Util.IntializedSubsystem;
-import Util.PowerManaged;
+import Util.Interfaces.PowerManaged;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimbConstants;
 
-public class Climb extends SubsystemBase implements IntializedSubsystem, PowerManaged {
+public class Climb extends SubsystemBase implements PowerManaged {
     
     private final CANSparkMax left, right;
     private final RelativeEncoder leftEnc, rightEnc;
@@ -37,8 +36,8 @@ public class Climb extends SubsystemBase implements IntializedSubsystem, PowerMa
         left.restoreFactoryDefaults();
         right.restoreFactoryDefaults();
 
-        left.setSmartCurrentLimit(25);
-        right.setSmartCurrentLimit(25);        
+        left.setSmartCurrentLimit((int) ClimbConstants.CURRENT_LIMIT);
+        right.setSmartCurrentLimit((int) ClimbConstants.CURRENT_LIMIT);        
 
         left.setInverted(false);
         right.setInverted(true);
@@ -79,8 +78,19 @@ public class Climb extends SubsystemBase implements IntializedSubsystem, PowerMa
         rightEnc.setPosition(0.0);
     }
 
+    public void overCurrentDetection() {}
+
+    public void setCurrentLimit(int a) {
+        left.setSmartCurrentLimit(a);
+        right.setSmartCurrentLimit(a);
+    }
+
     public double getTotalCurrent() {
         return left.getOutputCurrent() + right.getOutputCurrent();
+    }
+
+    public double getCurrentLimit() {
+        return ClimbConstants.CURRENT_LIMIT;
     }
 
     public void setEncToTop() {

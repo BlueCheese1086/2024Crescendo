@@ -1,58 +1,67 @@
 package frc.robot.Watchdog;
 
-import java.util.Objects;
+import org.littletonrobotics.junction.Logger;
 
+import Util.Interfaces.PowerManaged;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.Constants.BatteryConstants;
+import frc.robot.Constants.SwerveConstants;
 
 public class Watchdog extends SubsystemBase {
+    
+    private final PowerDistribution pdh;
+    private final Timer timer;
 
-    private static Watchdog instance;
+    private final PowerManaged dt;
+    private final PowerManaged i;
+    private final PowerManaged c;
 
-    public static Watchdog getInstance() {
-        if (Objects.isNull(instance)) {
-            instance = new Watchdog();
-        }
-        return instance;
+    private double totalPowerDraw = 0.0;
+
+    public Watchdog(PowerManaged d, PowerManaged i, PowerManaged c) {
+        pdh = Robot.pdh;
+
+        dt = d;
+        this.i = i;
+        this.c = c;
+
+        timer = new Timer();
+        timer.start();
     }
-
-    private Watchdog() {}
-
-    private double dtMult = 1.0;
-    private double inMult = 1.0;
-    private double clMult = 1.0;
-    private double shMult = 1.0;
-
-    private double drivetrainPriority = 1;
-    private double intakePriority = 2;
-    private double climbPriority = 4;
-    private double shooterPriority = 3;
-
-    private PowerDistribution pdh = Robot.pdh;
 
     public void periodic() {
+        timer.stop();
+        totalPowerDraw += pdh.getTotalCurrent() * pdh.getVoltage() * timer.get();
+        Logger.recordOutput("Total Wattage Pull", totalPowerDraw);
 
+        if (pdh.getTotalCurrent() > getMaximumCurrentDraw()) {
+            if (i.getTotalCurrent() > 5.0 || c.getTotalCurrent() > 5.0) {
+                dt.setCurrentLimit((int) (getMaximumCurrentDraw() - i.getTotalCurrent() - c.getTotalCurrent()));
+            } else {
+                dt.setCurrentLimit((int) (dt.getTotalCurrent() - (pdh.getTotalCurrent() - getMaximumCurrentDraw())));
+            }
+        } else {
+            dt.setCurrentLimit(SwerveConstants.DRIVE_CURRENT_LIMIT);
+        }
+
+        timer.restart();
     }
 
-    public void setPDH(PowerDistribution pdh) {
-        this.pdh = pdh;
+    /**
+     * @return Returns estimated safe capacity of the battery
+     */
+    public double getWhRemaining() {
+        return BatteryConstants.MAX_Wh - totalPowerDraw;
     }
 
-    public double getDrivetrainMultiplier() {
-        return dtMult;
-    }
-
-    public double getIntakeMultiplier() {
-        return inMult;
-    }
-
-    public double getClimbMultiplier() {
-        return clMult;
-    }
-
-    public double getShooterMultiplier() {
-        return shMult;
+    /**
+     * @return Returns the estimated maximum current draw the battery can handle
+     */
+    public double getMaximumCurrentDraw() {
+        return BatteryConstants.AMP_PULL_ROC * getWhRemaining();
     }
 
 }

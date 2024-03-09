@@ -59,7 +59,7 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
         drive.setSmartCurrentLimit((int) driveCurrentLimit);
         turn.setSmartCurrentLimit((int) turnCurrentLimit);
 
-        drive.setInverted(false);
+        drive.setInverted(true);
         turn.setInverted(false);
 
         drive.setIdleMode(IdleMode.kCoast);

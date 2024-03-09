@@ -2370,7 +2370,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [],
-            "isTrajectoryStale": true
+            "isTrajectoryStale": false
         },
         "5 note auto": {
             "waypoints": [
@@ -3843,9 +3843,9 @@
                     }
                 }
             ],
-            "isTrajectoryStale": true
+            "isTrajectoryStale": false
         },
-        "Swiper no Swiping": {
+        "Eat it and yeet it": {
             "waypoints": [
                 {
                     "x": 0.8448676466941833,
@@ -5862,7 +5862,7 @@
                 {
                     "name": "Shoot",
                     "target": 3,
-                    "targetTimestamp": 3.635684801072014,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -5874,7 +5874,7 @@
                 {
                     "name": "Marker",
                     "target": 5,
-                    "targetTimestamp": 6.02504577567222,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -5886,7 +5886,7 @@
                 {
                     "name": "Marker",
                     "target": 8,
-                    "targetTimestamp": 9.010139019328912,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -5898,7 +5898,7 @@
                 {
                     "name": "Marker",
                     "target": 10,
-                    "targetTimestamp": 11.35456123973237,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -5910,7 +5910,7 @@
                 {
                     "name": "Marker",
                     "target": 12,
-                    "targetTimestamp": 13.696680849789601,
+                    "targetTimestamp": null,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -7847,4 +7847,4 @@
     },
     "splitTrajectoriesAtStopPoints": false,
     "usesObstacles": false
-}}
+}

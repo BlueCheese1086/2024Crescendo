@@ -14,9 +14,9 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
+import Util.DebugPID;
 import Util.Interfaces.PowerManaged;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
@@ -30,11 +30,9 @@ public class Intake extends SubsystemBase implements PowerManaged {
     private final RelativeEncoder angleEnc;
     private final AbsoluteEncoder angleAbs;
 
-    private final PIDController rollersPID;
+    private final SparkPIDController rollersPID;
     private final PIDController anglePID;
     private final SparkPIDController angleVoltageController;
-
-    private final SimpleMotorFeedforward rollersFeedforward;
 
     private static Intake instance;
 
@@ -48,14 +46,14 @@ public class Intake extends SubsystemBase implements PowerManaged {
         rollers.restoreFactoryDefaults();
         angle.restoreFactoryDefaults();
 
-        rollers.setSmartCurrentLimit((int) IntakeConstants.ROLLERS_CURRENT_LIMIT);
+        // rollers.setSmartCurrentLimit((int) IntakeConstants.ROLLERS_CURRENT_LIMIT);
         angle.setSmartCurrentLimit((int) IntakeConstants.ANGLE_CURRENT_LIMIT);
 
         rollers.setInverted(false);
         angle.setInverted(false);
 
         rollers.setIdleMode(IdleMode.kCoast);
-        angle.setIdleMode(IdleMode.kBrake);
+        angle.setIdleMode(IdleMode.kCoast);
 
         rollersEnc = rollers.getEncoder();
         rollersEnc.setVelocityConversionFactor(IntakeConstants.rollersVelocityConversionFactor);
@@ -74,15 +72,20 @@ public class Intake extends SubsystemBase implements PowerManaged {
         angleVoltageController = angle.getPIDController();
         angleVoltageController.setP(1.0);
 
-        rollersPID = new PIDController(IntakeConstants.kPRoller, IntakeConstants.kIRoller, IntakeConstants.kDRoller);
-        anglePID = new PIDController(IntakeConstants.kPAngle, IntakeConstants.kIAngle, IntakeConstants.kDAngle);
+        // rollersPID = new PIDController(IntakeConstants.kPRoller, IntakeConstants.kIRoller, IntakeConstants.kDRoller);
+        rollersPID = rollers.getPIDController();
+        rollersPID.setP(IntakeConstants.kPRoller);
+        rollersPID.setI(IntakeConstants.kIRoller);
+        rollersPID.setD(IntakeConstants.kDRoller);
+        rollersPID.setFF(IntakeConstants.kFFRoller);
 
-        rollersFeedforward = new SimpleMotorFeedforward(0.0, 0.003, 0.0);
+
+        anglePID = new PIDController(IntakeConstants.kPAngle, IntakeConstants.kIAngle, IntakeConstants.kDAngle);
 
         rollers.burnFlash();
         angle.burnFlash();
 
-        // new DebugPID(rollersPID, "IntakeRollers");
+        new DebugPID(rollersPID, "IntakeRollers");
         // new DebugPID(anglePID, "IntakeAngle");
     }
 
@@ -105,6 +108,8 @@ public class Intake extends SubsystemBase implements PowerManaged {
         SmartDashboard.putNumber("Intake/AbsAngle", angleAbs.getPosition());
         SmartDashboard.putNumber("Intake/RollerSpeed", rollersEnc.getVelocity());
 
+        SmartDashboard.putNumber("Intake/RollerCurrent", rollers.getAppliedOutput() * rollers.getBusVoltage());
+
         SmartDashboard.putNumber("Intake/RelEnc/Measurement", angle.getEncoder().getPosition());
 
     }
@@ -117,7 +122,7 @@ public class Intake extends SubsystemBase implements PowerManaged {
     }
 
     public void setAnglePosition(double angleRads) {
-        double desiredVoltage = anglePID.calculate(angleAbs.getPosition(), angleRads) + 1.07 * Math.cos(angleAbs.getPosition());// + anglePID.getP() * angleFeedforward.calculate(angleAbs.getPosition(), 0.0);
+        double desiredVoltage = anglePID.calculate(angleAbs.getPosition(), angleRads) + IntakeConstants.kGAngle * Math.cos(angleAbs.getPosition() - 0.2);
         SmartDashboard.putNumber("/Intake/DesiredAngle", angleRads);
         SmartDashboard.putNumber("/Intake/DesiredVoltage", desiredVoltage);
         SmartDashboard.putNumber("/Intake/CurrentDraw", angle.getOutputCurrent());
@@ -126,8 +131,8 @@ public class Intake extends SubsystemBase implements PowerManaged {
     }
 
     public void setRollerSpeed(double rpm) {
-        rollers.setVoltage(rollersPID.calculate(rollersEnc.getVelocity(), rpm) + rollersFeedforward.calculate(rpm));
-        // rollersPID.setReference(rpm, ControlType.kVelocity);
+        // rollers.setVoltage(rollersPID.calculate(rollersEnc.getVelocity(), rpm) + rollersFeedforward.calculate(rpm));
+        rollersPID.setReference(rpm, ControlType.kVelocity);
     }
 
     public void stopRollers() {

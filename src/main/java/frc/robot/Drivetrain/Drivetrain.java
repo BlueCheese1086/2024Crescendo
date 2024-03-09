@@ -7,6 +7,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import Util.Interfaces.InitializedSubsystem;
 import Util.Interfaces.PowerManaged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,7 +25,7 @@ import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.SensorsAndFeedback.Gyro;
 
-public class Drivetrain extends SubsystemBase implements PowerManaged {
+public class Drivetrain extends SubsystemBase implements PowerManaged, InitializedSubsystem {
 
     /*           backLeft    frontLeft
      *                 x_____x
@@ -236,12 +237,10 @@ public class Drivetrain extends SubsystemBase implements PowerManaged {
      * @param speeds The desired speeds of the drivetrain
      */
     public void drive(ChassisSpeeds speeds) {
-        ChassisSpeeds currentSpeeds = kinematics.toChassisSpeeds(states);
-        double currentRotation = gyro.getYawVelocity().getDegrees();
         ChassisSpeeds newSpeeds = new ChassisSpeeds(
-            speeds.vxMetersPerSecond + 0.01 * (currentSpeeds.vxMetersPerSecond - speeds.vxMetersPerSecond), 
-            speeds.vyMetersPerSecond + 0.01 * (currentSpeeds.vyMetersPerSecond - speeds.vyMetersPerSecond), 
-            -speeds.omegaRadiansPerSecond + 0.01 * (currentRotation - -speeds.omegaRadiansPerSecond));
+            speeds.vxMetersPerSecond,// + 0.01 * (currentSpeeds.vxMetersPerSecond - speeds.vxMetersPerSecond), 
+            speeds.vyMetersPerSecond,// + 0.01 * (currentSpeeds.vyMetersPerSecond - speeds.vyMetersPerSecond), 
+            speeds.omegaRadiansPerSecond);// + 0.01 * (currentRotation - -speeds.omegaRadiansPerSecond));
         SwerveModuleState[] desiredStates = kinematics.toSwerveModuleStates(newSpeeds);
 
         for (int i = 0; i < modules.length; i++) {

@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 
 public class LEDManager extends SubsystemBase {
@@ -17,6 +18,7 @@ public class LEDManager extends SubsystemBase {
 
     public LEDManager(boolean on){
         ledOn = on;
+        SmartDashboard.putBoolean("LEDS On", ledOn);
 
         lead = new AddressableLED(0);
         leadbuff = new AddressableLEDBuffer(120);
@@ -24,17 +26,25 @@ public class LEDManager extends SubsystemBase {
 
         lead.setData(leadbuff);
         lead.start(); 
+
+        time.reset();
+        time.start();
     }
 
     @Override
     public void periodic() {
         if (ledOn) {
+            SmartDashboard.putBoolean("LEDS going", true);
             if (DriverStation.isDisabled()) {
                 rainbow();
             } else {
                 blueCheese();
             }
+        } else {
+            clearLEDs();
         }
+
+        lead.setData(leadbuff);
     }
 
     private void rainbow() {
@@ -57,6 +67,16 @@ public class LEDManager extends SubsystemBase {
         for (int i = 0; i < 120; i++) {
             leadbuff.setLED(i, color);
         }
+    }
+
+    public void clearLEDs() {
+        for (int i = 0; i < 120; i++) {
+            leadbuff.setRGB(i, 0, 0, 0);
+        }
+    }
+
+    public void powerLEDs() {
+        ledOn = !ledOn;
     }
     
 }

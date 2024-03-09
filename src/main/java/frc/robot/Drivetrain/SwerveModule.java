@@ -13,7 +13,6 @@ import Util.Interfaces.PowerManaged;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -51,7 +50,7 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
         drive = new CANSparkMax(driveID, MotorType.kBrushless);
         turn = new CANSparkMax(turnID, MotorType.kBrushless);
 
-        absEncoder = new DutyCycleEncoder(new DigitalInput(encID));
+        absEncoder = new DutyCycleEncoder(encID);
         this.encOffset = encOffset;
 
         drive.restoreFactoryDefaults();

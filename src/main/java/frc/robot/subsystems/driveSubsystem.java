@@ -161,7 +161,6 @@ public class driveSubsystem extends SubsystemBase {
   }
 
   public void driveAlignYaw(double yaw){
-    MathUtil.applyDeadband(yaw, DriveConstants.YAW_DEADBAND);
     rightLeader.set(drivePIDYAW.calculate(yaw, 0) * DriveConstants.MAX_ALIGN_SPEED);
     leftLeader.set(-drivePIDYAW.calculate(yaw, 0) * DriveConstants.MAX_ALIGN_SPEED);
   }
@@ -169,6 +168,10 @@ public class driveSubsystem extends SubsystemBase {
   public void driveAlignPitch(double pitch){
     rightLeader.set(drivePIDPITCH.calculate(pitch, 3) * DriveConstants.MAX_ALIGN_SPEED);
     leftLeader.set(drivePIDPITCH.calculate(pitch, 3) * DriveConstants.MAX_ALIGN_SPEED);
+  }
+
+  public void driveAlign(){
+    
   }
 
   public Pose2d getPose(){
@@ -191,7 +194,6 @@ public class driveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Rotation 2d", gyro.getYaw());
     SmartDashboard.putNumber("X distance", odometry.getPoseMeters().getX());
     SmartDashboard.putNumber("Y distance", odometry.getPoseMeters().getY());
-    SmartDashboard.putNumber("Rotation", odometry.getPoseMeters().getRotation().getDegrees());
     SmartDashboard.putNumber("Acceleration x", xyz_accel[0]);
     SmartDashboard.putNumber("Acceleration y", xyz_accel[1]);
     SmartDashboard.putNumber("Acceleration z", xyz_accel[2]);
@@ -220,7 +222,7 @@ public class driveSubsystem extends SubsystemBase {
     encoderFL.setPosition(0);
     encoderFR.setPosition(0);
     gyro.setYaw(0);
-    pose = new Pose2d(2, 7, Rotation2d.fromDegrees(gyro.getYaw()));
+    pose = new Pose2d(DriveConstants.startingX, DriveConstants.startingY, Rotation2d.fromDegrees(gyro.getYaw()));
 
     odometry.resetPosition(Rotation2d.fromDegrees(gyro.getYaw()), getPositions(), pose);
   }

@@ -9,6 +9,8 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
+import org.photonvision.estimation.CameraTargetRelation;
+
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -34,6 +36,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final driveSubsystem m_DriveSubsystem = new driveSubsystem();
   private final shooterSubystem m_ShooterSubsystem = new shooterSubystem();
+  private final cameraSubsystem m_CameraSubsystem = new cameraSubsystem();
   
   ChassisSpeeds speeds = new ChassisSpeeds();
 
@@ -44,10 +47,9 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    NamedCommands.registerCommand("Auto Shoot", new AutoShoot(m_DriveSubsystem, m_ShooterSubsystem));
     NamedCommands.registerCommand("Shoot", new Shoot(m_ShooterSubsystem));
     NamedCommands.registerCommand("Intake", new Intake(m_ShooterSubsystem));
-    NamedCommands.registerCommand("AlignYaw", new AlignYaw(m_DriveSubsystem, true));
+    NamedCommands.registerCommand("Align", new Align(m_DriveSubsystem));
 
     // Configure the trigger bindings
     configureBindings();
@@ -71,6 +73,7 @@ public class RobotContainer {
    * joysticks}
    */
   private void configureBindings() {
+    //Whack controller:
     /*xbox.button(4).whileTrue(new AlignYaw(m_DriveSubsystem, true));
     xbox.button(3).onTrue(new Shoot(m_ShooterSubsystem));
     xbox.button(2).whileTrue(new Intake(m_ShooterSubsystem));
@@ -79,10 +82,16 @@ public class RobotContainer {
     xbox.pov(180).whileTrue(new TopSpeed(m_ShooterSubsystem, -0.01));*/
 
     //Normal controller:
-    xbox.x().whileTrue(new AlignYaw(m_DriveSubsystem, true));
-    xbox.a().onTrue(new Shoot(m_ShooterSubsystem));
-    xbox.b().whileTrue(new Intake(m_ShooterSubsystem));
-    xbox.y().onTrue(new AutoShoot(m_DriveSubsystem, m_ShooterSubsystem));
+    //xbox.x().whileTrue(new AlignYaw(m_DriveSubsystem, true));
+    //xbox.a().onTrue(new Shoot(m_ShooterSubsystem));
+    //xbox.b().whileTrue(new Intake(m_ShooterSubsystem));
+    xbox.x().whileTrue(new Align(m_DriveSubsystem));
+    xbox.y().whileTrue(new AlignDrive(m_DriveSubsystem, 
+    () -> new ChassisSpeeds(
+        MathUtil.applyDeadband(-joy.getLeftY(), DriveConstants.DEADBAND)*DriveConstants.MAX_DRIVE_SPEED, 
+        0, 
+        MathUtil.applyDeadband(-joy.getLeftX(), DriveConstants.DEADBAND)*DriveConstants.MAX_TURN_SPEED)));
+    //xbox.y().onTrue(new AutoShoot(m_DriveSubsystem, m_ShooterSubsystem));
     xbox.leftBumper().onTrue(new InstantCommand(() -> m_DriveSubsystem.resetOdometry()));
   }
 
@@ -91,7 +100,10 @@ public class RobotContainer {
         PathPlannerPath path = PathPlannerPath.fromPathFile("1 meter");
 
         // Create a path following command using AutoBuilder. This will also trigger event markers.
-        return AutoBuilder.followPath(path);
-       // return new PathPlannerAuto("1 note");
+        //return AutoBuilder.followPath(path);
+        return null;
+
+        //Auto alternative:
+        //return new PathPlannerAuto("1 note");
     }
 }

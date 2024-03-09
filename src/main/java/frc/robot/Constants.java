@@ -26,7 +26,7 @@ public final class Constants {
     public static final double DEADBAND = 0.2;
     public static final int DRIVETRAINLIMITS = 35;
 
-    public static final double MAX_ALIGN_SPEED = 0.1;
+    public static final double MAX_ALIGN_SPEED = 0.05;
     public static final double MAX_DRIVE_SPEED = 6; //meters per second (velocity)
     public static final double MAX_TURN_SPEED = 15; //radians per second
 
@@ -42,7 +42,7 @@ public final class Constants {
 
 
     public static final double PITCH_DEADBAND = 0.5;
-    public static final double YAW_DEADBAND = 2.0;
+    public static final double YAW_DEADBAND = 3.0;
   }
   public static class ShooterConstants {
     public static final int UPPER_SHOOTER_ID = 12;

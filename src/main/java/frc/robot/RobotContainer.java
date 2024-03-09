@@ -6,7 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.LEDManager.LEDManager;
+import frc.robot.subsystems.LEDManager;
 import frc.robot.commands.LEDActivate;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -45,7 +45,7 @@ public class RobotContainer {
   CommandXboxController xbox = new CommandXboxController(0);
   XboxController joy = xbox.getHID();
 
-  LEDManager leds = new LEDManager(true);
+  LEDManager leds = new LEDManager(false);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
@@ -97,7 +97,7 @@ public class RobotContainer {
         MathUtil.applyDeadband(-joy.getLeftX(), DriveConstants.DEADBAND)*DriveConstants.MAX_TURN_SPEED)));
     //xbox.y().onTrue(new AutoShoot(m_DriveSubsystem, m_ShooterSubsystem));
     xbox.leftBumper().onTrue(new InstantCommand(() -> m_DriveSubsystem.resetOdometry()));
-    xbox.start().onTrue(new LEDActivate(leds));
+    xbox.start().toggleOnTrue(new LEDActivate(leds));
   }
 
     public Command getAutonomousCommand() {
@@ -105,8 +105,7 @@ public class RobotContainer {
         PathPlannerPath path = PathPlannerPath.fromPathFile("1 meter");
 
         // Create a path following command using AutoBuilder. This will also trigger event markers.
-        //return AutoBuilder.followPath(path);
-        return null;
+        return AutoBuilder.followPath(path);
 
         //Auto alternative:
         //return new PathPlannerAuto("1 note");

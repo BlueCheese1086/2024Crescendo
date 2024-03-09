@@ -28,18 +28,28 @@ public class AlignDrive extends Command{
     }
 
 
+    public void initialize() {
+        LEDManager.setCustom(1);
+    }
+
     //Full robot control
-    public void execute() {
+    /*public void execute() {
         alignSpeeds = new ChassisSpeeds(
         -alignPID.calculate(cameraSubsystem.getCameraPitch(), -15.0), 
         0, 
         alignPID.calculate(MathUtil.applyDeadband(cameraSubsystem.getCameraYaw(), DriveConstants.DEADBAND), 0));
         var alignwheelSpeeds = kinematics.toWheelSpeeds(alignSpeeds);
         driveSub.driveChassis(alignwheelSpeeds.leftMetersPerSecond, alignwheelSpeeds.rightMetersPerSecond);
-    }
+        if(cameraSubsystem.getCameraPitch() < -13){
+            LEDManager.ledRGB(0, 255, 0);
+        }
+        else{
+            LEDManager.ledRGB(255, 0, 0);
+        }
+    }*/
 
     //Partial robot control
-    /*public void execute() {
+    public void execute() {
         var wheelSpeeds = kinematics.toWheelSpeeds(speed.get());
         alignSpeeds = new ChassisSpeeds(
         -alignPID.calculate(cameraSubsystem.getCameraPitch(), -15.0), 
@@ -49,9 +59,15 @@ public class AlignDrive extends Command{
         driveSub.driveChassis(
         alignwheelSpeeds.leftMetersPerSecond * cameraSubsystem.getCameraArea()/10 + wheelSpeeds.leftMetersPerSecond, 
         alignwheelSpeeds.rightMetersPerSecond * cameraSubsystem.getCameraArea()/10 + wheelSpeeds.rightMetersPerSecond);
-    }*/
+        if(cameraSubsystem.getCameraPitch() < -13){
+            LEDManager.ledRGB(0, 255, 0);
+        }
+        else{
+            LEDManager.ledRGB(255, 0, 0);
+        }
+    }
 
     public void end(boolean interrupted){
-
+        LEDManager.setCustom(0);
     }
 }

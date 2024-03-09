@@ -1,6 +1,7 @@
-package frc.robot.LEDManager;
+package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.LEDConstants;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -10,18 +11,24 @@ import edu.wpi.first.wpilibj.util.Color;
 
 public class LEDManager extends SubsystemBase {
     private final AddressableLED lead;
-    private final AddressableLEDBuffer leadbuff;
+    private static AddressableLEDBuffer leadbuff;
 
+    private int currLED = 0;
     private int rainbowFirstPixelHue = 0;
     private boolean ledOn;
     private final Timer time = new Timer();
+
+    private static int red = 0;
+    private static int green = 0;
+    private static int blue = 255;
+    private static int custom = 0;
 
     public LEDManager(boolean on){
         ledOn = on;
         SmartDashboard.putBoolean("LEDS On", ledOn);
 
         lead = new AddressableLED(0);
-        leadbuff = new AddressableLEDBuffer(120);
+        leadbuff = new AddressableLEDBuffer(LEDConstants.ledCount);
         lead.setLength(leadbuff.getLength());
 
         lead.setData(leadbuff);
@@ -38,7 +45,12 @@ public class LEDManager extends SubsystemBase {
             if (DriverStation.isDisabled()) {
                 rainbow();
             } else {
-                blueCheese();
+                if(custom == 0){
+                     blueCheese();
+                }
+                if(custom == 1){
+                    ledRGB(red, green, blue);
+                }
             }
         } else {
             clearLEDs();
@@ -63,20 +75,37 @@ public class LEDManager extends SubsystemBase {
     }
 
     private void blueCheese() {
-        Color color = (time.get() * 10 % 10) % 5 < 2.5 ? Color.kBlue : Color.kYellow;
-        for (int i = 0; i < 120; i++) {
-            leadbuff.setLED(i, color);
+        for (int i = 0; i < LEDConstants.ledCount; i++) {
+            if (i < 60) {
+                leadbuff.setLED((i+currLED) % LEDConstants.ledCount, Color.kBlue);
+            } else {
+                leadbuff.setLED((i+currLED) % LEDConstants.ledCount, Color.kYellow);
+            }
         }
+        currLED++;
     }
 
     public void clearLEDs() {
-        for (int i = 0; i < 120; i++) {
+        for (int i = 0; i < LEDConstants.ledCount; i++) {
             leadbuff.setRGB(i, 0, 0, 0);
         }
     }
 
     public void powerLEDs() {
         ledOn = !ledOn;
+    }
+
+    public static void ledRGB(int R, int G, int B) {
+        red = R;
+        green = G;
+        blue = B;
+        for (int i = 0; i < LEDConstants.ledCount; i++) {
+            leadbuff.setRGB(i, R, G, B);
+        }
+    }
+
+    public static void setCustom(int c){
+        custom = c;
     }
     
 }

@@ -71,12 +71,14 @@ public class cameraSubsystem extends SubsystemBase {
     rightLeader.set(drivePIDYAW.calculate(yaw, 0) * DriveConstants.MAX_ALIGN_SPEED);
     leftLeader.set(-drivePIDYAW.calculate(yaw, 0) * DriveConstants.MAX_ALIGN_SPEED);
     } 
+    */
 
-    For Swerve Drive Command:
+    //For Swerve Drive Command:
+    /*
     drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
-            x_trans.getAsDouble() * (DriveConstants.maxWheelVelocity + (marioKart.getAsBoolean() ? Math.signum(x_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-speeds.vxMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0)), 
-            y_trans.getAsDouble() * (DriveConstants.maxWheelVelocity + (marioKart.getAsBoolean() ? Math.signum(y_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-speeds.vyMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0)),
-            PID.calculate(MathUtil.applyDeadband(yaw, 0.5)) * DriveConstants.maxRotationalVelocity, 
-            drivetrain.getYaw()));
+        x_trans.getAsDouble() * (DriveConstants.maxWheelVelocity + (marioKart.getAsBoolean() ? Math.signum(x_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-speeds.vxMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0)), 
+        y_trans.getAsDouble() * (DriveConstants.maxWheelVelocity + (marioKart.getAsBoolean() ? Math.signum(y_trans.getAsDouble()) * ((DriveConstants.maxWheelVelocity-speeds.vyMetersPerSecond)/DriveConstants.maxWheelVelocity * DriveConstants.maxWheelVelocity) : 0.0)),
+        PID.calculate(MathUtil.applyDeadband(cameraSubystem.getCameraYaw, 0.5)) * DriveConstants.maxRotationalVelocity, 
+        drivetrain.getYaw()));
     */
 }

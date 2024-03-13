@@ -5862,7 +5862,7 @@
                 {
                     "name": "Shoot",
                     "target": 3,
-                    "targetTimestamp": null,
+                    "targetTimestamp": 3.635684801072014,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -5874,7 +5874,7 @@
                 {
                     "name": "Marker",
                     "target": 5,
-                    "targetTimestamp": null,
+                    "targetTimestamp": 6.02504577567222,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -5886,7 +5886,7 @@
                 {
                     "name": "Marker",
                     "target": 8,
-                    "targetTimestamp": null,
+                    "targetTimestamp": 9.010139019328912,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -5898,7 +5898,7 @@
                 {
                     "name": "Marker",
                     "target": 10,
-                    "targetTimestamp": null,
+                    "targetTimestamp": 11.35456123973237,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -5910,7 +5910,7 @@
                 {
                     "name": "Marker",
                     "target": 12,
-                    "targetTimestamp": null,
+                    "targetTimestamp": 13.696680849789601,
                     "offset": 0,
                     "command": {
                         "type": "named",
@@ -5920,7 +5920,7 @@
                     }
                 }
             ],
-            "isTrajectoryStale": true
+            "isTrajectoryStale": false
         },
         "Bottom 4 Note Auto": {
             "waypoints": [
@@ -7842,7 +7842,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [],
-            "isTrajectoryStale": true
+            "isTrajectoryStale": false
         }
     },
     "splitTrajectoriesAtStopPoints": false,

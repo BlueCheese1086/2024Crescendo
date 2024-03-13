@@ -28,7 +28,7 @@ public class Gyro extends SubsystemBase {
         return instance;
     }
 
-    public Gyro(int id) {
+    private Gyro(int id) {
         pigeon = new Pigeon2(id);
         timer.start();
     }

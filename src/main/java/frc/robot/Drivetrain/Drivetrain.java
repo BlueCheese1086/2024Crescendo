@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.SensorsAndFeedback.Gyro;
 
@@ -160,83 +159,7 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
         odometry.update(gyro.getAngle(), positions);
         field.setRobotPose(odometry.getPoseMeters());
 
-        SmartDashboard.putNumber("/Gyro", gyro.getAngle().getDegrees());
         SmartDashboard.putData(field);
-        SmartDashboard.putNumber("PDH/TotalCurrent", Robot.pdh.getTotalCurrent());
-    }
-
-    public void overCurrentDetection() {
-    }
-
-    public void setCurrentLimit(int limit) {
-        for (SwerveModule m : modules) {
-            m.setCurrentLimit(limit / 4);
-        }
-    }
-
-    public double getCurrentLimit() {
-        return modules[0].getCurrentLimit();
-    }
-
-    /**
-     * @return Returns total current drawn by the turn motors
-     */
-    public double getTurnCurrent() {
-        int sum = 0;
-        for (SwerveModule m : modules) {
-            sum += m.getTurnCurrent();
-        }
-        return sum;
-    }
-
-    /**
-     * @return Returns total current drawn by the drive motors
-     */
-    public double getDriveCurrent() {
-        int sum = 0;
-        for (SwerveModule m : modules) {
-            sum += m.getDriveCurrent();
-        }
-        return sum;
-    }
-
-    /**
-     * @return Returns all current drawn by the drivetrain
-     */
-    public double getTotalCurrent() {
-        return getTurnCurrent() + getDriveCurrent();
-    }
-
-    /**
-     * @return Returns the robot position reported by the odometry
-     */
-    public Pose2d getPose() {
-        return odometry.getPoseMeters();
-    }
-
-    /**
-     * Sets the odometry position and updates the gyro angle
-     * 
-     * @param p The position to set odometry to
-     */
-    public void resetPose(Pose2d p) {
-        field.setRobotPose(p);
-        gyro.setAngle(p.getRotation().getDegrees());
-        odometry.resetPosition(gyro.getAngle(), positions, p);
-    }
-
-    /**
-     * @return Returns all swerve module positions in order of [FL, FR, BL, BR]
-     */
-    public SwerveModulePosition[] getPositions() {
-        return positions;
-    }
-
-    /**
-     * @return Returns the chassis speeds reported by the measured module states
-     */
-    public ChassisSpeeds getSpeeds() {
-        return kinematics.toChassisSpeeds(states);
     }
 
     /**
@@ -257,13 +180,19 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
         }
     }
 
+    public double getCurrentLimit() {
+        return modules[0].getCurrentLimit();
+    }
+
     /**
-     * Sets the modules in an X pattern
+     * @return Returns total current drawn by the drive motors
      */
-    public void setX() {
-        for (int i = 0; i < modules.length; i++) {
-            modules[i].setState(xStates[i]);
+    public double getDriveCurrent() {
+        int sum = 0;
+        for (SwerveModule m : modules) {
+            sum += m.getDriveCurrent();
         }
+        return sum;
     }
 
     /**
@@ -271,6 +200,68 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
      */
     public SwerveModule[] getModules() {
         return modules;
+    }
+
+    /**
+     * @return Returns the robot position reported by the odometry
+     */
+    public Pose2d getPose() {
+        return odometry.getPoseMeters();
+    }
+
+    /**
+     * @return Returns all swerve module positions in order of [FL, FR, BL, BR]
+     */
+    public SwerveModulePosition[] getPositions() {
+        return positions;
+    }
+
+    /**
+     * @return Returns the chassis speeds reported by the measured module states
+     */
+    public ChassisSpeeds getSpeeds() {
+        return kinematics.toChassisSpeeds(states);
+    }
+
+    public double getTotalCurrent() {
+        return getTurnCurrent() + getDriveCurrent();
+    }
+
+    /**
+     * @return Returns total current drawn by the turn motors
+     */
+    public double getTurnCurrent() {
+        int sum = 0;
+        for (SwerveModule m : modules) {
+            sum += m.getTurnCurrent();
+        }
+        return sum;
+    }
+
+    /**
+     * Sets the odometry position and updates the gyro angle
+     * 
+     * @param p The position to set odometry to
+     */
+    public void resetPose(Pose2d p) {
+        field.setRobotPose(p);
+        gyro.setAngle(p.getRotation().getDegrees());
+        odometry.resetPosition(gyro.getAngle(), positions, p);
+    }
+
+    public void setCurrentLimit(int limit) {
+        for (SwerveModule m : modules) {
+            m.setCurrentLimit(limit / 4);
+        }
+    }
+
+    /**
+     * Sets the modules in an X pattern
+     */
+    public void setX() {
+        for (int i = 0; i < modules.length; i++) {
+            modules[i].setState(xStates[i]);
+        }
     }
 
     /**

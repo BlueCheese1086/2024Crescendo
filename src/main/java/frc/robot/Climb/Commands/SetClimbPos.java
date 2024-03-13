@@ -20,7 +20,7 @@ public class SetClimbPos extends Command {
     public void initialize() {}
 
     public void execute() {
-        climb.set0to1Position(leftPos, rightPos);
+        climb.setPosition(leftPos, rightPos);
     }
 
     public boolean isFinished() {

@@ -78,6 +78,10 @@ public class RobotContainer {
 
 	private void configureBindings() {
 
+		for (InitializedSubsystem s : new InitializedSubsystem[]{drivetrain, intake, climb, shooter}) {
+			s.initialize();
+		}
+
 		primary.leftStick().onTrue(new InstantCommand(() -> {
 			frc.robot.SensorsAndFeedback.Gyro.getInstance().setAngle(0.0);
 		}));

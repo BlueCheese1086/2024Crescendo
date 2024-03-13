@@ -10,12 +10,12 @@ public interface PowerManaged {
     /**
      * @return Returns the total current limit of the subsystsem
      */
-    public double getCurrentLimit();
+    public  double getCurrentLimit();
 
     /**
      * Contains instructions on what to do in case extra current draw is detected
      */
-    public void overCurrentDetection();
+    default public void overCurrentDetection() {};
 
     /**
      * Sets the current limit of the overall subsystem

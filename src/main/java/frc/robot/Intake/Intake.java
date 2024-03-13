@@ -16,6 +16,7 @@ import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import Util.DebugPID;
 import Util.ThreeState;
+import Util.Interfaces.InitializedSubsystem;
 import Util.Interfaces.PowerManaged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -23,7 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
-public class Intake extends SubsystemBase implements PowerManaged {
+public class Intake extends SubsystemBase implements InitializedSubsystem, PowerManaged {
 
     private final CANSparkMax rollers;
     private final CANSparkMax angle;
@@ -84,7 +85,6 @@ public class Intake extends SubsystemBase implements PowerManaged {
     }
 
     private Intake() {
-
         shooterNoteDetector = new DigitalInput(IntakeConstants.shooterNoteDetectorID);
         intakeNoteDetector = new DigitalInput(IntakeConstants.intakeNoteDetectorID);
 
@@ -97,11 +97,9 @@ public class Intake extends SubsystemBase implements PowerManaged {
 
         anglePID = new PIDController(IntakeConstants.kPAngle, IntakeConstants.kIAngle, IntakeConstants.kDAngle);
         rollersPID = rollers.getPIDController();
-
     }
 
     public void initialize() {
-
         rollers.restoreFactoryDefaults();
         angle.restoreFactoryDefaults();
 
@@ -134,11 +132,9 @@ public class Intake extends SubsystemBase implements PowerManaged {
 
         new DebugPID(rollersPID, "IntakeRollers");
         // new DebugPID(anglePID, "IntakeAngle");
-
     }
 
     public void periodic() {
-
         Logger.recordOutput("Intake/Roller/MotorCurrent", rollers.getOutputCurrent());
         Logger.recordOutput("Intake/Roller/BusVoltage", rollers.getBusVoltage());
         Logger.recordOutput("Intake/Roller/Velocity", rollersEnc.getVelocity());
@@ -149,26 +145,26 @@ public class Intake extends SubsystemBase implements PowerManaged {
         Logger.recordOutput("Intake/Angle/Velocity", angleEnc.getVelocity());
         Logger.recordOutput("Intake/Angle/Temperature", angle.getMotorTemperature());
 
-        SmartDashboard.putNumber("Intake/AbsAngle", angleAbs.getPosition());
-        SmartDashboard.putNumber("Intake/RollerSpeed", rollersEnc.getVelocity());
+        SmartDashboard.putNumber("Intake/Roller/MotorCurrent", rollers.getOutputCurrent());
+        SmartDashboard.putNumber("Intake/Roller/BusVoltage", rollers.getBusVoltage());
+        SmartDashboard.putNumber("Intake/Roller/Velocity", rollersEnc.getVelocity());
+        SmartDashboard.putNumber("Intake/Roller/Temperature", rollers.getMotorTemperature());
 
-        SmartDashboard.putNumber("Intake/RollerCurrent", rollers.getAppliedOutput() * rollers.getBusVoltage());
-
-        SmartDashboard.putNumber("Intake/RelEnc/Measurement", angle.getEncoder().getPosition());
-
+        SmartDashboard.putNumber("Intake/Angle/MotorCurrent", angle.getOutputCurrent());
+        SmartDashboard.putNumber("Intake/Angle/BusVoltage", angle.getBusVoltage());
+        SmartDashboard.putNumber("Intake/Angle/ABSPosition", angleAbs.getPosition());
+        SmartDashboard.putNumber("Intake/Angle/Temperature", angle.getMotorTemperature());
     }
 
     /**
      * The default method that runs in the command scheduler to ensure everything in the subsystem is behaving as expected
      */
     public void defaultMethod() {
-
         if (getShooterSensor() && state.rollersRpm > 0.0) state = IntakeState.IdlingUp;
         if (getIntakeSensor() && !getShooterSensor() && state == IntakeState.IntakingDown) state = IntakeState.IntakingUp;
         
         setAnglePosition(state.angleRad);
         setRollerSpeed(state.rollersRpm);
-    
     }
 
     /**
@@ -205,10 +201,6 @@ public class Intake extends SubsystemBase implements PowerManaged {
 
     public double getTotalCurrent() {
         return angle.getOutputCurrent() + rollers.getOutputCurrent();
-    }
-
-    public void overCurrentDetection() {
-        return;
     }
 
     /**

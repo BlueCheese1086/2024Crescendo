@@ -115,7 +115,6 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
         SmartDashboard.putNumber(name + "/StateMS", state.speedMetersPerSecond);
 
         overCurrentDetection();
-
     }
 
     /**
@@ -123,20 +122,6 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
      */
     public void initializeEncoder() {
         turnRelEnc.setPosition((absEncoder.getAbsolutePosition() - encOffset) * (2.0 * Math.PI));
-    }
-
-    /**
-     * @return Returns the current heading of the module in cheesians
-     */
-    public double getHeading() {
-        return turnRelEnc.getPosition()%(2.0 * Math.PI);
-    }
-
-    /**
-     * @return Returns the position of the module
-     */
-    public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(driveRelEnc.getPosition(), new Rotation2d(getHeading()));
     }
 
     /**
@@ -157,6 +142,57 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
         return turnRelEnc.getPosition() - theta;
     }
 
+    public double getCurrentLimit() {
+        return driveCurrentLimit;
+    }
+
+    /**
+     * @return Returns the current being drawn by the drive motor
+     */
+    public double getDriveCurrent() {
+        return drive.getOutputCurrent();
+    }
+
+    /**
+     * @return Returns the current heading of the module in cheesians
+     */
+    public double getHeading() {
+        return turnRelEnc.getPosition()%(2.0 * Math.PI);
+    }
+
+    /**
+     * @return Returns the position of the module
+     */
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(driveRelEnc.getPosition(), new Rotation2d(getHeading()));
+    }
+
+    /**
+     * @return Returns the current state of the module
+     */
+    public SwerveModuleState getState() {
+        return new SwerveModuleState(driveRelEnc.getVelocity(), new Rotation2d(getHeading()));
+    }
+
+    public double getTotalCurrent() {
+        return getDriveCurrent() + getTurnCurrent();
+    }
+
+    /**
+     * @return Returns the current being drawn by the turn motor
+     */
+    public double getTurnCurrent() {
+        return turn.getOutputCurrent();
+    }
+
+    public void overCurrentDetection() {
+        if (drive.getOutputCurrent() > driveCurrentLimit) drive.setSmartCurrentLimit(driveCurrentLimit);
+    }
+
+    public void setCurrentLimit(int a) {
+        driveCurrentLimit = a;
+    }
+
     /**
      * Sets the desired state of the module with a feedback controller
      * @param state The desired state of the module
@@ -170,43 +206,6 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
 
         turnPID.setReference(adjustedAngle, ControlType.kPosition, 0);
         drivePID.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity, 0);
-    }
-
-    public void overCurrentDetection() {
-        if (drive.getOutputCurrent() > driveCurrentLimit) drive.setSmartCurrentLimit(driveCurrentLimit);
-    }
-
-    public void setCurrentLimit(int a) {
-        driveCurrentLimit = a;
-    }
-
-    public double getCurrentLimit() {
-        return driveCurrentLimit;
-    }
-
-    /**
-     * @return Returns the current state of the module
-     */
-    public SwerveModuleState getState() {
-        return new SwerveModuleState(driveRelEnc.getVelocity(), new Rotation2d(getHeading()));
-    }
-
-    /**
-     * @return Returns the current being drawn by the turn motor
-     */
-    public double getTurnCurrent() {
-        return turn.getOutputCurrent();
-    }
-
-    /**
-     * @return Returns the current being drawn by the drive motor
-     */
-    public double getDriveCurrent() {
-        return drive.getOutputCurrent();
-    }
-
-    public double getTotalCurrent() {
-        return getDriveCurrent() + getTurnCurrent();
     }
 
     /**

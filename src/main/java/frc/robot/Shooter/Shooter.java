@@ -5,6 +5,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import Util.Interfaces.InitializedSubsystem;
+import Util.Interfaces.PowerManaged;
 
 import java.util.Objects;
 
@@ -17,10 +18,10 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
-public class Shooter extends SubsystemBase implements InitializedSubsystem {
+public class Shooter extends SubsystemBase implements InitializedSubsystem, PowerManaged {
 
-    private final CANSparkMax front = new CANSparkMax(ShooterConstants.frontID, MotorType.kBrushless);
-    private final CANSparkMax back = new CANSparkMax(ShooterConstants.backID, MotorType.kBrushless);
+    private final CANSparkMax front;
+    private final CANSparkMax back;
 
     private final RelativeEncoder frontEnc;
     private final RelativeEncoder backEnc;
@@ -36,7 +37,17 @@ public class Shooter extends SubsystemBase implements InitializedSubsystem {
     }
     
     private Shooter() {
+        front = new CANSparkMax(ShooterConstants.frontID, MotorType.kBrushless);
+        back = new CANSparkMax(ShooterConstants.backID, MotorType.kBrushless);
 
+        frontEnc = front.getEncoder();
+        backEnc = back.getEncoder();
+
+        frontPID = front.getPIDController();
+        backPID = back.getPIDController();
+    }
+
+    public void initialize() {
         front.restoreFactoryDefaults();
         back.restoreFactoryDefaults();
 
@@ -46,19 +57,14 @@ public class Shooter extends SubsystemBase implements InitializedSubsystem {
         front.setIdleMode(IdleMode.kCoast);
         back.setIdleMode(IdleMode.kBrake);
 
-        frontEnc = front.getEncoder();
         frontEnc.setVelocityConversionFactor(1.0);
-
-        backEnc = back.getEncoder();
         backEnc.setVelocityConversionFactor(1.0);
 
-        frontPID = front.getPIDController();
         frontPID.setP(ShooterConstants.kP);
         frontPID.setI(ShooterConstants.kI);
         frontPID.setD(ShooterConstants.kD);
         frontPID.setFF(ShooterConstants.kFF);
 
-        backPID = back.getPIDController();
         backPID.setP(ShooterConstants.kP);
         backPID.setI(ShooterConstants.kI);
         backPID.setD(ShooterConstants.kD);
@@ -66,11 +72,6 @@ public class Shooter extends SubsystemBase implements InitializedSubsystem {
 
         front.burnFlash();
         back.burnFlash();
-
-    }
-
-    public void initialize() {
-        
     }
 
     public void periodic() {
@@ -86,29 +87,26 @@ public class Shooter extends SubsystemBase implements InitializedSubsystem {
         Logger.recordOutput("Shooter/Back/BusVoltage", back.getBusVoltage());
         Logger.recordOutput("Shooter/Back/Velocity", backEnc.getVelocity());
         Logger.recordOutput("Shooter/Back/Temperature", back.getMotorTemperature());
-        
+    }
+
+    public double getCurrentLimit() {
+        return 40.0;
     }
 
     public double getTotalCurrent() {
         return front.getOutputCurrent() + back.getOutputCurrent();
     }
 
-    public void setMotorVels(double frontRPM, double backRPM) {
-        frontPID.setReference(frontRPM, ControlType.kVelocity);
-        backPID.setReference(backRPM, ControlType.kVelocity);
-    }
+    public void setCurrentLimit(int a) {}
 
     public void stopMotors() {
         front.stopMotor();
         back.stopMotor();
     }
 
-    public CANSparkMax getFront() {
-        return front;
-    }
-
-    public CANSparkMax getBack() {
-        return back;
+    public void setMotorVels(double frontRPM, double backRPM) {
+        frontPID.setReference(frontRPM, ControlType.kVelocity);
+        backPID.setReference(backRPM, ControlType.kVelocity);
     }
 
 }

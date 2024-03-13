@@ -33,6 +33,14 @@ public class Climb extends SubsystemBase implements PowerManaged, InitializedSub
         left = new CANSparkMax(ClimbConstants.leftID, MotorType.kBrushless);
         right = new CANSparkMax(ClimbConstants.rightID, MotorType.kBrushless);
 
+        leftEnc = left.getEncoder();
+        rightEnc =  right.getEncoder();
+
+        leftPID = left.getPIDController();
+        rightPID = right.getPIDController();
+    }
+
+    public void initialize() {
         left.restoreFactoryDefaults();
         right.restoreFactoryDefaults();
 
@@ -45,21 +53,19 @@ public class Climb extends SubsystemBase implements PowerManaged, InitializedSub
         left.setIdleMode(IdleMode.kBrake);
         right.setIdleMode(IdleMode.kBrake);
 
-        leftEnc = left.getEncoder();
         leftEnc.setPositionConversionFactor(ClimbConstants.climbConversionFactor);
         leftEnc.setVelocityConversionFactor(ClimbConstants.climbConversionFactor / 60.0);
+        leftEnc.setPosition(0.0);
 
-        rightEnc = right.getEncoder();
         rightEnc.setPositionConversionFactor(ClimbConstants.climbConversionFactor);
         rightEnc.setVelocityConversionFactor(ClimbConstants.climbConversionFactor / 60.0);
+        rightEnc.setPosition(0.0);
 
-        leftPID = left.getPIDController();
         leftPID.setP(ClimbConstants.kP);
         leftPID.setI(ClimbConstants.kI);
         leftPID.setD(ClimbConstants.kD);
         leftPID.setFF(ClimbConstants.kFF);
 
-        rightPID = right.getPIDController();
         rightPID.setP(ClimbConstants.kP);
         rightPID.setI(ClimbConstants.kI);
         rightPID.setD(ClimbConstants.kD);
@@ -70,32 +76,6 @@ public class Climb extends SubsystemBase implements PowerManaged, InitializedSub
 
         left.burnFlash();
         right.burnFlash();
-
-    }
-
-    public void initialize() {
-        leftEnc.setPosition(0.0);
-        rightEnc.setPosition(0.0);
-    }
-
-    public void overCurrentDetection() {}
-
-    public void setCurrentLimit(int a) {
-        left.setSmartCurrentLimit(a);
-        right.setSmartCurrentLimit(a);
-    }
-
-    public double getTotalCurrent() {
-        return left.getOutputCurrent() + right.getOutputCurrent();
-    }
-
-    public double getCurrentLimit() {
-        return ClimbConstants.CURRENT_LIMIT;
-    }
-
-    public void setEncToTop() {
-        leftEnc.setPosition(ClimbConstants.maxHeight);
-        rightEnc.setPosition(ClimbConstants.maxHeight);
     }
 
     public void periodic() {
@@ -110,16 +90,38 @@ public class Climb extends SubsystemBase implements PowerManaged, InitializedSub
         // Logging
     }
 
+
+    public double getCurrentLimit() {
+        return ClimbConstants.CURRENT_LIMIT;
+    }
+
+    public double getTotalCurrent() {
+        return left.getOutputCurrent() + right.getOutputCurrent();
+    }
+
+    public void setCurrentLimit(int a) {
+        left.setSmartCurrentLimit(a);
+        right.setSmartCurrentLimit(a);
+    }
+
+    public void setEncToTop() {
+        leftEnc.setPosition(ClimbConstants.maxHeight);
+        rightEnc.setPosition(ClimbConstants.maxHeight);
+    }
+
     /**
      * (0-1) 0 is fully down, 1 is fully up
      * @param leftHeight
      * @param rightHeight
      */
-    public void set0to1Position(double leftHeight, double rightHeight) {
+    public void setPosition(double leftHeight, double rightHeight) {
         if (leftHeight >= 0.0) leftPID.setReference(leftHeight * ClimbConstants.maxHeight, ControlType.kPosition);
         if (rightHeight >= 0.0) rightPID.setReference(rightHeight * ClimbConstants.maxHeight, ControlType.kPosition);
     }
 
+    /**
+     * Stops both climb motors
+     */
     public void stopMotors() {
         left.stopMotor();
         right.stopMotor();

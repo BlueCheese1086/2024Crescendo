@@ -89,6 +89,9 @@ public final class Constants {
         public static final int rollerID = 31;
         public static final int angleID = 32;
 
+        public static final int shooterNoteDetectorID = 0;
+        public static final int intakeNoteDetectorID = 1;
+
         public static final double rollersVelocityConversionFactor = 1.0;
 
         public static final double ROLLERS_CURRENT_LIMIT = 40;
@@ -98,6 +101,10 @@ public final class Constants {
         public static final double anglePositionConverstionFactor = Math.PI * 2.0/((48.0/44.0)*(48.0/24.0));
 
         public static final double STOWED_ANGLE = 2.4;
+        public static final double DOWN_ANGLE = 0.2;
+
+        public static final double ROLLERS_IN_RPM = 3000.0;
+        public static final double ROLLERS_OUT_RPM = -3000.0;
 
         public static final double kPRoller = 1.0;
         public static final double kIRoller = 0.0;

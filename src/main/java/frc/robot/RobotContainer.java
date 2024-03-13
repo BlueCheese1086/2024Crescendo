@@ -5,11 +5,11 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 
 import Util.ControllableConfiguration;
 import Util.Interfaces.InitializedSubsystem;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,12 +18,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Climb.Climb;
 import frc.robot.Climb.Commands.SetClimbPos;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.Drivetrain.Commands.DefaultDrive;
 import frc.robot.Intake.Intake;
-import frc.robot.Intake.Commands.SetAngle;
+import frc.robot.Intake.Commands.IntakeDefault;
 import frc.robot.Intake.Commands.SetIntakeState;
+import frc.robot.Intake.Intake.IntakeState;
 import frc.robot.Shooter.Shooter;
 import frc.robot.Shooter.Commands.RunShooter;
 
@@ -47,9 +47,9 @@ public class RobotContainer {
 
 		primary = new CommandXboxController(0);
 		secondary = new CommandXboxController(1);
-		secondary = primary;
+		// secondary = primary;
 
-		NamedCommands.registerCommand("Intake", new SetIntakeState(true, true, intake));
+		// NamedCommands.registerCommand("Intake", new SetIntakeState(IntakeState.IntakingDown, intake));
 		// NamedCommands.registerCommand("Shoot", new RunShooter(5500, 15000, secondary, shooter));
 
 		autoChooser = AutoBuilder.buildAutoChooser();
@@ -68,7 +68,7 @@ public class RobotContainer {
 				drivetrain)
 		);
 
-		intake.setDefaultCommand(new SetAngle(IntakeConstants.STOWED_ANGLE, intake));
+		intake.setDefaultCommand(new IntakeDefault(intake));
 
 		configureBindings();
 	}
@@ -79,13 +79,13 @@ public class RobotContainer {
 			frc.robot.SensorsAndFeedback.Gyro.getInstance().setAngle(0.0);
 		}));
 
-		secondary.a().whileTrue(new SetIntakeState(true, true, intake));
-		secondary.b().whileTrue(new SetIntakeState(false, false, intake));
+		secondary.a().whileTrue(new SetIntakeState(IntakeState.IntakingDown, intake));
+		secondary.b().whileTrue(new SetIntakeState(IntakeState.OuttakingUp, intake));
 
 		secondary.y().toggleOnTrue(new RunShooter(5500.0, 0.0, secondary, shooter));
 		secondary.x().whileTrue(new RunShooter(5500.0, 5500, secondary, shooter));
 		secondary.pov(90).whileTrue(new RunShooter(-5500, -5500, secondary, shooter));
-		secondary.pov(180).whileTrue(new SetIntakeState(true, false, intake));
+		secondary.pov(180).whileTrue(new SetIntakeState(IntakeState.IntakingUp, intake));
 		secondary.pov(270).whileTrue(new RunShooter(50, 500, primary, shooter));
 
 		secondary.rightTrigger(0.1).whileTrue(new SetClimbPos(-1, 0, climb));
@@ -96,6 +96,10 @@ public class RobotContainer {
 	}
 
 	public void checkClimb() {
+		if (DriverStation.isFMSAttached()) {
+			climb.initialize();
+			return;
+		}
 		if ((Boolean) climbDown.getValue()) {
 			climb.initialize();
 		} else {

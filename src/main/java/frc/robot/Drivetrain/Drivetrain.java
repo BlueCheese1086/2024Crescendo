@@ -27,13 +27,14 @@ import frc.robot.SensorsAndFeedback.Gyro;
 
 public class Drivetrain extends SubsystemBase implements PowerManaged, InitializedSubsystem {
 
-    /*           backLeft    frontLeft
-     *                 x_____x
-     *                 |     |
+    /*
+     * backLeft frontLeft
+     * x_____x
+     * | |
      * --------shooter-----------intake--- x-axis
-     *                 |_____|
-     *                 x     x
-     *           backRight   frontRight
+     * |_____|
+     * x x
+     * backRight frontRight
      */
 
     private final SwerveModule frontLeft;
@@ -48,11 +49,11 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
     private SwerveModuleState[] states = new SwerveModuleState[4];
     private SwerveModulePosition[] positions = new SwerveModulePosition[4];
 
-    private SwerveModuleState[] xStates = new SwerveModuleState[]{
-        new SwerveModuleState(0.0, new Rotation2d(Math.PI/4.0)),
-        new SwerveModuleState(0.0, new Rotation2d(-Math.PI/4.0)),
-        new SwerveModuleState(0.0, new Rotation2d(-Math.PI/4.0)),
-        new SwerveModuleState(0.0, new Rotation2d(Math.PI/4.0)),
+    private SwerveModuleState[] xStates = new SwerveModuleState[] {
+            new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)),
+            new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)),
+            new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)),
+            new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)),
     };
 
     private SwerveDriveOdometry odometry;
@@ -60,7 +61,8 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
     private static Drivetrain instance;
 
     public static Drivetrain getInstance() {
-        if (Objects.isNull(instance)) instance = new Drivetrain();
+        if (Objects.isNull(instance))
+            instance = new Drivetrain();
         return instance;
     }
 
@@ -68,40 +70,43 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
 
     public Drivetrain() {
         frontLeft = new SwerveModule(
-            "FrontLeft",
-            DriveConstants.frontLeftDriveID,
-            DriveConstants.frontLeftTurnID, 
-            DriveConstants.frontLeftEncID, 
-            DriveConstants.frontLeftOffset);
+                "FrontLeft",
+                DriveConstants.frontLeftDriveID,
+                DriveConstants.frontLeftTurnID,
+                DriveConstants.frontLeftEncID,
+                DriveConstants.frontLeftOffset);
 
         backLeft = new SwerveModule(
-            "BackLeft",
-            DriveConstants.backLeftDriveID,
-            DriveConstants.backLeftTurnID, 
-            DriveConstants.backLeftEncID, 
-            DriveConstants.backLeftOffset);
+                "BackLeft",
+                DriveConstants.backLeftDriveID,
+                DriveConstants.backLeftTurnID,
+                DriveConstants.backLeftEncID,
+                DriveConstants.backLeftOffset);
 
         frontRight = new SwerveModule(
-            "FrontRight",
-            DriveConstants.frontRightDriveID,
-            DriveConstants.frontRightTurnID, 
-            DriveConstants.frontRightEncID, 
-            DriveConstants.frontRightOffset);
+                "FrontRight",
+                DriveConstants.frontRightDriveID,
+                DriveConstants.frontRightTurnID,
+                DriveConstants.frontRightEncID,
+                DriveConstants.frontRightOffset);
 
         backRight = new SwerveModule(
-            "BackRight",
-            DriveConstants.backRightDriveID,
-            DriveConstants.backRightTurnID, 
-            DriveConstants.backRightEncID, 
-            DriveConstants.backRightOffset);
+                "BackRight",
+                DriveConstants.backRightDriveID,
+                DriveConstants.backRightTurnID,
+                DriveConstants.backRightEncID,
+                DriveConstants.backRightOffset);
 
-        modules = new SwerveModule[]{frontLeft, frontRight, backLeft, backRight};
+        modules = new SwerveModule[] { frontLeft, frontRight, backLeft, backRight };
         kinematics = new SwerveDriveKinematics(
-            new Translation2d(DriveConstants.moduleToModuleDistanceMeters/2.0, DriveConstants.moduleToModuleDistanceMeters/2.0),
-            new Translation2d(DriveConstants.moduleToModuleDistanceMeters/2.0, -DriveConstants.moduleToModuleDistanceMeters/2.0),
-            new Translation2d(-DriveConstants.moduleToModuleDistanceMeters/2.0, DriveConstants.moduleToModuleDistanceMeters/2.0),
-            new Translation2d(-DriveConstants.moduleToModuleDistanceMeters/2.0, -DriveConstants.moduleToModuleDistanceMeters/2.0)
-        );
+                new Translation2d(DriveConstants.moduleToModuleDistanceMeters / 2.0,
+                        DriveConstants.moduleToModuleDistanceMeters / 2.0),
+                new Translation2d(DriveConstants.moduleToModuleDistanceMeters / 2.0,
+                        -DriveConstants.moduleToModuleDistanceMeters / 2.0),
+                new Translation2d(-DriveConstants.moduleToModuleDistanceMeters / 2.0,
+                        DriveConstants.moduleToModuleDistanceMeters / 2.0),
+                new Translation2d(-DriveConstants.moduleToModuleDistanceMeters / 2.0,
+                        -DriveConstants.moduleToModuleDistanceMeters / 2.0));
 
         gyro = Gyro.getInstance();
 
@@ -112,24 +117,24 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
         odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(), positions);
 
         AutoBuilder.configureHolonomic(
-            this::getPose,
-            this::resetPose,
-            this::getSpeeds,
-            this::drive,
-            new HolonomicPathFollowerConfig(
-                new PIDConstants(1.0, 0, 0), // try without these?
-                new PIDConstants(1.0, 0, 0), // try without these?
-                DriveConstants.maxWheelVelocity,
-                Math.sqrt(2*Math.pow(DriveConstants.moduleToCenterDistance, 2)),
-                new ReplanningConfig()
-            ),
-            () -> DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red,
-            this
-        );
+                this::getPose,
+                this::resetPose,
+                this::getSpeeds,
+                this::drive,
+                new HolonomicPathFollowerConfig(
+                        new PIDConstants(1.0, 0, 0), // try without these?
+                        new PIDConstants(1.0, 0, 0), // try without these?
+                        DriveConstants.maxWheelVelocity,
+                        Math.sqrt(2 * Math.pow(DriveConstants.moduleToCenterDistance, 2)),
+                        new ReplanningConfig()),
+                () -> DriverStation.getAlliance().isPresent()
+                        && DriverStation.getAlliance().get() == DriverStation.Alliance.Red,
+                this);
     }
 
     /**
-     * Initializes the subsystem: sets swerve states, intializes encoders and odometry
+     * Initializes the subsystem: sets swerve states, intializes encoders and
+     * odometry
      */
     public void initialize() {
         for (int i = 0; i < states.length; i++) {
@@ -160,7 +165,8 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
         SmartDashboard.putNumber("PDH/TotalCurrent", Robot.pdh.getTotalCurrent());
     }
 
-    public void overCurrentDetection() {}
+    public void overCurrentDetection() {
+    }
 
     public void setCurrentLimit(int limit) {
         for (SwerveModule m : modules) {
@@ -178,7 +184,7 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
     public double getTurnCurrent() {
         int sum = 0;
         for (SwerveModule m : modules) {
-            sum+=m.getTurnCurrent();
+            sum += m.getTurnCurrent();
         }
         return sum;
     }
@@ -189,7 +195,7 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
     public double getDriveCurrent() {
         int sum = 0;
         for (SwerveModule m : modules) {
-            sum+=m.getDriveCurrent();
+            sum += m.getDriveCurrent();
         }
         return sum;
     }
@@ -210,6 +216,7 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
 
     /**
      * Sets the odometry position and updates the gyro angle
+     * 
      * @param p The position to set odometry to
      */
     public void resetPose(Pose2d p) {
@@ -217,7 +224,7 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
         gyro.setAngle(p.getRotation().getDegrees());
         odometry.resetPosition(gyro.getAngle(), positions, p);
     }
-    
+
     /**
      * @return Returns all swerve module positions in order of [FL, FR, BL, BR]
      */
@@ -233,14 +240,16 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
     }
 
     /**
-     * Drives the robot at the desired speeds with an overall feedback loop to ensure the speeds are met
+     * Drives the robot at the desired speeds with an overall feedback loop to
+     * ensure the speeds are met
+     * 
      * @param speeds The desired speeds of the drivetrain
      */
     public void drive(ChassisSpeeds speeds) {
         ChassisSpeeds newSpeeds = new ChassisSpeeds(
-            speeds.vxMetersPerSecond,// + 0.01 * (currentSpeeds.vxMetersPerSecond - speeds.vxMetersPerSecond), 
-            speeds.vyMetersPerSecond,// + 0.01 * (currentSpeeds.vyMetersPerSecond - speeds.vyMetersPerSecond), 
-            speeds.omegaRadiansPerSecond);// + 0.01 * (currentRotation - -speeds.omegaRadiansPerSecond));
+                speeds.vxMetersPerSecond, // + 0.01 * (currentSpeeds.vxMetersPerSecond - speeds.vxMetersPerSecond),
+                speeds.vyMetersPerSecond, // + 0.01 * (currentSpeeds.vyMetersPerSecond - speeds.vyMetersPerSecond),
+                speeds.omegaRadiansPerSecond);// + 0.01 * (currentRotation - -speeds.omegaRadiansPerSecond));
         SwerveModuleState[] desiredStates = kinematics.toSwerveModuleStates(newSpeeds);
 
         for (int i = 0; i < modules.length; i++) {
@@ -272,5 +281,5 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
             m.stop();
         }
     }
-    
+
 }

@@ -15,16 +15,21 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import Util.DebugPID;
+import Util.ThreeState;
 import Util.Interfaces.PowerManaged;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase implements PowerManaged {
 
-    private final CANSparkMax rollers = new CANSparkMax(IntakeConstants.rollerID, MotorType.kBrushless);
-    private final CANSparkMax angle = new CANSparkMax(IntakeConstants.angleID, MotorType.kBrushless);
+    private final CANSparkMax rollers;
+    private final CANSparkMax angle;
+
+    private final DigitalInput shooterNoteDetector;
+    private final DigitalInput intakeNoteDetector;
 
     private final RelativeEncoder rollersEnc;
     private final RelativeEncoder angleEnc;
@@ -32,21 +37,74 @@ public class Intake extends SubsystemBase implements PowerManaged {
 
     private final SparkPIDController rollersPID;
     private final PIDController anglePID;
-    private final SparkPIDController angleVoltageController;
+
+    private IntakeState state = IntakeState.IdlingUp;
 
     private static Intake instance;
 
+    public enum IntakeState {
+        IntakingDown(false, ThreeState.TRUE),
+        IntakingUp(true, ThreeState.TRUE),
+        OuttakingUp(true, ThreeState.FALSE),
+        OuttakingDown(true, ThreeState.FALSE),
+        IdlingUp(true, ThreeState.IDLE),
+        IdlingDown(false, ThreeState.IDLE);
+
+        private final double angleRad;
+        private final double rollersRpm;
+        
+        IntakeState(boolean up, ThreeState rollersIn) {
+            this.angleRad = up ? IntakeConstants.STOWED_ANGLE : IntakeConstants.DOWN_ANGLE;
+            switch (rollersIn) {
+                case TRUE:
+                    rollersRpm = IntakeConstants.ROLLERS_IN_RPM;
+                    break;
+                case FALSE:
+                    rollersRpm = IntakeConstants.ROLLERS_OUT_RPM;
+                    break;
+                default:
+                    rollersRpm = 0.0;
+                    break;
+            }
+        }
+
+        double getAngle() {
+            return angleRad;
+        }
+
+        double getRollerState() {
+            return rollersRpm;
+        }
+    }
+
     public static Intake getInstance() {
-        if (Objects.isNull(instance)) instance = new Intake();
+        if (Objects.isNull(instance))
+            instance = new Intake();
         return instance;
     }
 
     private Intake() {
 
+        shooterNoteDetector = new DigitalInput(IntakeConstants.shooterNoteDetectorID);
+        intakeNoteDetector = new DigitalInput(IntakeConstants.intakeNoteDetectorID);
+
+        rollers = new CANSparkMax(IntakeConstants.rollerID, MotorType.kBrushless);
+        angle = new CANSparkMax(IntakeConstants.angleID, MotorType.kBrushless);
+
+        rollersEnc = rollers.getEncoder();
+        angleEnc = angle.getEncoder();
+        angleAbs = angle.getAbsoluteEncoder(Type.kDutyCycle);
+
+        anglePID = new PIDController(IntakeConstants.kPAngle, IntakeConstants.kIAngle, IntakeConstants.kDAngle);
+        rollersPID = rollers.getPIDController();
+
+    }
+
+    public void initialize() {
+
         rollers.restoreFactoryDefaults();
         angle.restoreFactoryDefaults();
 
-        // rollers.setSmartCurrentLimit((int) IntakeConstants.ROLLERS_CURRENT_LIMIT);
         angle.setSmartCurrentLimit((int) IntakeConstants.ANGLE_CURRENT_LIMIT);
 
         rollers.setInverted(false);
@@ -55,45 +113,31 @@ public class Intake extends SubsystemBase implements PowerManaged {
         rollers.setIdleMode(IdleMode.kCoast);
         angle.setIdleMode(IdleMode.kCoast);
 
-        rollersEnc = rollers.getEncoder();
         rollersEnc.setVelocityConversionFactor(IntakeConstants.rollersVelocityConversionFactor);
 
-        angleAbs = angle.getAbsoluteEncoder(Type.kDutyCycle);
         angleAbs.setVelocityConversionFactor(IntakeConstants.anglePositionConverstionFactor / 60.0);
         angleAbs.setPositionConversionFactor(IntakeConstants.anglePositionConverstionFactor);
         angleAbs.setZeroOffset(IntakeConstants.angleOffset);
         angleAbs.setInverted(false);
 
-        angleEnc = angle.getEncoder();
         angleEnc.setPositionConversionFactor(2.0 * Math.PI / 54.55);
         angleEnc.setVelocityConversionFactor(2.0 * Math.PI / 54.55 / 60.0);
         angleEnc.setPosition(angleAbs.getPosition());
 
-        angleVoltageController = angle.getPIDController();
-        angleVoltageController.setP(1.0);
-
-        // rollersPID = new PIDController(IntakeConstants.kPRoller, IntakeConstants.kIRoller, IntakeConstants.kDRoller);
-        rollersPID = rollers.getPIDController();
         rollersPID.setP(IntakeConstants.kPRoller);
         rollersPID.setI(IntakeConstants.kIRoller);
         rollersPID.setD(IntakeConstants.kDRoller);
         rollersPID.setFF(IntakeConstants.kFFRoller);
-
-
-        anglePID = new PIDController(IntakeConstants.kPAngle, IntakeConstants.kIAngle, IntakeConstants.kDAngle);
 
         rollers.burnFlash();
         angle.burnFlash();
 
         new DebugPID(rollersPID, "IntakeRollers");
         // new DebugPID(anglePID, "IntakeAngle");
+
     }
 
-    public void initialize() {}
-
     public void periodic() {
-        // TODO
-        // Telemetry
 
         Logger.recordOutput("Intake/Roller/MotorCurrent", rollers.getOutputCurrent());
         Logger.recordOutput("Intake/Roller/BusVoltage", rollers.getBusVoltage());
@@ -114,54 +158,114 @@ public class Intake extends SubsystemBase implements PowerManaged {
 
     }
 
-    public void overCurrentDetection() {}
+    /**
+     * The default method that runs in the command scheduler to ensure everything in the subsystem is behaving as expected
+     */
+    public void defaultMethod() {
 
-    public void setCurrentLimit(int a) {
-        rollers.setSmartCurrentLimit(a);
-        angle.setSmartCurrentLimit(a);
+        if (getShooterSensor() && state.rollersRpm > 0.0) state = IntakeState.IdlingUp;
+        if (getIntakeSensor() && !getShooterSensor() && state == IntakeState.IntakingDown) state = IntakeState.IntakingUp;
+        
+        setAnglePosition(state.angleRad);
+        setRollerSpeed(state.rollersRpm);
+    
     }
 
-    public void setAnglePosition(double angleRads) {
-        double desiredVoltage = anglePID.calculate(angleAbs.getPosition(), angleRads) + IntakeConstants.kGAngle * Math.cos(angleAbs.getPosition() - 0.2);
-        SmartDashboard.putNumber("/Intake/DesiredAngle", angleRads);
-        SmartDashboard.putNumber("/Intake/DesiredVoltage", desiredVoltage);
-        SmartDashboard.putNumber("/Intake/CurrentDraw", angle.getOutputCurrent());
-        // angle.setVoltage(desiredVoltage);
-        angleVoltageController.setReference(desiredVoltage, ControlType.kVoltage);
-    }
-
-    public void setRollerSpeed(double rpm) {
-        // rollers.setVoltage(rollersPID.calculate(rollersEnc.getVelocity(), rpm) + rollersFeedforward.calculate(rpm));
-        rollersPID.setReference(rpm, ControlType.kVelocity);
-    }
-
-    public void stopRollers() {
-        rollers.stopMotor();
-    }
-
-    public void stopAngle() {
-        angle.stopMotor();
-    }
-
-    public void stop() {
-        angle.stopMotor();
-        rollers.stopMotor();
-    }
-
-    public double getTotalCurrent() {
-        return angle.getOutputCurrent() + rollers.getOutputCurrent();
+    /**
+     * @return Returns the current angle of the intake in radians
+     */
+    public double getAngle() {
+        return angleEnc.getPosition();
     }
 
     public double getCurrentLimit() {
         return IntakeConstants.ANGLE_CURRENT_LIMIT + IntakeConstants.ROLLERS_CURRENT_LIMIT;
     }
 
-    public RelativeEncoder getRollerEncoder() {
-        return rollersEnc;
+    /**
+     * @return Returns the desired state of the intake
+     */
+    public IntakeState getDesiredState() {
+        return state;
     }
 
-    public double getAngle() {
-        return angleEnc.getPosition();
+    /**
+     * @return Returns the state of the intake beam break sensor
+     */
+    public boolean getIntakeSensor() {
+        return intakeNoteDetector.get();
+    }
+
+    /**
+     * @return Returns the state of the shooter beam break sensor
+     */
+    public boolean getShooterSensor() {
+        return shooterNoteDetector.get();
+    }
+
+    public double getTotalCurrent() {
+        return angle.getOutputCurrent() + rollers.getOutputCurrent();
+    }
+
+    public void overCurrentDetection() {
+        return;
+    }
+
+    /**
+     * Sets the goal of the angle position PID to the desired angle in radians
+     * 
+     * @param angleRads The desired angle in radians
+     */
+    public void setAnglePosition(double angleRads) {
+        double desiredVoltage = anglePID.calculate(angleAbs.getPosition(), angleRads) + IntakeConstants.kGAngle * Math.cos(angleAbs.getPosition() - 0.2);
+
+        angle.setVoltage(desiredVoltage);
+    }
+
+    /**
+     * Sets the desired state of the intake
+     * @param state The desired state of the intake
+     */
+    public void setState(IntakeState state) {
+        this.state = state;
+    }
+
+    public void setCurrentLimit(int a) {
+        rollers.setSmartCurrentLimit(a);
+        angle.setSmartCurrentLimit(a);
+    }
+
+    /**
+     * Sets the goal of the roller velocity PID to the desired rpm
+     * 
+     * @param rpm The desired rpm
+     */
+    public void setRollerSpeed(double rpm) {
+        // rollers.setVoltage(rollersPID.calculate(rollersEnc.getVelocity(), rpm) +
+        // rollersFeedforward.calculate(rpm));
+        rollersPID.setReference(rpm, ControlType.kVelocity);
+    }
+
+    /**
+     * Stops all motors in the intake
+     */
+    public void stop() {
+        angle.stopMotor();
+        rollers.stopMotor();
+    }
+
+    /**
+     * Stops the angle control motor
+     */
+    public void stopAngle() {
+        angle.stopMotor();
+    }
+
+    /**
+     * Stops the roller control motor
+     */
+    public void stopRollers() {
+        rollers.stopMotor();
     }
 
 }

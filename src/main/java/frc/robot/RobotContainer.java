@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import Util.ControllableConfiguration;
 import Util.Interfaces.InitializedSubsystem;
@@ -21,10 +22,12 @@ import frc.robot.Climb.Commands.SetClimbPos;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.Drivetrain.Commands.DefaultDrive;
 import frc.robot.Intake.Intake;
+import frc.robot.Intake.Commands.AutoIntake;
 import frc.robot.Intake.Commands.IntakeDefault;
 import frc.robot.Intake.Commands.SetIntakeState;
 import frc.robot.Intake.Intake.IntakeState;
 import frc.robot.Shooter.Shooter;
+import frc.robot.Shooter.Commands.AutoShoot;
 import frc.robot.Shooter.Commands.RunShooter;
 
 public class RobotContainer {
@@ -49,8 +52,8 @@ public class RobotContainer {
 		secondary = new CommandXboxController(1);
 		// secondary = primary;
 
-		// NamedCommands.registerCommand("Intake", new SetIntakeState(IntakeState.IntakingDown, intake));
-		// NamedCommands.registerCommand("Shoot", new RunShooter(5500, 15000, secondary, shooter));
+		NamedCommands.registerCommand("Intake", new AutoIntake(intake));
+		NamedCommands.registerCommand("Shoot", new AutoShoot(shooter, intake));
 
 		autoChooser = AutoBuilder.buildAutoChooser();
 		SmartDashboard.putData(autoChooser);

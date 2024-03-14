@@ -48,6 +48,11 @@ public final class Constants {
         public static final double maxWheelVelocity = Units.feetToMeters(19.8);
         public static final double maxRotationalVelocity = maxWheelVelocity/moduleToCenterDistance;
 
+        /**
+         * 6 m/s^2
+         */
+        public static final double maxAcceleration = 6;
+
     }
 
     public static final class SwerveConstants {
@@ -94,7 +99,7 @@ public final class Constants {
 
         public static final double rollersVelocityConversionFactor = 1.0;
 
-        public static final double ROLLERS_CURRENT_LIMIT = 40;
+        public static final double ROLLERS_CURRENT_LIMIT = 80;
         public static final double ANGLE_CURRENT_LIMIT = 40;
 
         public static final double angleOffset = 2.0;
@@ -106,10 +111,10 @@ public final class Constants {
         public static final double ROLLERS_IN_RPM = 3000.0;
         public static final double ROLLERS_OUT_RPM = -3000.0;
 
-        public static final double kPRoller = 1.0;
+        public static final double kPRoller = 0.0001;
         public static final double kIRoller = 0.0;
         public static final double kDRoller = 0.0;
-        public static final double kFFRoller = 1.5;
+        public static final double kFFRoller = 0.0025;
 
         public static final double kPAngle = 3.5;
         public static final double kIAngle = 0.0;

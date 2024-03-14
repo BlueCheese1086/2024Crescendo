@@ -104,12 +104,13 @@ public class Intake extends SubsystemBase implements InitializedSubsystem, Power
         angle.restoreFactoryDefaults();
 
         angle.setSmartCurrentLimit((int) IntakeConstants.ANGLE_CURRENT_LIMIT);
+        rollers.setSmartCurrentLimit((int) IntakeConstants.ROLLERS_CURRENT_LIMIT);
 
         rollers.setInverted(false);
         angle.setInverted(false);
 
         rollers.setIdleMode(IdleMode.kCoast);
-        angle.setIdleMode(IdleMode.kCoast);
+        angle.setIdleMode(IdleMode.kBrake);
 
         rollersEnc.setVelocityConversionFactor(IntakeConstants.rollersVelocityConversionFactor);
 
@@ -154,13 +155,19 @@ public class Intake extends SubsystemBase implements InitializedSubsystem, Power
         SmartDashboard.putNumber("Intake/Angle/BusVoltage", angle.getBusVoltage());
         SmartDashboard.putNumber("Intake/Angle/ABSPosition", angleAbs.getPosition());
         SmartDashboard.putNumber("Intake/Angle/Temperature", angle.getMotorTemperature());
+
+        SmartDashboard.putBoolean("Intake/ShooterBreakStatus", getShooterSensor());
+        SmartDashboard.putBoolean("Intake/IntakeBreakStatus", getIntakeSensor());
+
+        SmartDashboard.putNumber("Intake/DesiredAngle", state.angleRad);
+        SmartDashboard.putNumber("Intake/DesiredRPM", state.rollersRpm);
     }
 
     /**
      * The default method that runs in the command scheduler to ensure everything in the subsystem is behaving as expected
      */
     public void defaultMethod() {
-        if (getShooterSensor() && state.rollersRpm > 0.0) state = IntakeState.IdlingUp;
+        if (getShooterSensor() && getIntakeSensor() && state.rollersRpm > 0.0) state = IntakeState.IdlingUp;
         if (getIntakeSensor() && !getShooterSensor() && state == IntakeState.IntakingDown) state = IntakeState.IntakingUp;
         
         setAnglePosition(state.angleRad);
@@ -189,14 +196,14 @@ public class Intake extends SubsystemBase implements InitializedSubsystem, Power
      * @return Returns the state of the intake beam break sensor
      */
     public boolean getIntakeSensor() {
-        return intakeNoteDetector.get();
+        return !intakeNoteDetector.get();
     }
 
     /**
      * @return Returns the state of the shooter beam break sensor
      */
     public boolean getShooterSensor() {
-        return shooterNoteDetector.get();
+        return !shooterNoteDetector.get();
     }
 
     public double getTotalCurrent() {
@@ -210,7 +217,6 @@ public class Intake extends SubsystemBase implements InitializedSubsystem, Power
      */
     public void setAnglePosition(double angleRads) {
         double desiredVoltage = anglePID.calculate(angleAbs.getPosition(), angleRads) + IntakeConstants.kGAngle * Math.cos(angleAbs.getPosition() - 0.2);
-
         angle.setVoltage(desiredVoltage);
     }
 
@@ -235,6 +241,7 @@ public class Intake extends SubsystemBase implements InitializedSubsystem, Power
     public void setRollerSpeed(double rpm) {
         // rollers.setVoltage(rollersPID.calculate(rollersEnc.getVelocity(), rpm) +
         // rollersFeedforward.calculate(rpm));
+        SmartDashboard.putNumber("Intake/DesiredRPM as Reported", rpm);
         rollersPID.setReference(rpm, ControlType.kVelocity);
     }
 

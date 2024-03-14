@@ -50,15 +50,16 @@ public class RobotContainer {
 
 		primary = new CommandXboxController(0);
 		secondary = new CommandXboxController(1);
-		// secondary = primary;
+		secondary = primary;
 
 		NamedCommands.registerCommand("Intake", new AutoIntake(intake));
 		NamedCommands.registerCommand("Shoot", new AutoShoot(shooter, intake));
+		NamedCommands.registerCommand("IntakeThenShoot", new AutoIntake(intake).andThen(new AutoShoot(shooter, intake)));
 
 		autoChooser = AutoBuilder.buildAutoChooser();
 		SmartDashboard.putData(autoChooser);
 
-		for (SubsystemBase s : new SubsystemBase[]{drivetrain, climb}) {
+		for (SubsystemBase s : new SubsystemBase[]{drivetrain, climb, intake, shooter}) {
 			((InitializedSubsystem) s).initialize();
 		}
 
@@ -86,8 +87,8 @@ public class RobotContainer {
 			frc.robot.SensorsAndFeedback.Gyro.getInstance().setAngle(0.0);
 		}));
 
-		secondary.a().whileTrue(new SetIntakeState(IntakeState.IntakingDown, intake));
-		secondary.b().whileTrue(new SetIntakeState(IntakeState.OuttakingUp, intake));
+		secondary.a().whileTrue(new SetIntakeState(IntakeState.IntakingDown, intake)).whileFalse(new SetIntakeState(IntakeState.IdlingUp, intake));
+		secondary.b().whileTrue(new SetIntakeState(IntakeState.OuttakingUp, intake)).whileFalse(new SetIntakeState(IntakeState.IdlingUp, intake));
 
 		secondary.y().toggleOnTrue(new RunShooter(5500.0, 0.0, secondary, shooter));
 		secondary.x().whileTrue(new RunShooter(5500.0, 5500, secondary, shooter));

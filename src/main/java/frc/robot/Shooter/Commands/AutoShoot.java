@@ -20,19 +20,20 @@ public class AutoShoot extends Command {
     
     public void initialize() {
         end = false;
+        // if (!intake.getIntakeSensor()) end = true;
     }
 
     public void execute() {
         if (!intake.getShooterSensor()) return;
-        shooter.setMotorVels(5500, 5500);
+        shooter.setMotorVels(5500, shooter.getFrontRPM() > 5000.0 ? 15000 : 0.0);
         end = true;
     }
 
     public boolean isFinished() {
-        return end && intake.getShooterSensor();
+        return end && !intake.getShooterSensor();
     }
 
-    public void end() {
+    public void end(boolean interr) {
         shooter.stopMotors();
     }
 

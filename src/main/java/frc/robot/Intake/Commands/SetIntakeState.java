@@ -15,7 +15,7 @@ public class SetIntakeState extends Command {
         this.state = state;
 
         this.intake = intake;
-        addRequirements(intake);
+        // addRequirements(intake);
     }
     
     public void initialize() {}
@@ -28,6 +28,8 @@ public class SetIntakeState extends Command {
         return false;
     }
 
-    public void end(boolean inter) {}
+    public void end(boolean inter) {
+        // intake.setState(IntakeState.IdlingUp);
+    }
 
 }

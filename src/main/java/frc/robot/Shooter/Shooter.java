@@ -93,6 +93,10 @@ public class Shooter extends SubsystemBase implements InitializedSubsystem, Powe
         return 40.0;
     }
 
+    public double getFrontRPM() {
+        return frontEnc.getVelocity();
+    }
+
     public double getTotalCurrent() {
         return front.getOutputCurrent() + back.getOutputCurrent();
     }

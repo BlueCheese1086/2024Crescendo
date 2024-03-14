@@ -10,12 +10,14 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import Util.Interfaces.PowerManaged;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SwerveConstants;
 
 public class SwerveModule extends SubsystemBase implements PowerManaged {
@@ -34,6 +36,8 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
     private final CANSparkMax drive, turn;
     private final RelativeEncoder driveRelEnc, turnRelEnc;
     private final SparkPIDController drivePID, turnPID;
+
+    private final SlewRateLimiter driveAccelerationLimiter = new SlewRateLimiter(DriveConstants.maxAcceleration);
 
     private int turnCurrentLimit = 30;
     private int driveCurrentLimit = 80;
@@ -191,6 +195,17 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
 
     public void setCurrentLimit(int a) {
         driveCurrentLimit = a;
+    }
+
+    public void setRatedState(SwerveModuleState state) {
+        this.state = state;
+        SwerveModuleState optimizedState = SwerveModuleState.optimize(state, new Rotation2d(getHeading()));
+
+        double desiredAngle = optimizedState.angle.getRadians();
+        double adjustedAngle = getAdjustedAngle(desiredAngle);
+
+        turnPID.setReference(adjustedAngle, ControlType.kPosition, 0);
+        drivePID.setReference(driveAccelerationLimiter.calculate(optimizedState.speedMetersPerSecond), ControlType.kVelocity);
     }
 
     /**

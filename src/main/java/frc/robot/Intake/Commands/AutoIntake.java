@@ -13,7 +13,8 @@ public class AutoIntake extends Command {
         addRequirements(intake);
     }
 
-    public void initialize() {}
+    public void initialize() {
+    }
 
     public void execute() {
         intake.setState(IntakeState.IntakingDown);
@@ -21,7 +22,7 @@ public class AutoIntake extends Command {
     }
 
     public boolean isFinished() {
-        return intake.getIntakeSensor();
+        return intake.getShooterSensor() && intake.getIntakeSensor();
     }
 
     public void end(boolean interr) {}

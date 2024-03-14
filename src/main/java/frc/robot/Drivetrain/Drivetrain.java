@@ -119,7 +119,7 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
                 this::getPose,
                 this::resetPose,
                 this::getSpeeds,
-                this::drive,
+                this::driveRated,
                 new HolonomicPathFollowerConfig(
                         new PIDConstants(1.0, 0, 0), // try without these?
                         new PIDConstants(1.0, 0, 0), // try without these?
@@ -169,14 +169,33 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
      * @param speeds The desired speeds of the drivetrain
      */
     public void drive(ChassisSpeeds speeds) {
+        ChassisSpeeds currentSpeeds = getSpeeds();
         ChassisSpeeds newSpeeds = new ChassisSpeeds(
-                speeds.vxMetersPerSecond, // + 0.01 * (currentSpeeds.vxMetersPerSecond - speeds.vxMetersPerSecond),
-                speeds.vyMetersPerSecond, // + 0.01 * (currentSpeeds.vyMetersPerSecond - speeds.vyMetersPerSecond),
-                speeds.omegaRadiansPerSecond);// + 0.01 * (currentRotation - -speeds.omegaRadiansPerSecond));
+                speeds.vxMetersPerSecond + 0.001 * (currentSpeeds.vxMetersPerSecond - speeds.vxMetersPerSecond),
+                speeds.vyMetersPerSecond + 0.001 * (currentSpeeds.vyMetersPerSecond - speeds.vyMetersPerSecond),
+                speeds.omegaRadiansPerSecond);// + 0.0001 * (gyro.getYawVelocity().getRadians() - speeds.omegaRadiansPerSecond));
         SwerveModuleState[] desiredStates = kinematics.toSwerveModuleStates(newSpeeds);
 
         for (int i = 0; i < modules.length; i++) {
             modules[i].setState(desiredStates[i]);
+        }
+    }
+
+    /**
+     * Drives the robot at the desired speeds with an overall feedback loop to
+     * ensure the speeds are met
+     * 
+     * @param speeds The desired speeds of the drivetrain
+     */
+    public void driveRated(ChassisSpeeds speeds) {
+        ChassisSpeeds newSpeeds = new ChassisSpeeds(
+                speeds.vxMetersPerSecond,// + 0.001 * (currentSpeeds.vxMetersPerSecond - speeds.vxMetersPerSecond),
+                speeds.vyMetersPerSecond,// + 0.001 * (currentSpeeds.vyMetersPerSecond - speeds.vyMetersPerSecond),
+                speeds.omegaRadiansPerSecond);// + 0.0001 * (gyro.getYawVelocity().getRadians() - speeds.omegaRadiansPerSecond));
+        SwerveModuleState[] desiredStates = kinematics.toSwerveModuleStates(newSpeeds);
+
+        for (int i = 0; i < modules.length; i++) {
+            modules[i].setRatedState(desiredStates[i]);
         }
     }
 
@@ -245,7 +264,6 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
      */
     public void resetPose(Pose2d p) {
         field.setRobotPose(p);
-        gyro.setAngle(p.getRotation().getDegrees());
         odometry.resetPosition(gyro.getAngle(), positions, p);
     }
 

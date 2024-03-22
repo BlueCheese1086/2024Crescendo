@@ -53,24 +53,43 @@ public class Constants {
         public static final double driveP = 0.01;
         public static final double driveI = 0;
         public static final double driveD = 0;
+        public static final double driveFF = 0;
 
         // Turn PID Values
         public static final double turnP = 0.01;
         public static final double turnI = 0;
         public static final double turnD = 0;
+        public static final double turnFF = 0;
 
         // FeedForward Values
         public static final double kS = 0.00; // give the dt a minimal voltage until it moves.  That voltage value is kS.
         public static final double kV = 2.54;
         public static final double kA = 0.22;
+
+        // Robot Specs
+        public static final double wheelCircumpherence = Units.inchesToMeters(4.0 * Math.PI);
+        public static final double driveGearRatio = 5.14;
+        public static final double turnGearRatio = 12.8;
+
+        // Conversion factors
+        public static final double drivePosConversionFactor = wheelCircumpherence / driveGearRatio;
+        public static final double driveVelConversionFactor = wheelCircumpherence / driveGearRatio / 60;
+        public static final double turnPosConversionFactor = Math.PI * 2.0 / turnGearRatio;
+        public static final double turnVelConversionFactor = Math.PI * 2.0 / turnGearRatio / 60;
+    }
+
+    public class IntakeConstants {
+        // Motor IDs
+        public static final int rollerID = 11;
+        public static final int accessID = 12;
     }
 
     public class ShooterConstants {
         // Motor IDs
-        public static final int lShooterID = 11;
-        public static final int rShooterID = 12;
-        public static final int feedRollerID = 13;
-        public static final int alignID = 14;
+        public static final int lShooterID = 21;
+        public static final int rShooterID = 22;
+        public static final int feedRollerID = 23;
+        public static final int alignID = 24;
 
         // Robot Measurements
         public static final double gearRatio = 4.5;
@@ -89,8 +108,8 @@ public class Constants {
 
     public class TowerConstants {
         // Motor IDs
-        public static final int lTowerID = 21;
-        public static final int rTowerID = 22;
+        public static final int lTowerID = 31;
+        public static final int rTowerID = 32;
     }
 
     public class VisionConstants {

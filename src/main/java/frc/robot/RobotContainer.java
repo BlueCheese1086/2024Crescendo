@@ -4,24 +4,29 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.math.MathUtil;
-import frc.robot.Drivetrain.Commands.SwerveDrive;
-import frc.robot.Intake.Intake;
-import frc.robot.Shooter.Shooter;
-import frc.robot.Vision.Vision;
-import frc.robot.Climb.Climb;
+
+import frc.robot.Drivetrain.Commands.*;
 import frc.robot.Drivetrain.Drivetrain;
+import frc.robot.Intake.Commands.*;
+import frc.robot.Intake.Intake;
+import frc.robot.Shooter.Commands.*;
+import frc.robot.Shooter.Shooter;
+import frc.robot.Tower.Commands.*;
+import frc.robot.Tower.Tower;
+import frc.robot.Vision.Commands.*;
+import frc.robot.Vision.Vision;
 
 public class RobotContainer {
     // Creating the subsystems
     Vision vision = new Vision();
-    Drivetrain drivetrain = new Drivetrain(vision);
-    Shooter shooter = new Shooter(vision, drivetrain);
+    Drivetrain drivetrain = new Drivetrain();
+    Shooter shooter = new Shooter();
     Intake intake = new Intake();
-    Climb climb = new Climb();
+    Tower tower = new Tower();
 
     // Creating the controllers
     CommandXboxController driveController = new CommandXboxController(0);

@@ -16,7 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
-public class SwerveModule extends SubsystemBase {
+public class TalonFXSwerveModule extends SubsystemBase {
     // Motors
     private TalonFX drive;
     private TalonFX turn;
@@ -34,7 +34,7 @@ public class SwerveModule extends SubsystemBase {
     private VelocityVoltage driveVolts;
     private PositionVoltage turnVolts;
 
-    public SwerveModule(int driveID, int turnID, int cancoderID, double offset) {
+    public TalonFXSwerveModule(int driveID, int turnID, int cancoderID, double offset) {
         // Initializing the motors
         drive = new TalonFX(driveID);
         turn = new TalonFX(turnID);
@@ -56,7 +56,7 @@ public class SwerveModule extends SubsystemBase {
         turnConfig.Slot0.kI = DriveConstants.turnI;
         turnConfig.Slot0.kD = DriveConstants.turnD;
 
-        // Initializing the cancoder
+        // Initializing the cancoder (may be able to remove due to how talons treat external encoders)
         cancoder = new CANcoder(cancoderID);
         
         // Linking the cancoder to the turn motor

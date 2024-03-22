@@ -6,28 +6,15 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import frc.robot.Constants.ClimbConstants;
+import frc.robot.Constants.TowerConstants;
 
 public class Tower {
-    // A common instance of the climb subsystem.
-    private static Tower instance;
-
     // Motors
-    private CANSparkMax lTower = new CANSparkMax(ClimbConstants.lTowerID, MotorType.kBrushless);
-    private CANSparkMax rTower = new CANSparkMax(ClimbConstants.rTowerID, MotorType.kBrushless);
+    private CANSparkMax lTower = new CANSparkMax(TowerConstants.lTowerID, MotorType.kBrushless);
+    private CANSparkMax rTower = new CANSparkMax(TowerConstants.rTowerID, MotorType.kBrushless);
 
-    /**
-     * Gets an instance of the Climb subsystem.
-     * 
-     * @return The instance of the Climb subsystem.
-     */
-    public static Tower getInstance() {
-        // Checks if the climb system has been initialized yet.
-        if (Objects.isNull(instance)) instance = new Tower();
-
-        // Returns an instance of the Climb subsystem.
-        return instance;
-    }
+    // A common instance of the tower subsystem.
+    private static Tower instance;
 
     public Tower() {
         // Resetting the settings on the sparkmaxes
@@ -45,6 +32,20 @@ public class Tower {
         // Saving the settings to the sparkmax
         lTower.burnFlash();
         rTower.burnFlash();
+    }
+
+    /**
+     * This function gets a common instance of the tower subsystem that anyone can access.
+     * <p>
+     * This allows us to not need to pass around subsystems as parameters, and instead run this function whenever we need the subsystem.
+     * 
+     * @return An instance of the Tower subsystem.
+     */
+    public static Tower getInstance() {
+        // If the instance hasn't been initialized, then initialize it.
+        if (Objects.isNull(instance)) instance = new Tower();
+
+        return instance;
     }
 
     /**

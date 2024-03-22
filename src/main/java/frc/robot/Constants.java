@@ -87,7 +87,7 @@ public class Constants {
         public static final double maxAlignSpeed = 0.5; // Duty Cycle
     }
 
-    public class ClimbConstants {
+    public class TowerConstants {
         // Motor IDs
         public static final int lTowerID = 21;
         public static final int rTowerID = 22;

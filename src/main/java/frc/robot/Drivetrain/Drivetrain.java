@@ -1,5 +1,7 @@
 package frc.robot.Drivetrain;
 
+import java.util.Objects;
+
 import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -18,10 +20,10 @@ import frc.robot.Vision.Vision;
 
 public class Drivetrain extends SubsystemBase {
     // Swerve Modules
-    private SwerveModule flModule;
-    private SwerveModule frModule;
-    private SwerveModule blModule;
-    private SwerveModule brModule;
+    private SparkMaxSwerveModule flModule;
+    private SparkMaxSwerveModule frModule;
+    private SparkMaxSwerveModule blModule;
+    private SparkMaxSwerveModule brModule;
 
     // Sensors
     private Pigeon2 gyro;
@@ -41,19 +43,22 @@ public class Drivetrain extends SubsystemBase {
     private SwerveDriveKinematics kinematics;
 
     // Swerve Module Vars
-    private SwerveModule[] modules = {flModule, frModule, blModule, brModule};
+    private SparkMaxSwerveModule[] modules = {flModule, frModule, blModule, brModule};
     private SwerveModulePosition[] positions = new SwerveModulePosition[4];
 
     // Odometry/Pose Estimation
     private SwerveDrivePoseEstimator poseEstimator;
     private Vision vision;
 
-    public Drivetrain(Vision vision) {
+    // A common instance of the drivetrain subsystem.
+    private static Drivetrain instance;
+
+    public Drivetrain() {
         // Initializing the Swerve Modules
-        flModule = new SwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
-        frModule = new SwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
-        blModule = new SwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
-        brModule = new SwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
+        flModule = new SparkMaxSwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
+        frModule = new SparkMaxSwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
+        blModule = new SparkMaxSwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
+        brModule = new SparkMaxSwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
 
         // Initializing the gyro
         gyro = new Pigeon2(DriveConstants.gyroID);
@@ -71,8 +76,25 @@ public class Drivetrain extends SubsystemBase {
             new Translation2d( DriveConstants.width / 2, -DriveConstants.length / 2)  // BR Swerve module
         );
 
+        // Initializing the pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(kinematics, getAngle(), positions, new Pose2d());
-        this.vision = vision;
+
+        // Getting an instance of the Vision subsystem.
+        vision = Vision.getInstance();
+    }
+
+    /**
+     * This function gets a common instance of the drivetrain subsystem that anyone can access.
+     * <p>
+     * This allows us to not need to pass around subsystems as parameters, and instead run this function whenever we need the subsystem.
+     * 
+     * @return An instance of the Drivetrain subsystem.
+     */
+    public static Drivetrain getInstance() {
+        // If the instance hasn't been initialized, then initialize it.
+        if (Objects.isNull(instance)) instance = new Drivetrain();
+
+        return instance;
     }
 
     @Override

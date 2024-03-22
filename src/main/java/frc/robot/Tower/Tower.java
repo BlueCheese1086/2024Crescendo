@@ -1,4 +1,4 @@
-package frc.robot.Climb;
+package frc.robot.Tower;
 
 import java.util.Objects;
 
@@ -8,9 +8,9 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.Constants.ClimbConstants;
 
-public class Climb {
+public class Tower {
     // A common instance of the climb subsystem.
-    private static Climb instance;
+    private static Tower instance;
 
     // Motors
     private CANSparkMax lTower = new CANSparkMax(ClimbConstants.lTowerID, MotorType.kBrushless);
@@ -21,15 +21,15 @@ public class Climb {
      * 
      * @return The instance of the Climb subsystem.
      */
-    public static Climb getInstance() {
+    public static Tower getInstance() {
         // Checks if the climb system has been initialized yet.
-        if (Objects.isNull(instance)) instance = new Climb();
+        if (Objects.isNull(instance)) instance = new Tower();
 
         // Returns an instance of the Climb subsystem.
         return instance;
     }
 
-    public Climb() {
+    public Tower() {
         // Resetting the settings on the sparkmaxes
         lTower.restoreFactoryDefaults();
         rTower.restoreFactoryDefaults();

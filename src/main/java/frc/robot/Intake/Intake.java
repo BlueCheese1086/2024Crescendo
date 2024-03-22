@@ -2,12 +2,14 @@ package frc.robot.Intake;
 
 import java.util.Objects;
 
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkBase.ControlType;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake {
@@ -33,10 +35,16 @@ public class Intake {
         accessEncoder = accessMotor.getEncoder();
 
         // Setting position conversion factor
-        accessEncoder.setPositionConversionFactor(0);
+        accessEncoder.setPositionConversionFactor(IntakeConstants.anglePosConversionFactor);
 
         // Initializing PID controller
         accessPID = accessMotor.getPIDController();
+
+        // Setting PID values
+        accessPID.setP(IntakeConstants.accessP);
+        accessPID.setI(IntakeConstants.accessI);
+        accessPID.setD(IntakeConstants.accessD);
+        accessPID.setFF(IntakeConstants.accessFF);
     }
 
     /**
@@ -58,7 +66,7 @@ public class Intake {
      * 
      * @param speed The percent speed of the roller motor.
      */
-    public void setRollerSpeed(double speed) {
+    public void setSpeed(double speed) {
         rollerMotor.set(speed);
     }
 
@@ -68,7 +76,6 @@ public class Intake {
      * @param angle The angle that the intake should be set to.
      */
     public void setAngle(Rotation2d angle) {
-        
-
+        accessPID.setReference(angle.getRadians(), ControlType.kPosition);
     }
 }

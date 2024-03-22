@@ -66,22 +66,34 @@ public class Constants {
         public static final double kV = 2.54;
         public static final double kA = 0.22;
 
-        // Robot Specs
+        // Drivetrain Specs
         public static final double wheelCircumpherence = Units.inchesToMeters(4.0 * Math.PI);
         public static final double driveGearRatio = 5.14;
         public static final double turnGearRatio = 12.8;
 
         // Conversion factors
         public static final double drivePosConversionFactor = wheelCircumpherence / driveGearRatio;
-        public static final double driveVelConversionFactor = wheelCircumpherence / driveGearRatio / 60;
-        public static final double turnPosConversionFactor = Math.PI * 2.0 / turnGearRatio;
-        public static final double turnVelConversionFactor = Math.PI * 2.0 / turnGearRatio / 60;
+        public static final double driveVelConversionFactor = wheelCircumpherence / driveGearRatio / 60.0;
+        public static final double turnPosConversionFactor = 2.0 * Math.PI / turnGearRatio;
+        public static final double turnVelConversionFactor = 2.0 * Math.PI / turnGearRatio / 60.0;
     }
 
     public class IntakeConstants {
         // Motor IDs
         public static final int rollerID = 11;
         public static final int accessID = 12;
+
+        // Access PID Values
+        public static final double accessP = 0.1;
+        public static final double accessI = 0;
+        public static final double accessD = 0;
+        public static final double accessFF = 0;
+
+        // Intake Specs
+        public static final double accessGearRatio = 24.0 / 11.0;
+
+        // Conversion factors
+        public static final double anglePosConversionFactor = 2.0 * Math.PI / accessGearRatio;
     }
 
     public class ShooterConstants {

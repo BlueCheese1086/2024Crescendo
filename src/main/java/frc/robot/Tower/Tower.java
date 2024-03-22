@@ -10,28 +10,26 @@ import frc.robot.Constants.TowerConstants;
 
 public class Tower {
     // Motors
-    private CANSparkMax lTower = new CANSparkMax(TowerConstants.lTowerID, MotorType.kBrushless);
-    private CANSparkMax rTower = new CANSparkMax(TowerConstants.rTowerID, MotorType.kBrushless);
+    private CANSparkMax tower;
 
     // A common instance of the tower subsystem.
     private static Tower instance;
 
     public Tower() {
+        // Initializing the motor
+        tower = new CANSparkMax(TowerConstants.lTowerID, MotorType.kBrushless);
+
         // Resetting the settings on the sparkmaxes
-        lTower.restoreFactoryDefaults();
-        rTower.restoreFactoryDefaults();
+        tower.restoreFactoryDefaults();
 
         // Setting the idle modes of the sparkmaxs
-        lTower.setIdleMode(IdleMode.kBrake);
-        rTower.setIdleMode(IdleMode.kBrake);
+        tower.setIdleMode(IdleMode.kBrake);
 
         // Inverting the motors
-        lTower.setInverted(false);
-        rTower.setInverted(true);
+        tower.setInverted(false);
 
         // Saving the settings to the sparkmax
-        lTower.burnFlash();
-        rTower.burnFlash();
+        tower.burnFlash();
     }
 
     /**
@@ -49,37 +47,20 @@ public class Tower {
     }
 
     /**
-     * Sets the speed of the left tower.
+     * Sets the speed of the tower.
      * 
-     * @param speed The duty cycle speed of the left tower.
+     * @param speed The duty cycle speed of the tower.
      */
-    public void setLeftSpeed(double speed) {
-        lTower.set(speed);
+    public void setSpeed(double speed) {
+        tower.set(speed);
     }
 
     /**
-     * Sets the speed of the right tower.
+     * Gets the speed of the tower.
      * 
-     * @param speed The duty cycle speed of the right tower.
+     * @return The duty cycle speed of the tower.
      */
-    public void setRightSpeed(double speed) {
-        rTower.set(speed);
-    }
-
-    /**
-     * Gets the speed of the left tower.
-     * 
-     * @return The duty cycle speed of the left tower.
-     */
-    public double getLeftSpeed() {
-        return lTower.get();
-    }
-    /**
-     * Gets the speed of the right tower.
-     * 
-     * @return The duty cycle speed of the right tower.
-     */
-    public double getRightSpeed() {
-        return rTower.get();
+    public double getSpeed() {
+        return tower.get();
     }
 }

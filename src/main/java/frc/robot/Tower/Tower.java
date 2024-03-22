@@ -9,7 +9,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Constants.TowerConstants;
 
 public class Tower {
-    // Motors
+    // Motor
     private CANSparkMax tower;
 
     // A common instance of the tower subsystem.
@@ -19,14 +19,11 @@ public class Tower {
         // Initializing the motor
         tower = new CANSparkMax(TowerConstants.lTowerID, MotorType.kBrushless);
 
-        // Resetting the settings on the sparkmaxes
+        // Resetting the settings on the sparkmax
         tower.restoreFactoryDefaults();
 
-        // Setting the idle modes of the sparkmaxs
+        // Setting the idle modes of the sparkmax
         tower.setIdleMode(IdleMode.kBrake);
-
-        // Inverting the motors
-        tower.setInverted(false);
 
         // Saving the settings to the sparkmax
         tower.burnFlash();

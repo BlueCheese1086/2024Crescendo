@@ -3,7 +3,7 @@ package frc.robot.Tower.Commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Tower.Tower;
 
-public class RunTower extends Command {
+public class SetTowerSpeed extends Command {
     private Tower tower;
     private double speed;
 
@@ -14,7 +14,7 @@ public class RunTower extends Command {
      * 
      * @param speed The percent speed to run the tower at.
      */
-    public RunTower(double speed) {
+    public SetTowerSpeed(double speed) {
         this.tower = Tower.getInstance();
         this.speed = speed;
     }

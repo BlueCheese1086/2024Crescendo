@@ -15,8 +15,7 @@ import com.revrobotics.SparkMaxAlternateEncoder.Type;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter {
@@ -26,9 +25,6 @@ public class Shooter {
         public Rotation2d SPEAKER = new Rotation2d(5 / 9 * Math.PI);
         public Rotation2d AMP = new Rotation2d(Math.PI);
     }
-
-    // A common instance of the shooter subsystem
-    private static Shooter instance;
 
     // Motors
     private TalonFX lShooter = new TalonFX(ShooterConstants.lShooterID);
@@ -43,18 +39,8 @@ public class Shooter {
     // PID Controllers
     private SparkPIDController alignPID;
 
-    /**
-     * Gets an instance of the Shooter subsystem.
-     * 
-     * @return The instance of the Shooter subsystem.
-     */
-    public static Shooter getInstance() {
-        // Checks if the shooter system has been initialized yet.
-        if (Objects.isNull(instance)) instance = new Shooter();
-
-        // Returns an instance of the Climb subsystem.
-        return instance;
-    }
+    // A common instance of the shooter subsystem.
+    private static Shooter instance;
 
     public Shooter() {
         // Creating the configuration objects for the talons
@@ -99,6 +85,20 @@ public class Shooter {
         alignPID.setI(ShooterConstants.kI);
         alignPID.setD(ShooterConstants.kD);
         alignPID.setFF(ShooterConstants.kFF);
+    }
+
+    /**
+     * This function gets a common instance of the shooter subsystem that anyone can access.
+     * <p>
+     * This allows us to not need to pass around subsystems as parameters, and instead run this function whenever we need the subsystem.
+     * 
+     * @return An instance of the Shooter subsystem.
+     */
+    public static Shooter getInstance() {
+        // If the instance hasn't been initialized, then initialize it.
+        if (Objects.isNull(instance)) instance = new Shooter();
+
+        return instance;
     }
 
     /** Resets the encoder of the align motor. */

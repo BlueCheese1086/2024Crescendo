@@ -9,11 +9,19 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.math.MathUtil;
 import frc.robot.Drivetrain.Commands.SwerveDrive;
+import frc.robot.Intake.Intake;
+import frc.robot.Shooter.Shooter;
+import frc.robot.Vision.Vision;
+import frc.robot.Climb.Climb;
 import frc.robot.Drivetrain.Drivetrain;
 
 public class RobotContainer {
     // Creating the subsystems
-    Drivetrain drivetrain = new Drivetrain();
+    Vision vision = new Vision();
+    Drivetrain drivetrain = new Drivetrain(vision);
+    Shooter shooter = new Shooter(vision, drivetrain);
+    Intake intake = new Intake();
+    Climb climb = new Climb();
 
     // Creating the controllers
     CommandXboxController driveController = new CommandXboxController(0);

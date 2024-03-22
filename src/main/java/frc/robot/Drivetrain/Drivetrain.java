@@ -2,30 +2,34 @@ package frc.robot.Drivetrain;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Dynamic;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Vision.Vision;
 
 public class Drivetrain extends SubsystemBase {
     // Swerve Modules
-    private SwerveModule flModule = new SwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
-    private SwerveModule frModule = new SwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
-    private SwerveModule blModule = new SwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
-    private SwerveModule brModule = new SwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
+    private SwerveModule flModule;
+    private SwerveModule frModule;
+    private SwerveModule blModule;
+    private SwerveModule brModule;
 
     // Sensors
-    private Pigeon2 gyro = new Pigeon2(DriveConstants.gyroID);
+    private Pigeon2 gyro;
 
     // Kinematics
     /*
-     *         Y
-     *
+     *         Y      
+     *                
      *         |      
      *     FL  |  FR  
      *         |      
@@ -34,29 +38,56 @@ public class Drivetrain extends SubsystemBase {
      *     BL  |  BR  
      *         |      
      */
-    private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-        new Translation2d(-DriveConstants.width / 2,  DriveConstants.length / 2), // FL Swerve module
-        new Translation2d( DriveConstants.width / 2,  DriveConstants.length / 2), // FR Swerve module
-        new Translation2d(-DriveConstants.width / 2, -DriveConstants.length / 2), // BL Swerve module
-        new Translation2d( DriveConstants.width / 2, -DriveConstants.length / 2)  // BR Swerve module
-    );
+    private SwerveDriveKinematics kinematics;
 
     // Swerve Module Vars
-    private SwerveModule[] modules = new SwerveModule[4];
-    private SwerveModuleState[] states = new SwerveModuleState[4];
+    private SwerveModule[] modules = {flModule, frModule, blModule, brModule};
     private SwerveModulePosition[] positions = new SwerveModulePosition[4];
 
-    // Odometry
-    private SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, getAngle(), positions);
+    // Odometry/Pose Estimation
+    private SwerveDrivePoseEstimator poseEstimator;
+    private Vision vision;
 
-    @Override
-    public void periodic() {
+    public Drivetrain(Vision vision) {
+        // Initializing the Swerve Modules
+        flModule = new SwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
+        frModule = new SwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
+        blModule = new SwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
+        brModule = new SwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
+
+        // Initializing the gyro
+        gyro = new Pigeon2(DriveConstants.gyroID);
+
+        // Loading the initial values into the state and position arrays.
         for (int i = 0; i < 4; i++) {
-            states[i] = modules[i].getState();
             positions[i] = modules[i].getPosition();
         }
 
-        odometry.update(getAngle(), positions);
+        // Initializing the kinematics
+        kinematics = new SwerveDriveKinematics(
+            new Translation2d(-DriveConstants.width / 2,  DriveConstants.length / 2), // FL Swerve module
+            new Translation2d( DriveConstants.width / 2,  DriveConstants.length / 2), // FR Swerve module
+            new Translation2d(-DriveConstants.width / 2, -DriveConstants.length / 2), // BL Swerve module
+            new Translation2d( DriveConstants.width / 2, -DriveConstants.length / 2)  // BR Swerve module
+        );
+
+        poseEstimator = new SwerveDrivePoseEstimator(kinematics, getAngle(), positions, new Pose2d());
+        this.vision = vision;
+    }
+
+    @Override
+    public void periodic() {
+        // Updating the states and positions of the modules
+        for (int i = 0; i < 4; i++) {
+            positions[i] = modules[i].getPosition();
+        }
+        
+        // Updating the pose estimator
+        poseEstimator.addVisionMeasurement(vision.getFrontPose(), Timer.getFPGATimestamp());
+        poseEstimator.addVisionMeasurement(vision.getBackPose(), Timer.getFPGATimestamp());
+        poseEstimator.update(getAngle(), positions);
+
+        Dynamic.robotPose = poseEstimator.getEstimatedPosition();
     }
 
     public Rotation2d getAngle() {

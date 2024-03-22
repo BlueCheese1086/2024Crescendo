@@ -88,7 +88,7 @@ public class SwerveModule extends SubsystemBase {
         // Gettings Rotations/Second^2
         double rps2 = drive.getAcceleration().getValue();
         
-        // Converting r/s^2 to m/s^2
+        // Converting Rotations/Second^2 to Meters/Second^2
         return rps2 * DriveConstants.driveRatio * DriveConstants.wheelCircumference;
     }
 
@@ -99,7 +99,7 @@ public class SwerveModule extends SubsystemBase {
      */
     public Rotation2d getAngle() {
         // Getting Rotations
-        double rotations = turn.getPosition().getValue();
+        double rotations = turn.getPosition().getValue() - offset;
 
         // Converting Rotations to Rotation2d
         return Rotation2d.fromRotations(rotations);

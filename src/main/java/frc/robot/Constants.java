@@ -1,5 +1,9 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
@@ -26,6 +30,12 @@ public class Constants {
         public static final double frOffset = 0;
         public static final double blOffset = 0;
         public static final double brOffset = 0;
+
+        // Kinematics
+        public static final Translation2d flTranslation = new Translation2d(-DriveConstants.width / 2,  DriveConstants.length / 2);
+        public static final Translation2d frTranslation = new Translation2d( DriveConstants.width / 2,  DriveConstants.length / 2);
+        public static final Translation2d blTranslation = new Translation2d(-DriveConstants.width / 2, -DriveConstants.length / 2);
+        public static final Translation2d brTranslation = new Translation2d( DriveConstants.width / 2, -DriveConstants.length / 2);
 
         // Max Speeds
         public static final int maxDriveSpeed = 1; // Meters / Second
@@ -64,11 +74,32 @@ public class Constants {
 
         // Robot Measurements
         public static final double gearRatio = 4.5;
+
+        // PID Values
+        public static final double kP = 0.0001;
+        public static final double kI = 0;
+        public static final double kD = 0;
+        public static final double kFF = 0.001;
+
+        // Max speeds
+        public static final double maxShootSpeed = 1;   // Duty Cycle
+        public static final double maxFeedSpeed = 1;    // Duty Cycle
+        public static final double maxAlignSpeed = 0.5; // Duty Cycle
     }
 
     public class ClimbConstants {
         // Motor IDs
         public static final int lTowerID = 21;
         public static final int rTowerID = 22;
+    }
+
+    public class VisionConstants {
+        // Camera Poses
+        public static final Translation3d frontCamTranslation = new Translation3d();
+        public static final Translation3d backCamTranslation = new Translation3d();
+        public static final Rotation3d frontCamRotation = new Rotation3d();
+        public static final Rotation3d backCamRotation = new Rotation3d();
+        public static final Transform3d frontCamTransform = new Transform3d(frontCamTranslation, frontCamRotation);
+        public static final Transform3d backCamTransform = new Transform3d(backCamTranslation, backCamRotation);
     }
 }

@@ -65,7 +65,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("v3-auto");
+        return new PathPlannerAuto("V3-Auto");
     }
 
     public Command getTeleopCommand() {

@@ -22,12 +22,12 @@ import frc.robot.Tower.Tower;
 import frc.robot.Vision.Vision;
 
 public class RobotContainer {
-    // Creating the subsystems
-    Vision vision = new Vision();
-    Drivetrain drivetrain = new Drivetrain();
-    Shooter shooter = new Shooter();
-    Intake intake = new Intake();
-    Tower tower = new Tower();
+    // Initializing the subsystems
+    Vision vision = Vision.getInstance();
+    Drivetrain drivetrain = Drivetrain.getInstance();
+    Shooter shooter = Shooter.getInstance();
+    Intake intake = Intake.getInstance();
+    Tower tower = Tower.getInstance();
 
     // Creating the controllers
     CommandXboxController driveController = new CommandXboxController(0);
@@ -69,7 +69,7 @@ public class RobotContainer {
     }
 
     public Command getTeleopCommand() {
-        return new SwerveDrive(drivetrain, 
+        return new SwerveDrive(
             () -> MathUtil.applyDeadband(driveController.getLeftX(), 0.2),
             () -> MathUtil.applyDeadband(driveController.getLeftY(), 0.2),
             () -> MathUtil.applyDeadband(driveController.getRightX(), 0.2)

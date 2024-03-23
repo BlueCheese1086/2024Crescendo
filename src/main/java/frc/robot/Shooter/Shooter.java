@@ -134,6 +134,15 @@ public class Shooter {
     }
 
     /**
+     * Returns the angle of the Shooter.
+     * 
+     * @return The angle of the Shooter.
+     */
+    public Rotation2d getAngle() {
+        return new Rotation2d(alignEncoder.getPosition());
+    }
+
+    /**
      * Sets the angle of the shooter mechanism.
      * 
      * @param angle The angle to go to as a Rotation2d.

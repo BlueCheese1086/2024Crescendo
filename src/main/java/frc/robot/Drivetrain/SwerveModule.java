@@ -40,7 +40,7 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
     private final SlewRateLimiter driveAccelerationLimiter = new SlewRateLimiter(DriveConstants.maxAcceleration);
 
     private int turnCurrentLimit = 30;
-    private int driveCurrentLimit = 80;
+    private int driveCurrentLimit = 60;
 
     private final AnalogEncoder absEncoder;
     private final double encOffset;
@@ -66,7 +66,7 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
         drive.setInverted(true);
         turn.setInverted(false);
 
-        drive.setIdleMode(IdleMode.kCoast);
+        drive.setIdleMode(IdleMode.kBrake);
         turn.setIdleMode(IdleMode.kBrake);
 
         driveRelEnc = drive.getEncoder();
@@ -117,6 +117,7 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
         SmartDashboard.putNumber(name + "/TurnAngle", getHeading());
         SmartDashboard.putNumber(name + "/WheelSpeed", driveRelEnc.getVelocity());
         SmartDashboard.putNumber(name + "/StateMS", state.speedMetersPerSecond);
+        SmartDashboard.putNumber(name + "/CurrentDraw", drive.getOutputCurrent());
 
         overCurrentDetection();
     }
@@ -157,6 +158,10 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
         return drive.getOutputCurrent();
     }
 
+    public double getDriveFF() {
+        return drivePID.getFF();
+    }
+
     /**
      * @return Returns the current heading of the module in cheesians
      */
@@ -195,6 +200,14 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
 
     public void setCurrentLimit(int a) {
         driveCurrentLimit = a;
+    }
+
+    /**
+     * Sets the drive PID FF value
+     * @param FF The desired FF value
+     */
+    public void setDriveFF(double FF) {
+        drivePID.setFF(FF);
     }
 
     public void setRatedState(SwerveModuleState state) {

@@ -20,6 +20,7 @@ import Util.Interfaces.InitializedSubsystem;
 import Util.Interfaces.PowerManaged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
@@ -31,6 +32,9 @@ public class Intake extends SubsystemBase implements InitializedSubsystem, Power
 
     private final DigitalInput shooterNoteDetector;
     private final DigitalInput intakeNoteDetector;
+
+    private final Timer stateBuffer = new Timer();
+    private boolean stateOveridden = false;
 
     private final RelativeEncoder rollersEnc;
     private final RelativeEncoder angleEnc;
@@ -133,6 +137,8 @@ public class Intake extends SubsystemBase implements InitializedSubsystem, Power
 
         new DebugPID(rollersPID, "IntakeRollers");
         // new DebugPID(anglePID, "IntakeAngle");
+
+        stateBuffer.start();
     }
 
     public void periodic() {
@@ -167,9 +173,16 @@ public class Intake extends SubsystemBase implements InitializedSubsystem, Power
      * The default method that runs in the command scheduler to ensure everything in the subsystem is behaving as expected
      */
     public void defaultMethod() {
-        if (getShooterSensor() && getIntakeSensor() && state.rollersRpm > 0.0) state = IntakeState.IdlingUp;
-        if (getIntakeSensor() && !getShooterSensor() && state == IntakeState.IntakingDown) state = IntakeState.IntakingUp;
-        
+        stateOveridden = false;
+        // if (getIntakeSensor() && !getShooterSensor() && state == IntakeState.IntakingDown) {
+        //     setState(IntakeState.IntakingUp);
+        //     stateOveridden = true;
+        // }
+        if (getShooterSensor() && getIntakeSensor() && state.rollersRpm > 0.0) {
+            setState(IntakeState.IdlingUp);
+            stateOveridden = true;
+        }
+
         setAnglePosition(state.angleRad);
         setRollerSpeed(state.rollersRpm);
     }
@@ -225,6 +238,7 @@ public class Intake extends SubsystemBase implements InitializedSubsystem, Power
      * @param state The desired state of the intake
      */
     public void setState(IntakeState state) {
+        if (stateOveridden) return;
         this.state = state;
     }
 

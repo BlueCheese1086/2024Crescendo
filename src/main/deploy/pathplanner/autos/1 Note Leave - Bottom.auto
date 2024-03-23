@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.5195519924163818,
-      "y": 5.572014808654785
+      "x": 0.8448675274848938,
+      "y": 4.378147125244141
     },
-    "rotation": 7.545219910216533e-29
+    "rotation": -58.392514673686286
   },
   "command": {
     "type": "sequential",
@@ -18,15 +18,15 @@
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "4 note auto"
+            "waitTime": 10.0
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Shoot"
+            "pathName": "1 Note Leave Bottom"
           }
         }
       ]

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.5195519924163818,
-      "y": 5.572014808654785
+      "x": 0.9813032746315002,
+      "y": 4.553564548492432
     },
-    "rotation": 7.545219910216533e-29
+    "rotation": -58.5704028857566
   },
   "command": {
     "type": "sequential",
@@ -20,7 +20,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "4 note auto"
+            "pathName": "Bottom 4 Note Auto"
           }
         },
         {

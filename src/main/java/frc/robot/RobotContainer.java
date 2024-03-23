@@ -14,11 +14,13 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Climb.Climb;
 import frc.robot.Climb.Commands.SetClimbPos;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.Drivetrain.Commands.DefaultDrive;
 import frc.robot.Intake.Intake;
@@ -26,6 +28,8 @@ import frc.robot.Intake.Commands.AutoIntake;
 import frc.robot.Intake.Commands.IntakeDefault;
 import frc.robot.Intake.Commands.SetIntakeState;
 import frc.robot.Intake.Intake.IntakeState;
+import frc.robot.SensorsAndFeedback.LEDFeedback;
+import frc.robot.SensorsAndFeedback.LEDFeedback.LEDMode;
 import frc.robot.Shooter.Shooter;
 import frc.robot.Shooter.Commands.AutoShoot;
 import frc.robot.Shooter.Commands.RunShooter;
@@ -36,6 +40,7 @@ public class RobotContainer {
 	Climb climb = Climb.getInstance();
 	Intake intake = Intake.getInstance();
 	Shooter shooter = Shooter.getInstance();
+	LEDFeedback leds = new LEDFeedback();
 	// Watchdog wd = new Watchdog(drivetrain, drivetrain, climb);
 
 	private final SendableChooser<Command> autoChooser;
@@ -79,6 +84,8 @@ public class RobotContainer {
 
 	private void configureBindings() {
 
+		leds.setMode(LEDMode.Bootup);
+
 		for (InitializedSubsystem s : new InitializedSubsystem[]{drivetrain, intake, climb, shooter}) {
 			s.initialize();
 		}
@@ -104,10 +111,10 @@ public class RobotContainer {
 	}
 
 	public void checkClimb() {
-		if (DriverStation.isFMSAttached()) {
-			climb.initialize();
-			return;
-		}
+		// if (DriverStation.isFMSAttached()) {
+		// 	climb.initialize();
+		// 	return;
+		// }
 		if ((Boolean) climbDown.getValue()) {
 			climb.initialize();
 		} else {
@@ -115,13 +122,22 @@ public class RobotContainer {
 		}
 	}
 
+	public void configureTeleop() {
+		drivetrain.setDriveFF(SwerveConstants.kFFDriveVeloTeleop);
+		intake.setState(IntakeState.IdlingUp);
+	}
+
 	public void setGyroAngle() {
 		// Gyro.getInstance().setAngle(drivetrain.getPose().getRotation().getDegrees());
 	}
 
+	public void setLEDMode(LEDMode mode) {
+		leds.setMode(mode);
+	}
+
 	public Command getAutonomousCommand() {
 		// An example command will be run in autonomous
-		return autoChooser.getSelected();
+		return autoChooser.getSelected().andThen(new DefaultDrive(() -> 0.0, () -> 0.0, () -> 0.0, () -> false, drivetrain));
 		// return new PrintCommand("Hello WOrld");
 	}
 

@@ -121,8 +121,8 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
                 this::getSpeeds,
                 this::driveRated,
                 new HolonomicPathFollowerConfig(
-                        new PIDConstants(1.0, 0, 0), // try without these?
-                        new PIDConstants(1.0, 0, 0), // try without these?
+                        new PIDConstants(2.0, 0, 0), // try without these?
+                        new PIDConstants(2.0, 0, 0), // try without these?
                         DriveConstants.maxWheelVelocity,
                         Math.sqrt(2 * Math.pow(DriveConstants.moduleToCenterDistance, 2)),
                         new ReplanningConfig()),
@@ -156,6 +156,8 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
             states[i] = modules[i].getState();
         }
 
+        SmartDashboard.putNumber("Drive FF", modules[0].getDriveFF());
+
         odometry.update(gyro.getAngle(), positions);
         field.setRobotPose(odometry.getPoseMeters());
 
@@ -171,8 +173,8 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
     public void drive(ChassisSpeeds speeds) {
         ChassisSpeeds currentSpeeds = getSpeeds();
         ChassisSpeeds newSpeeds = new ChassisSpeeds(
-                speeds.vxMetersPerSecond + 0.001 * (currentSpeeds.vxMetersPerSecond - speeds.vxMetersPerSecond),
-                speeds.vyMetersPerSecond + 0.001 * (currentSpeeds.vyMetersPerSecond - speeds.vyMetersPerSecond),
+                speeds.vxMetersPerSecond,// + 0.001 * (currentSpeeds.vxMetersPerSecond - speeds.vxMetersPerSecond),
+                speeds.vyMetersPerSecond,// + 0.001 * (currentSpeeds.vyMetersPerSecond - speeds.vyMetersPerSecond),
                 speeds.omegaRadiansPerSecond);// + 0.0001 * (gyro.getYawVelocity().getRadians() - speeds.omegaRadiansPerSecond));
         SwerveModuleState[] desiredStates = kinematics.toSwerveModuleStates(newSpeeds);
 
@@ -270,6 +272,16 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
     public void setCurrentLimit(int limit) {
         for (SwerveModule m : modules) {
             m.setCurrentLimit(limit / 4);
+        }
+    }
+
+    /**
+     * Sets the drive PID FF value
+     * @param FF The desired FF value
+     */
+    public void setDriveFF(double FF) {
+        for (SwerveModule m : modules) {
+            m.setDriveFF(FF);
         }
     }
 

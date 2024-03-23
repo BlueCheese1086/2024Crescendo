@@ -104,7 +104,7 @@ public class Constants {
         public static final int alignID = 24;
 
         // Robot Measurements
-        public static final double gearRatio = 4.5;
+        public static final double alignGearRatio = 4.5;
 
         // PID Values
         public static final double kP = 0.0001;
@@ -116,6 +116,9 @@ public class Constants {
         public static final double maxShootSpeed = 1;   // Duty Cycle
         public static final double maxFeedSpeed = 1;    // Duty Cycle
         public static final double maxAlignSpeed = 0.5; // Duty Cycle
+
+        // Conversion factors
+        public static final double alignPosConversionFactor = 2 * Math.PI / alignGearRatio;
     }
 
     public class TowerConstants {

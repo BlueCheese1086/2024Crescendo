@@ -74,8 +74,7 @@ public class Shooter {
         alignEncoder = align.getAlternateEncoder(Type.kQuadrature, 8192);
 
         // Setting the conversion factors for the align encoder
-        alignEncoder.setPositionConversionFactor(ShooterConstants.gearRatio * 2 * Math.PI);
-        alignEncoder.setVelocityConversionFactor(ShooterConstants.gearRatio * 2 * Math.PI / 60);
+        alignEncoder.setPositionConversionFactor(ShooterConstants.alignPosConversionFactor);
 
         // Configuring the align PID
         alignPID = align.getPIDController();

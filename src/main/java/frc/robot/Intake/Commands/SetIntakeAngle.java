@@ -26,10 +26,4 @@ public class SetIntakeAngle extends Command {
     public void execute() {
         intake.setAngle(angle);
     }
-
-    /** Runs once when the command ends. */
-    @Override
-    public void end(boolean interrupted) {
-        intake.setAngle(new Rotation2d());
-    }
 }

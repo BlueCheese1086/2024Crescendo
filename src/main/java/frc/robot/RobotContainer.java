@@ -17,17 +17,19 @@ import frc.robot.Intake.Commands.*;
 import frc.robot.Intake.Intake;
 import frc.robot.Shooter.Commands.*;
 import frc.robot.Shooter.Shooter;
+import frc.robot.Shooter.Pivot;
 import frc.robot.Tower.Commands.*;
 import frc.robot.Tower.Tower;
 import frc.robot.Vision.Vision;
 
 public class RobotContainer {
-    // Initializing the subsystems
-    Vision vision = Vision.getInstance();
-    Drivetrain drivetrain = Drivetrain.getInstance();
-    Shooter shooter = Shooter.getInstance();
-    Intake intake = Intake.getInstance();
-    Tower tower = Tower.getInstance();
+    // Creating the subsystems
+    Vision vision = new Vision();
+    Drivetrain drivetrain = new Drivetrain();
+    Shooter shooter = new Shooter();
+    Pivot pivot = new Pivot();
+    Intake intake = new Intake();
+    Tower tower = new Tower();
 
     // Creating the controllers
     CommandXboxController driveController = new CommandXboxController(0);
@@ -55,8 +57,8 @@ public class RobotContainer {
         operatorController.b().whileTrue(new SetIntakeSpeed(1));
         operatorController.x().whileTrue(new SetLauncherSpeed(-1));
         operatorController.y().toggleOnTrue(new SetLauncherSpeed(1));
-        operatorController.leftBumper().whileTrue(new SetShooterAngle(shooter.getAngle(), 1));
-        operatorController.leftTrigger().whileTrue(new SetShooterAngle(shooter.getAngle(), -1));
+        operatorController.leftBumper().whileTrue(new SetShooterAngle(pivot.getAngle(), 1));
+        operatorController.leftTrigger().whileTrue(new SetShooterAngle(pivot.getAngle(), -1));
         operatorController.rightBumper().whileTrue(new SetTowerSpeed(1));
         operatorController.rightTrigger().whileTrue(new SetTowerSpeed(-1));
         operatorController.back().whileTrue(new SetIntakeSpeed(-1));

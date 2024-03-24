@@ -20,27 +20,24 @@ import frc.robot.Constants.ShooterConstants;
 
 public class Shooter {
     // Small set of recommended positions.
-    public static class Positions {
-        public Rotation2d ORIGIN = new Rotation2d(0);
-        public Rotation2d SPEAKER = new Rotation2d(5 / 9 * Math.PI);
-        public Rotation2d AMP = new Rotation2d(Math.PI);
-    }
 
     // Motors
     private TalonFX lShooter = new TalonFX(ShooterConstants.lShooterID);
     private TalonFX rShooter = new TalonFX(ShooterConstants.rShooterID);
 
     private CANSparkMax feedRoller = new CANSparkMax(ShooterConstants.feedRollerID, MotorType.kBrushless);
-    private CANSparkMax align = new CANSparkMax(ShooterConstants.alignID, MotorType.kBrushless);
-
-    // Encoders
-    private RelativeEncoder alignEncoder;
-
-    // PID Controllers
-    private SparkPIDController alignPID;
 
     // A common instance of the shooter subsystem.
     private static Shooter instance;
+
+    //🫵🤫
+    public enum State {
+        IDLE,
+        SPINNINGUPANDFEEDING,
+        SHOOTING,
+        SPINNINGUPNOFEEDING,
+        WEAKSHOT
+    }
 
     public Shooter() {
         // Creating the configuration objects for the talons
@@ -60,30 +57,12 @@ public class Shooter {
 
         // Resetting the settings of the sparkmaxes
         feedRoller.restoreFactoryDefaults();
-        align.restoreFactoryDefaults();
 
         // Setting the idle mode of the sparkmaxes
         feedRoller.setIdleMode(IdleMode.kBrake);
-        align.setIdleMode(IdleMode.kCoast);
 
         // Saving the settings of the sparkmaxes
         feedRoller.burnFlash();
-        align.burnFlash();
-
-        // Configuring the align encoder
-        alignEncoder = align.getAlternateEncoder(Type.kQuadrature, 8192);
-
-        // Setting the conversion factors for the align encoder
-        alignEncoder.setPositionConversionFactor(ShooterConstants.alignPosConversionFactor);
-
-        // Configuring the align PID
-        alignPID = align.getPIDController();
-
-        // Setting PIDFF values
-        alignPID.setP(ShooterConstants.kP);
-        alignPID.setI(ShooterConstants.kI);
-        alignPID.setD(ShooterConstants.kD);
-        alignPID.setFF(ShooterConstants.kFF);
     }
 
     /**
@@ -98,11 +77,6 @@ public class Shooter {
         if (Objects.isNull(instance)) instance = new Shooter();
 
         return instance;
-    }
-
-    /** Resets the encoder of the align motor. */
-    public void resetEncoders() {
-        alignEncoder.setPosition(0);
     }
 
     /**
@@ -137,16 +111,4 @@ public class Shooter {
      * 
      * @return The angle of the Shooter.
      */
-    public Rotation2d getAngle() {
-        return new Rotation2d(alignEncoder.getPosition());
-    }
-
-    /**
-     * Sets the angle of the shooter mechanism.
-     * 
-     * @param angle The angle to go to as a Rotation2d.
-     */
-    public void setAngle(Rotation2d angle) {
-        alignPID.setReference(angle.getRadians(), ControlType.kPosition);
-    }
 }

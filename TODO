@@ -2,3 +2,9 @@ Things to do:
     Get Alex to help me write the Vision class
     Get Luke to help me write the LED class.
     Figure out the calculation for what angle I should shoot at based off of the angle of the apriltag
+    Use getInstance methods in the RobotContainer.java file when instantiating the subsystems.
+
+To do with Rookies:
+    Have them implement the getInstance method for the shooter subsystem.
+    Have them fix the references in SetShooterAngle.java
+    Show them how ryan wants the states implemented.

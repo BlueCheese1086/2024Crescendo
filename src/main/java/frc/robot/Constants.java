@@ -7,6 +7,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
+    public static class BeamConstants {
+        // Sensor IDs
+        public static final int shooterID = 0;
+        public static final int feedID = 1;
+    }
+
     public static class DriveConstants {
         // Motor IDs
         public static final int flDriveID = 1;

@@ -35,11 +35,8 @@ public final class Constants {
     public static final double IntakeSpeed = -5500;
   }
 
-  public static class IntakeConstants {
-
-  }
-
-  public static class ClimbConstants {
+  public static class LightsConstants {
+    public static final int StripLength = 1;
     
   }
 }

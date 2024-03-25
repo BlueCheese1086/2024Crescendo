@@ -14,7 +14,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-//import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -55,45 +54,39 @@ public class Launcher extends SubsystemBase {
     upperPID.setD(0);
     upperPID.setFF(0.01);
 
-    // INSERT WHEEL DIAMETER
-    upperEncoder.setVelocityConversionFactor(1 * Math.PI / 60);
-    lowerEncoder.setVelocityConversionFactor(1 * Math.PI / 60);
+    upperEncoder.setVelocityConversionFactor(4 * Math.PI / 60);
+    lowerEncoder.setVelocityConversionFactor(4 * Math.PI / 60);
   }
  
   public void periodic() {
     SmartDashboard.putNumber("Flywheel Speed", upperEncoder.getVelocity());
-    SmartDashboard.putNumber("Feed Speed", lowerEncoder.getVelocity());
+    SmartDashboard.putNumber("Feed Wheel Speed", lowerEncoder.getVelocity());
   }
 
   /**
-   * Sets the speed of the upper (flywheel) motor.
-   * @param speed The desired speed in RPM
+   * Runs the flywheel
    */
-  public void setUpper(double speed) {
-    SmartDashboard.putNumber("Flywheel Speed Setpoint", speed);
-    upperPID.setReference(speed, ControlType.kVelocity);
+  public void flywheel() {
+    SmartDashboard.putNumber("Flywheel Speed Setpoint", FlywheelSpeed);
+    upperPID.setReference(FlywheelSpeed, ControlType.kVelocity);
   }
 
   /**
-   * Sets the speed of the lower (feed) motor.
-   * @param speed The desired speed in RPM
+   * Runs the feed wheel
    */
-  public void setLower(double speed) {
-    SmartDashboard.putNumber("Feed Speed Setpoint", speed);
-    lowerPID.setReference(speed, ControlType.kVelocity);
+  public void feed() {
+    SmartDashboard.putNumber("Feed Wheel Speed Setpoint", FeedSpeed);
+    lowerPID.setReference(FeedSpeed, ControlType.kVelocity);
   }
 
   /**
-   * Stops the upper (flywheel) motor, which stops the control systems.
+   * Runs the wheels in reverse to intake a note
    */
-  public void stopUpper() {
-    upper.stopMotor();
-  }
+  public void intake() {
+    SmartDashboard.putNumber("Feed Wheel Speed Setpoint", IntakeSpeed);
+    SmartDashboard.putNumber("Flywheel Speed Setpoint", IntakeSpeed);
 
-  /**
-   * Stops the lower (feed) motor, which stops the control systems.
-   */
-  public void stopLower() {
-    lower.stopMotor();
+    lowerPID.setReference(IntakeSpeed, ControlType.kVelocity);
+    upperPID.setReference(IntakeSpeed, ControlType.kVelocity);
   }
 }

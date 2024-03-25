@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import static frc.robot.Constants.LauncherConstants.*;
-
 import frc.robot.subsystems.Launcher;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -30,14 +28,13 @@ public class Launch extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    launcher.setLower(FeedSpeed);
+    launcher.feed();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // Stop the wheel; control systems are unnecessary.
-    launcher.stopLower();
+
   }
 
   // Returns true when the command should end.

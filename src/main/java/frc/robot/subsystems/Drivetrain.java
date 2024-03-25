@@ -4,24 +4,19 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.DrivetrainConstants.DrivetrainLimits;
-import static frc.robot.Constants.DrivetrainConstants.LeftBackMotor;
-import static frc.robot.Constants.DrivetrainConstants.LeftFrontMotor;
-import static frc.robot.Constants.DrivetrainConstants.RightBackMotor;
-import static frc.robot.Constants.DrivetrainConstants.RightFrontMotor;
+import static frc.robot.Constants.DrivetrainConstants.*;
 
-import java.util.Optional;
+import com.ctre.phoenix6.hardware.Pigeon2;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.ReplanningConfig;
+
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-
-import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -35,6 +30,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.Optional;
 
 /**
  * Drivetrain subsystem controlled with arcade-style inputs.

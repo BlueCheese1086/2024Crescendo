@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static frc.robot.Constants.DrivetrainConstants.*;
+
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Drive;
@@ -12,15 +14,12 @@ import frc.robot.commands.Intake;
 import frc.robot.commands.Launch;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Launcher;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
-import static frc.robot.Constants.DrivetrainConstants.DrivetrainSpeed;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.Joystick;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -35,8 +34,8 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed.
   // private final CommandXboxController driverController =
   //     new CommandXboxController(OperatorConstants.kDriverControllerPort);
-  private final Joystick driverController =
-      new Joystick(OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController driverController =
+      new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -65,9 +64,9 @@ public class RobotContainer {
       )
     );
 
-    new Trigger(() -> driverController.getRawButton(5)).whileTrue(new Flywheel(launcher));
-    new Trigger(() -> driverController.getRawButton(6)).whileTrue(new Launch(launcher));
-    new Trigger(() -> driverController.getRawButton(1)).whileTrue(new Intake(launcher));
+    driverController.leftTrigger().whileTrue(new Flywheel(launcher));
+    driverController.rightTrigger().whileTrue(new Launch(launcher));
+    driverController.a().whileTrue(new Intake(launcher));
   }
 
   /**

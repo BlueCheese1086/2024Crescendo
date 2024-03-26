@@ -12,7 +12,8 @@ import com.revrobotics.CANSparkMax;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter {
-    // Motors
+    // motors
+    // this code was brought to you by lil' python
     private TalonFX lShooter = new TalonFX(ShooterConstants.lShooterID);
     private TalonFX rShooter = new TalonFX(ShooterConstants.rShooterID);
 

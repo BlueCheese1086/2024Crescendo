@@ -56,9 +56,9 @@ public class Drivetrain extends SubsystemBase {
     public Drivetrain() {
         // Initializing the Swerve Modules
         flModule = new SparkMaxSwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
-        frModule = new SparkMaxSwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
-        blModule = new SparkMaxSwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
-        brModule = new SparkMaxSwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID, DriveConstants.flCancoderID, DriveConstants.flOffset);
+        frModule = new SparkMaxSwerveModule(DriveConstants.frDriveID, DriveConstants.frTurnID, DriveConstants.frCancoderID, DriveConstants.frOffset);
+        blModule = new SparkMaxSwerveModule(DriveConstants.blDriveID, DriveConstants.blTurnID, DriveConstants.blCancoderID, DriveConstants.blOffset);
+        brModule = new SparkMaxSwerveModule(DriveConstants.brDriveID, DriveConstants.brTurnID, DriveConstants.brCancoderID, DriveConstants.brOffset);
 
         // Initializing the gyro
         gyro = new Pigeon2(DriveConstants.gyroID);

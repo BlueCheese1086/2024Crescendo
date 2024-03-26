@@ -54,7 +54,8 @@ public class SparkMaxSwerveModule extends SubsystemBase {
         turnEncoder.setVelocityConversionFactor(DriveConstants.turnVelConversionFactor);
 
         // Getting PID Controllers for the motors
-        drive.getPIDController();
+        drivePID = drive.getPIDController();
+        turnPID = turn.getPIDController();
 
         // Setting PID values for each motor
         drivePID.setP(DriveConstants.driveP);

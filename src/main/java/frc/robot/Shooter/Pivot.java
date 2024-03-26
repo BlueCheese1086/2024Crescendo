@@ -24,6 +24,8 @@ public class Pivot extends SubsystemBase {
     // PID Controllers
     private SparkPIDController alignPID;
 
+    private static Pivot instance;
+
     public static class Positions {
         public Rotation2d ORIGIN = new Rotation2d(0);
         public Rotation2d SPEAKER = new Rotation2d(5 / 9 * Math.PI);
@@ -36,6 +38,14 @@ public class Pivot extends SubsystemBase {
         STATIC_KITBOT,
         ACTIVE_HOMING,
         PREMTIVE_HOMING
+    }
+
+    //states
+    public static Pivot getInstance() {
+        // If the instance hasn't been initialized, then initialize it.
+        if (Objects.isNull(instance)) instance = new Pivot();
+
+        return instance;
     }
 
     public Pivot() {

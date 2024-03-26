@@ -24,12 +24,12 @@ import frc.robot.Vision.Vision;
 
 public class RobotContainer {
     // Creating the subsystems
-    Vision vision = new Vision();
-    Drivetrain drivetrain = new Drivetrain();
-    Shooter shooter = new Shooter();
-    Pivot pivot = new Pivot();
-    Intake intake = new Intake();
-    Tower tower = new Tower();
+    Vision vision = Vision.getInstance();
+    Drivetrain drivetrain = Drivetrain.getInstance();
+    Shooter shooter = Shooter.getInstance();
+    Pivot pivot = Pivot.getInstance();
+    Intake intake = Intake.getInstance();
+    Tower tower = Tower.getInstance();
 
     // Creating the controllers
     CommandXboxController driveController = new CommandXboxController(0);

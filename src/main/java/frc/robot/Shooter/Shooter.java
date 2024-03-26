@@ -6,21 +6,12 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAlternateEncoder.Type;
-import com.revrobotics.SparkPIDController;
-
-import edu.wpi.first.math.geometry.Rotation2d;
-
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter {
-    // Small set of recommended positions.
-
     // Motors
     private TalonFX lShooter = new TalonFX(ShooterConstants.lShooterID);
     private TalonFX rShooter = new TalonFX(ShooterConstants.rShooterID);
@@ -96,19 +87,4 @@ public class Shooter {
     public void runFeed(double speed) {
         feedRoller.set(speed * ShooterConstants.maxFeedSpeed);
     }
-
-    /**
-     * Finds the angle that the system should be set to based upon camera inputs.
-     * 
-     * @return The angle the system should be set to.
-     */
-    public Rotation2d calculateAngle() {
-        return new Rotation2d();
-    }
-
-    /**
-     * Returns the angle of the Shooter.
-     * 
-     * @return The angle of the Shooter.
-     */
 }

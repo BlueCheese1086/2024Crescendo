@@ -8,7 +8,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import Util.Interfaces.InitializedSubsystem;
-import Util.Interfaces.PowerManaged;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -24,7 +24,20 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.SensorsAndFeedback.Gyro;
 
-public class Drivetrain extends SubsystemBase implements PowerManaged, InitializedSubsystem {
+/*
+                         __
+                   _.--""  |
+    .----.     _.-'   |/\| |.--.
+    |1086|__.-'   _________|  |_)  _______________  
+    |  .-""-.""""" ___,    `----'"))   __   .-""-.""""--._  
+    '-' ,--. `   |blue|   .---.       |:.| ' ,--. `      _`.
+     ( (    ) )__|cheese|__ \\|// _..--  \/ ( (    ) )--._".-.
+      . `--' ;\__________________..--------. `--' ;--------'
+       `-..-'                               `-..-'
+
+*/
+
+public class Drivetrain extends SubsystemBase implements InitializedSubsystem {
 
     /*
      * backLeft frontLeft
@@ -54,6 +67,9 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
             new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)),
             new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)),
     };
+
+    private final PIDController translationController = new PIDController(DriveConstants.translationControllerkP, 0.0, 0.0);
+    private final PIDController thetaController = new PIDController(DriveConstants.thetaControllerkP, 0.0, 0.0);
 
     private SwerveDriveOdometry odometry;
 
@@ -119,12 +135,12 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
                 this::getPose,
                 this::resetPose,
                 this::getSpeeds,
-                this::driveRated,
+                this::drive,
                 new HolonomicPathFollowerConfig(
-                        new PIDConstants(2.0, 0, 0), // try without these?
-                        new PIDConstants(2.0, 0, 0), // try without these?
+                        new PIDConstants(DriveConstants.translationAutoControllerkP, 0, 0),
+                        new PIDConstants(DriveConstants.thetaAutoControllerkP, 0, 0),
                         DriveConstants.maxWheelVelocity,
-                        Math.sqrt(2 * Math.pow(DriveConstants.moduleToCenterDistance, 2)),
+                        DriveConstants.moduleToCenterDistance,
                         new ReplanningConfig()),
                 () -> DriverStation.getAlliance().isPresent()
                         && DriverStation.getAlliance().get() == DriverStation.Alliance.Red,
@@ -156,8 +172,6 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
             states[i] = modules[i].getState();
         }
 
-        SmartDashboard.putNumber("Drive FF", modules[0].getDriveFF());
-
         odometry.update(gyro.getAngle(), positions);
         field.setRobotPose(odometry.getPoseMeters());
 
@@ -173,9 +187,9 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
     public void drive(ChassisSpeeds speeds) {
         ChassisSpeeds currentSpeeds = getSpeeds();
         ChassisSpeeds newSpeeds = new ChassisSpeeds(
-                speeds.vxMetersPerSecond,// + 0.001 * (currentSpeeds.vxMetersPerSecond - speeds.vxMetersPerSecond),
-                speeds.vyMetersPerSecond,// + 0.001 * (currentSpeeds.vyMetersPerSecond - speeds.vyMetersPerSecond),
-                speeds.omegaRadiansPerSecond);// + 0.0001 * (gyro.getYawVelocity().getRadians() - speeds.omegaRadiansPerSecond));
+                speeds.vxMetersPerSecond + translationController.calculate(currentSpeeds.vxMetersPerSecond, speeds.vxMetersPerSecond),// + 0.001 * (currentSpeeds.vxMetersPerSecond - speeds.vxMetersPerSecond),
+                speeds.vyMetersPerSecond + translationController.calculate(currentSpeeds.vyMetersPerSecond, speeds.vyMetersPerSecond),// + 0.001 * (currentSpeeds.vyMetersPerSecond - speeds.vyMetersPerSecond),
+                speeds.omegaRadiansPerSecond + thetaController.calculate(currentSpeeds.omegaRadiansPerSecond, speeds.omegaRadiansPerSecond));// + 0.0001 * (gyro.getYawVelocity().getRadians() - speeds.omegaRadiansPerSecond));
         SwerveModuleState[] desiredStates = kinematics.toSwerveModuleStates(newSpeeds);
 
         for (int i = 0; i < modules.length; i++) {
@@ -199,10 +213,6 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
         for (int i = 0; i < modules.length; i++) {
             modules[i].setRatedState(desiredStates[i]);
         }
-    }
-
-    public double getCurrentLimit() {
-        return modules[0].getCurrentLimit();
     }
 
     /**
@@ -244,10 +254,6 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
         return kinematics.toChassisSpeeds(states);
     }
 
-    public double getTotalCurrent() {
-        return getTurnCurrent() + getDriveCurrent();
-    }
-
     /**
      * @return Returns total current drawn by the turn motors
      */
@@ -267,12 +273,6 @@ public class Drivetrain extends SubsystemBase implements PowerManaged, Initializ
     public void resetPose(Pose2d p) {
         field.setRobotPose(p);
         odometry.resetPosition(gyro.getAngle(), positions, p);
-    }
-
-    public void setCurrentLimit(int limit) {
-        for (SwerveModule m : modules) {
-            m.setCurrentLimit(limit / 4);
-        }
     }
 
     /**

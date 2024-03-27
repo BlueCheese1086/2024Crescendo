@@ -5,11 +5,8 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import Util.Interfaces.InitializedSubsystem;
-import Util.Interfaces.PowerManaged;
 
 import java.util.Objects;
-
-import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -18,7 +15,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
-public class Shooter extends SubsystemBase implements InitializedSubsystem, PowerManaged {
+public class Shooter extends SubsystemBase implements InitializedSubsystem {
 
     private final CANSparkMax front;
     private final CANSparkMax back;
@@ -78,30 +75,20 @@ public class Shooter extends SubsystemBase implements InitializedSubsystem, Powe
         // TODO
         // Telemetry
 
-        Logger.recordOutput("Shooter/Front/MotorCurrent", front.getOutputCurrent());
-        Logger.recordOutput("Shooter/Front/BusVoltage", front.getBusVoltage());
-        Logger.recordOutput("Shooter/Front/Velocity", frontEnc.getVelocity());
-        Logger.recordOutput("Shooter/Front/Temperature", front.getMotorTemperature());
+        // Logger.recordOutput("Shooter/Front/MotorCurrent", front.getOutputCurrent());
+        // Logger.recordOutput("Shooter/Front/BusVoltage", front.getBusVoltage());
+        // Logger.recordOutput("Shooter/Front/Velocity", frontEnc.getVelocity());
+        // Logger.recordOutput("Shooter/Front/Temperature", front.getMotorTemperature());
 
-        Logger.recordOutput("Shooter/Back/MotorCurrent", back.getOutputCurrent());
-        Logger.recordOutput("Shooter/Back/BusVoltage", back.getBusVoltage());
-        Logger.recordOutput("Shooter/Back/Velocity", backEnc.getVelocity());
-        Logger.recordOutput("Shooter/Back/Temperature", back.getMotorTemperature());
-    }
-
-    public double getCurrentLimit() {
-        return 40.0;
+        // Logger.recordOutput("Shooter/Back/MotorCurrent", back.getOutputCurrent());
+        // Logger.recordOutput("Shooter/Back/BusVoltage", back.getBusVoltage());
+        // Logger.recordOutput("Shooter/Back/Velocity", backEnc.getVelocity());
+        // Logger.recordOutput("Shooter/Back/Temperature", back.getMotorTemperature());
     }
 
     public double getFrontRPM() {
         return frontEnc.getVelocity();
     }
-
-    public double getTotalCurrent() {
-        return front.getOutputCurrent() + back.getOutputCurrent();
-    }
-
-    public void setCurrentLimit(int a) {}
 
     public void stopMotors() {
         front.stopMotor();

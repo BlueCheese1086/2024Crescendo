@@ -3,6 +3,8 @@ package frc.robot.Drivetrain.Commands;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import Util.DebugPID;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
@@ -15,36 +17,40 @@ public class DefaultDrive extends Command {
     private final DoubleSupplier y_trans;
     private final DoubleSupplier z_rot;
 
-    private final BooleanSupplier marioKart;
+    private final BooleanSupplier alignToDS;
+    private boolean prevAlign;
 
+    private final PIDController aligningPID = new PIDController(DriveConstants.rotationAlignkP, DriveConstants.rotationAlignI, DriveConstants.rotationAlignD);
+    
+    private final Gyro gyro;
     private final Drivetrain drivetrain;
 
-    public DefaultDrive(DoubleSupplier x_trans, DoubleSupplier y_trans, DoubleSupplier z_rot, BooleanSupplier marioKart, Drivetrain drivetrain) {
+    public DefaultDrive(DoubleSupplier x_trans, DoubleSupplier y_trans, DoubleSupplier z_rot, BooleanSupplier alignToDS, Drivetrain drivetrain) {
         this.x_trans = x_trans;
         this.y_trans = y_trans;
         this.z_rot = z_rot;
 
-        this.marioKart = marioKart;
+        this.alignToDS = alignToDS;
+        this.prevAlign = alignToDS.getAsBoolean();
 
         this.drivetrain = drivetrain;
+        this.gyro = Gyro.getInstance();
+        new DebugPID(aligningPID, "DrivingAutoTurning");
         addRequirements(drivetrain);
     }
 
     public void initialize() {}
 
     public void execute() {
-        // if (x_trans.getAsDouble() == 0.0 && y_trans.getAsDouble() == 0.0 && z_rot.getAsDouble() == 0.0) {
-        //     drivetrain.setX();
-        //     return;
-        // }
-
-        double mult = marioKart.getAsBoolean() ? 1.0 : 0.0;
+        if (alignToDS.getAsBoolean() && !prevAlign) aligningPID.reset();
 
         drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
-            x_trans.getAsDouble() * (DriveConstants.maxWheelVelocity) + mult * (DriveConstants.maxWheelVelocity - drivetrain.getSpeeds().vxMetersPerSecond),
-            y_trans.getAsDouble() * (DriveConstants.maxWheelVelocity) + mult * (DriveConstants.maxWheelVelocity - drivetrain.getSpeeds().vyMetersPerSecond),
-            z_rot.getAsDouble() * DriveConstants.maxRotationalVelocity, 
-            Gyro.getInstance().getAngle()));
+            x_trans.getAsDouble() * DriveConstants.maxWheelVelocity,
+            y_trans.getAsDouble() * DriveConstants.maxWheelVelocity,
+            z_rot.getAsDouble() * DriveConstants.maxRotationalVelocity + aligningPID.calculate(gyro.getAngle().getDegrees(), -180.0), 
+            gyro.getAngle()));
+
+        prevAlign = alignToDS.getAsBoolean();
     }
 
     public boolean isFinished() {

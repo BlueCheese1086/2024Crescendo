@@ -48,10 +48,17 @@ public final class Constants {
         public static final double maxWheelVelocity = Units.feetToMeters(19.8);
         public static final double maxRotationalVelocity = maxWheelVelocity/moduleToCenterDistance;
 
-        /**
-         * 6 m/s^2
-         */
         public static final double maxAcceleration = 6;
+
+        public static final double translationControllerkP = 0.01;
+        public static final double thetaControllerkP = 0.01;
+
+        public static final double translationAutoControllerkP = 6.0;
+        public static final double thetaAutoControllerkP = 6.0;
+
+        public static final double rotationAlignkP = 1.0;
+        public static final double rotationAlignI = 0.0;
+        public static final double rotationAlignD = 0.0;
 
     }
 
@@ -103,10 +110,10 @@ public final class Constants {
         public static final double ROLLERS_CURRENT_LIMIT = 80;
         public static final double ANGLE_CURRENT_LIMIT = 40;
 
-        public static final double angleOffset = 2.0;
+        public static final double angleOffset = 1.4;
         public static final double anglePositionConverstionFactor = Math.PI * 2.0/((48.0/44.0)*(48.0/24.0));
 
-        public static final double STOWED_ANGLE = 2.4;
+        public static final double STOWED_ANGLE = 2.37;
         public static final double DOWN_ANGLE = 0.2;
 
         public static final double ROLLERS_IN_RPM = 2000.0;

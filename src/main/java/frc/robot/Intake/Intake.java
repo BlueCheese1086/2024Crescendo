@@ -2,8 +2,6 @@ package frc.robot.Intake;
 
 import java.util.Objects;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -17,7 +15,6 @@ import com.revrobotics.SparkAbsoluteEncoder.Type;
 import Util.DebugPID;
 import Util.ThreeState;
 import Util.Interfaces.InitializedSubsystem;
-import Util.Interfaces.PowerManaged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
@@ -25,7 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
-public class Intake extends SubsystemBase implements InitializedSubsystem, PowerManaged {
+public class Intake extends SubsystemBase implements InitializedSubsystem {
 
     private final CANSparkMax rollers;
     private final CANSparkMax angle;
@@ -114,7 +111,7 @@ public class Intake extends SubsystemBase implements InitializedSubsystem, Power
         angle.setInverted(false);
 
         rollers.setIdleMode(IdleMode.kCoast);
-        angle.setIdleMode(IdleMode.kBrake);
+        angle.setIdleMode(IdleMode.kCoast);
 
         rollersEnc.setVelocityConversionFactor(IntakeConstants.rollersVelocityConversionFactor);
 
@@ -142,15 +139,15 @@ public class Intake extends SubsystemBase implements InitializedSubsystem, Power
     }
 
     public void periodic() {
-        Logger.recordOutput("Intake/Roller/MotorCurrent", rollers.getOutputCurrent());
-        Logger.recordOutput("Intake/Roller/BusVoltage", rollers.getBusVoltage());
-        Logger.recordOutput("Intake/Roller/Velocity", rollersEnc.getVelocity());
-        Logger.recordOutput("Intake/Roller/Temperature", rollers.getMotorTemperature());
+        // Logger.recordOutput("Intake/Roller/MotorCurrent", rollers.getOutputCurrent());
+        // Logger.recordOutput("Intake/Roller/BusVoltage", rollers.getBusVoltage());
+        // Logger.recordOutput("Intake/Roller/Velocity", rollersEnc.getVelocity());
+        // Logger.recordOutput("Intake/Roller/Temperature", rollers.getMotorTemperature());
 
-        Logger.recordOutput("Intake/Angle/MotorCurrent", angle.getOutputCurrent());
-        Logger.recordOutput("Intake/Angle/BusVoltage", angle.getBusVoltage());
-        Logger.recordOutput("Intake/Angle/Velocity", angleEnc.getVelocity());
-        Logger.recordOutput("Intake/Angle/Temperature", angle.getMotorTemperature());
+        // Logger.recordOutput("Intake/Angle/MotorCurrent", angle.getOutputCurrent());
+        // Logger.recordOutput("Intake/Angle/BusVoltage", angle.getBusVoltage());
+        // Logger.recordOutput("Intake/Angle/Velocity", angleEnc.getVelocity());
+        // Logger.recordOutput("Intake/Angle/Temperature", angle.getMotorTemperature());
 
         SmartDashboard.putNumber("Intake/Roller/MotorCurrent", rollers.getOutputCurrent());
         SmartDashboard.putNumber("Intake/Roller/BusVoltage", rollers.getBusVoltage());
@@ -194,10 +191,6 @@ public class Intake extends SubsystemBase implements InitializedSubsystem, Power
         return angleEnc.getPosition();
     }
 
-    public double getCurrentLimit() {
-        return IntakeConstants.ANGLE_CURRENT_LIMIT + IntakeConstants.ROLLERS_CURRENT_LIMIT;
-    }
-
     /**
      * @return Returns the desired state of the intake
      */
@@ -219,10 +212,6 @@ public class Intake extends SubsystemBase implements InitializedSubsystem, Power
         return !shooterNoteDetector.get();
     }
 
-    public double getTotalCurrent() {
-        return angle.getOutputCurrent() + rollers.getOutputCurrent();
-    }
-
     /**
      * Sets the goal of the angle position PID to the desired angle in radians
      * 
@@ -240,11 +229,6 @@ public class Intake extends SubsystemBase implements InitializedSubsystem, Power
     public void setState(IntakeState state) {
         if (stateOveridden) return;
         this.state = state;
-    }
-
-    public void setCurrentLimit(int a) {
-        rollers.setSmartCurrentLimit(a);
-        angle.setSmartCurrentLimit(a);
     }
 
     /**

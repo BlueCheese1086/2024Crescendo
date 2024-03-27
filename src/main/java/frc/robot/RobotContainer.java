@@ -10,11 +10,9 @@ import com.pathplanner.lib.auto.NamedCommands;
 import Util.ControllableConfiguration;
 import Util.Interfaces.InitializedSubsystem;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -28,11 +26,23 @@ import frc.robot.Intake.Commands.AutoIntake;
 import frc.robot.Intake.Commands.IntakeDefault;
 import frc.robot.Intake.Commands.SetIntakeState;
 import frc.robot.Intake.Intake.IntakeState;
+import frc.robot.SensorsAndFeedback.Gyro;
 import frc.robot.SensorsAndFeedback.LEDFeedback;
 import frc.robot.SensorsAndFeedback.LEDFeedback.LEDMode;
 import frc.robot.Shooter.Shooter;
 import frc.robot.Shooter.Commands.AutoShoot;
 import frc.robot.Shooter.Commands.RunShooter;
+
+/*
+	 /$$$$$$$  /$$                            /$$$$$$  /$$                                                       /$$    /$$$$$$   /$$$$$$   /$$$$$$ 
+	| $$__  $$| $$                           /$$__  $$| $$                                                     /$$$$   /$$$_  $$ /$$__  $$ /$$__  $$
+	| $$  \ $$| $$ /$$   /$$  /$$$$$$       | $$  \__/| $$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$$  /$$$$$$       |_  $$  | $$$$\ $$| $$  \ $$| $$  \__/
+	| $$$$$$$ | $$| $$  | $$ /$$__  $$      | $$      | $$__  $$ /$$__  $$ /$$__  $$ /$$_____/ /$$__  $$        | $$  | $$ $$ $$|  $$$$$$/| $$$$$$$ 
+	| $$__  $$| $$| $$  | $$| $$$$$$$$      | $$      | $$  \ $$| $$$$$$$$| $$$$$$$$|  $$$$$$ | $$$$$$$$        | $$  | $$\ $$$$ >$$__  $$| $$__  $$
+	| $$  \ $$| $$| $$  | $$| $$_____/      | $$    $$| $$  | $$| $$_____/| $$_____/ \____  $$| $$_____/        | $$  | $$ \ $$$| $$  \ $$| $$  \ $$
+	| $$$$$$$/| $$|  $$$$$$/|  $$$$$$$      |  $$$$$$/| $$  | $$|  $$$$$$$|  $$$$$$$ /$$$$$$$/|  $$$$$$$       /$$$$$$|  $$$$$$/|  $$$$$$/|  $$$$$$/
+	|_______/ |__/ \______/  \_______/       \______/ |__/  |__/ \_______/ \_______/|_______/  \_______/      |______/ \______/  \______/  \______/ 
+ */
 
 public class RobotContainer {
 
@@ -41,6 +51,7 @@ public class RobotContainer {
 	Intake intake = Intake.getInstance();
 	Shooter shooter = Shooter.getInstance();
 	LEDFeedback leds = new LEDFeedback();
+	Gyro gyro = Gyro.getInstance();
 	// Watchdog wd = new Watchdog(drivetrain, drivetrain, climb);
 
 	private final SendableChooser<Command> autoChooser;
@@ -73,7 +84,7 @@ public class RobotContainer {
 				() -> MathUtil.applyDeadband(-primary.getLeftY(), 0.1), 
 				() -> MathUtil.applyDeadband(-primary.getLeftX(), 0.1), 
 				() -> MathUtil.applyDeadband(-primary.getRightX(), 0.1), 
-				() -> primary.rightBumper().getAsBoolean(),
+				() -> primary.rightStick().getAsBoolean(),
 				drivetrain)
 		);
 
@@ -91,7 +102,7 @@ public class RobotContainer {
 		}
 
 		primary.leftStick().onTrue(new InstantCommand(() -> {
-			frc.robot.SensorsAndFeedback.Gyro.getInstance().setAngle(0.0);
+			gyro.setAngle(0.0);
 		}));
 
 		secondary.a().whileTrue(new SetIntakeState(IntakeState.IntakingDown, intake)).whileFalse(new SetIntakeState(IntakeState.IdlingUp, intake));
@@ -124,11 +135,8 @@ public class RobotContainer {
 
 	public void configureTeleop() {
 		drivetrain.setDriveFF(SwerveConstants.kFFDriveVeloTeleop);
+		gyro.setAngle(drivetrain.getPose().getRotation().getDegrees());
 		intake.setState(IntakeState.IdlingUp);
-	}
-
-	public void setGyroAngle() {
-		// Gyro.getInstance().setAngle(drivetrain.getPose().getRotation().getDegrees());
 	}
 
 	public void setLEDMode(LEDMode mode) {

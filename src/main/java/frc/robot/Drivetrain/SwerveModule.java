@@ -1,7 +1,5 @@
 package frc.robot.Drivetrain;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -9,7 +7,6 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import Util.Interfaces.PowerManaged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -20,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SwerveConstants;
 
-public class SwerveModule extends SubsystemBase implements PowerManaged {
+public class SwerveModule extends SubsystemBase {
 
     /*           backLeft    frontLeft
      *                 x_____x
@@ -103,23 +100,21 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
     public void periodic() {
         // TODO
         // Telemetry
-        Logger.recordOutput(name + "/Drive/MotorCurrent", drive.getOutputCurrent());
-        Logger.recordOutput(name + "/Drive/BusVoltage", drive.getBusVoltage());
-        Logger.recordOutput(name + "/Drive/Velocity", driveRelEnc.getVelocity());
-        Logger.recordOutput(name + "/Drive/Temperature", drive.getMotorTemperature());
+        // Logger.recordOutput(name + "/Drive/MotorCurrent", drive.getOutputCurrent());
+        // Logger.recordOutput(name + "/Drive/BusVoltage", drive.getBusVoltage());
+        // Logger.recordOutput(name + "/Drive/Velocity", driveRelEnc.getVelocity());
+        // Logger.recordOutput(name + "/Drive/Temperature", drive.getMotorTemperature());
 
-        Logger.recordOutput(name + "/Turn/MotorCurrent", turn.getOutputCurrent());
-        Logger.recordOutput(name + "/Turn/BusVoltage", turn.getBusVoltage());
-        Logger.recordOutput(name + "/Turn/Position", turnRelEnc.getPosition());
-        Logger.recordOutput(name + "/Turn/Temperature", turn.getMotorTemperature());
+        // Logger.recordOutput(name + "/Turn/MotorCurrent", turn.getOutputCurrent());
+        // Logger.recordOutput(name + "/Turn/BusVoltage", turn.getBusVoltage());
+        // Logger.recordOutput(name + "/Turn/Position", turnRelEnc.getPosition());
+        // Logger.recordOutput(name + "/Turn/Temperature", turn.getMotorTemperature());
 
         SmartDashboard.putNumber(name + "/AbsPosition", absEncoder.getAbsolutePosition());
         SmartDashboard.putNumber(name + "/TurnAngle", getHeading());
         SmartDashboard.putNumber(name + "/WheelSpeed", driveRelEnc.getVelocity());
         SmartDashboard.putNumber(name + "/StateMS", state.speedMetersPerSecond);
         SmartDashboard.putNumber(name + "/CurrentDraw", drive.getOutputCurrent());
-
-        overCurrentDetection();
     }
 
     /**
@@ -145,10 +140,6 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
         }
 
         return turnRelEnc.getPosition() - theta;
-    }
-
-    public double getCurrentLimit() {
-        return driveCurrentLimit;
     }
 
     /**
@@ -183,23 +174,11 @@ public class SwerveModule extends SubsystemBase implements PowerManaged {
         return new SwerveModuleState(driveRelEnc.getVelocity(), new Rotation2d(getHeading()));
     }
 
-    public double getTotalCurrent() {
-        return getDriveCurrent() + getTurnCurrent();
-    }
-
     /**
      * @return Returns the current being drawn by the turn motor
      */
     public double getTurnCurrent() {
         return turn.getOutputCurrent();
-    }
-
-    public void overCurrentDetection() {
-        if (drive.getOutputCurrent() > driveCurrentLimit) drive.setSmartCurrentLimit(driveCurrentLimit);
-    }
-
-    public void setCurrentLimit(int a) {
-        driveCurrentLimit = a;
     }
 
     /**

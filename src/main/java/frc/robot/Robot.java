@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.SensorsAndFeedback.LEDFeedback.LEDMode;
 
 /**
@@ -102,7 +101,6 @@ public class Robot extends LoggedRobot {
 
 	@Override
 	public void teleopInit() {
-		m_robotContainer.setGyroAngle();
 		m_robotContainer.checkClimb();
 		m_robotContainer.configureTeleop();
 		m_robotContainer.setLEDMode(LEDMode.Rainbow);

@@ -11,12 +11,11 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import Util.Interfaces.InitializedSubsystem;
-import Util.Interfaces.PowerManaged;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimbConstants;
 
-public class Climb extends SubsystemBase implements PowerManaged, InitializedSubsystem {
+public class Climb extends SubsystemBase implements InitializedSubsystem {
     
     private final CANSparkMax left, right;
     private final RelativeEncoder leftEnc, rightEnc;
@@ -88,20 +87,6 @@ public class Climb extends SubsystemBase implements PowerManaged, InitializedSub
         // TODO
         // Telemetry
         // Logging
-    }
-
-
-    public double getCurrentLimit() {
-        return ClimbConstants.CURRENT_LIMIT;
-    }
-
-    public double getTotalCurrent() {
-        return left.getOutputCurrent() + right.getOutputCurrent();
-    }
-
-    public void setCurrentLimit(int a) {
-        left.setSmartCurrentLimit(a);
-        right.setSmartCurrentLimit(a);
     }
 
     public void setEncToTop() {

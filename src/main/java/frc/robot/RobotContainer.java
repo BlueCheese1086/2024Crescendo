@@ -95,7 +95,7 @@ public class RobotContainer {
 
 	private void configureBindings() {
 
-		leds.setMode(LEDMode.Bootup);
+		leds.setMode(LEDMode.Bootup, "ConfigureBindings");
 
 		for (InitializedSubsystem s : new InitializedSubsystem[]{drivetrain, intake, climb, shooter}) {
 			s.initialize();
@@ -122,10 +122,6 @@ public class RobotContainer {
 	}
 
 	public void checkClimb() {
-		// if (DriverStation.isFMSAttached()) {
-		// 	climb.initialize();
-		// 	return;
-		// }
 		if ((Boolean) climbDown.getValue()) {
 			climb.initialize();
 		} else {
@@ -139,8 +135,8 @@ public class RobotContainer {
 		intake.setState(IntakeState.IdlingUp);
 	}
 
-	public void setLEDMode(LEDMode mode) {
-		leds.setMode(mode);
+	public void setLEDMode(LEDMode mode, String refSystem) {
+		leds.setMode(mode, refSystem);
 	}
 
 	public Command getAutonomousCommand() {

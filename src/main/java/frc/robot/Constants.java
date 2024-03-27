@@ -75,7 +75,7 @@ public final class Constants {
         public static final double kFFDriveVelo = 0.165;
         public static final double kFFDriveVeloTeleop = 0.2;
 
-        public static final double ROC_LIMIT_MULT = 0.1;
+        public static final int TURN_CURRENT_LIMIT = 30;        
         public static final int DRIVE_CURRENT_LIMIT = 70;
 
         public static final double wheelCircumpherence = Units.inchesToMeters(4.0 * Math.PI);

@@ -39,7 +39,6 @@ public class LEDFeedback extends SubsystemBase {
     }
     
     private static void bootup() {
-        // System.out.println(buffer.getLength());
         for (int i = 0; i < bootingLed; i++) {
             buffer.setRGB(i, 0, 0, 255);
             if (bootingLed < buffer.getLength() && ledTimer.get() > 0.020) {
@@ -100,7 +99,8 @@ public class LEDFeedback extends SubsystemBase {
         }
     }
 
-    public void setMode(LEDMode mode) {
+    public void setMode(LEDMode mode, String refSystem) {
+        SmartDashboard.putString("/LEDS/LastCallFrom", refSystem);
 		LEDFeedback.mode = mode;
 	}
 

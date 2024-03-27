@@ -47,7 +47,7 @@ public class DefaultDrive extends Command {
         drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
             x_trans.getAsDouble() * DriveConstants.maxWheelVelocity,
             y_trans.getAsDouble() * DriveConstants.maxWheelVelocity,
-            z_rot.getAsDouble() * DriveConstants.maxRotationalVelocity + aligningPID.calculate(gyro.getAngle().getDegrees(), -180.0), 
+            z_rot.getAsDouble() * DriveConstants.maxRotationalVelocity + (alignToDS.getAsBoolean() ? aligningPID.calculate(gyro.getAngle().getDegrees(), -180.0) : 0.0), 
             gyro.getAngle()));
 
         prevAlign = alignToDS.getAsBoolean();

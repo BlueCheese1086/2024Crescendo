@@ -36,9 +36,6 @@ public class SwerveModule extends SubsystemBase {
 
     private final SlewRateLimiter driveAccelerationLimiter = new SlewRateLimiter(DriveConstants.maxAcceleration);
 
-    private int turnCurrentLimit = 30;
-    private int driveCurrentLimit = 60;
-
     private final AnalogEncoder absEncoder;
     private final double encOffset;
 
@@ -57,8 +54,8 @@ public class SwerveModule extends SubsystemBase {
         drive.restoreFactoryDefaults();
         turn.restoreFactoryDefaults();
 
-        drive.setSmartCurrentLimit((int) driveCurrentLimit);
-        turn.setSmartCurrentLimit((int) turnCurrentLimit);
+        drive.setSmartCurrentLimit(SwerveConstants.DRIVE_CURRENT_LIMIT);
+        turn.setSmartCurrentLimit(SwerveConstants.TURN_CURRENT_LIMIT);
 
         drive.setInverted(true);
         turn.setInverted(false);

@@ -103,7 +103,7 @@ public class Robot extends LoggedRobot {
 	public void teleopInit() {
 		m_robotContainer.checkClimb();
 		m_robotContainer.configureTeleop();
-		m_robotContainer.setLEDMode(LEDMode.Rainbow);
+		m_robotContainer.setLEDMode(LEDMode.Rainbow, "RobotTeleInit");
 		// This makes sure that the autonomous stops running when
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove

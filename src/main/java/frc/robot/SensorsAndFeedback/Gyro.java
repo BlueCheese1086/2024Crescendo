@@ -3,9 +3,7 @@ package frc.robot.SensorsAndFeedback;
 import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
@@ -36,11 +34,7 @@ public class Gyro extends SubsystemBase {
     public void initGyro() {
         pigeon.configFactoryDefault();
         // The gyro is offset by 180deg
-        try {
-            pigeon.setYaw(DriverStation.getAlliance().get() == Alliance.Red ? 0 : 180);
-        } catch (Exception e) {
-            pigeon.setYaw(0.0);
-        }
+        pigeon.setYaw(0.0);
         
         yawVelo = 0.0;
         prevYaw = pigeon.getYaw();

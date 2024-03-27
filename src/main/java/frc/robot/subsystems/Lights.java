@@ -25,6 +25,6 @@ public class Lights extends SubsystemBase {
   }
 
   public void periodic() {
-    led.setData(ledBuffer);
+    
   }
 }

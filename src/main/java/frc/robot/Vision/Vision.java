@@ -11,22 +11,20 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 
 public class Vision extends SubsystemBase {
-    // Cameras
-    private PhotonCamera frontCam = new PhotonCamera("Forte-Front");
-    private PhotonCamera backCam = new PhotonCamera("Forte-Back");
+    // Camera
+    private PhotonCamera camera = new PhotonCamera("Forte");
 
     // Pose Estimation
     private AprilTagFieldLayout field = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-    private PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(field, PoseStrategy.AVERAGE_BEST_TARGETS, VisionConstants.backCamTransform);
-    private PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(field, PoseStrategy.AVERAGE_BEST_TARGETS, VisionConstants.backCamTransform);
+    private PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(field, PoseStrategy.AVERAGE_BEST_TARGETS, VisionConstants.camTransform);
 
     // Previous Pose
-    private Pose2d frontPrevPose = new Pose2d();
-    private Pose2d backPrevPose = new Pose2d();
+    private Pose2d prevPose = new Pose2d();
 
     // A common instance of the vision subsystem.
     private static Vision instance;
@@ -48,47 +46,27 @@ public class Vision extends SubsystemBase {
     /** This function runs every 20 ms that this subsystem is active. */
     public void periodic() {
         // Updating the previous poses
-        frontPrevPose = getFrontPose();
-        backPrevPose = getBackPose();
+        prevPose = getPose();
         
         // Updating the pose estimators
-        frontPoseEstimator.update(frontCam.getLatestResult());
-        backPoseEstimator.update(backCam.getLatestResult());
+        poseEstimator.update(camera.getLatestResult());
     }
 
     /**
-     * Gets targets that the front camera can see.
+     * Gets targets that the camera can see.
      * 
-     * @return A list of targets tracked by the front camera.
+     * @return A list of targets tracked by the camera.
      */
-    public List<PhotonTrackedTarget> getFrontTargets() {
-        return frontCam.getLatestResult().targets;
+    public List<PhotonTrackedTarget> getTargets() {
+        return camera.getLatestResult().targets;
     }
 
     /**
-     * Gets targets that the back camera can see.
-     * 
-     * @return A list of targets tracked by the back camera.
-     */
-    public List<PhotonTrackedTarget> getBackTargets() {
-        return backCam.getLatestResult().targets;
-    }
-
-    /**
-     * Gets the estimated pose according to the front camera.
+     * Gets the estimated pose according to the camera.
      * 
      * @return An estimated Pose2d of the robot.
      */
-    public Pose2d getFrontPose() {
-        return frontPoseEstimator.update().isPresent() ? frontPoseEstimator.update().get().estimatedPose.toPose2d() : frontPrevPose;
-    }
-
-    /**
-     * Gets the estimated pose according to the back camera.
-     * 
-     * @return An estimated Pose2d of the robot.
-     */
-    public Pose2d getBackPose() {
-        return backPoseEstimator.update().isPresent() ? backPoseEstimator.update().get().estimatedPose.toPose2d() : backPrevPose;
+    public Pose2d getPose() {
+        return poseEstimator.update().isPresent() ? poseEstimator.update().get().estimatedPose.toPose2d() : prevPose;
     }
 }

@@ -135,11 +135,8 @@ public class Constants {
 
     public class VisionConstants {
         // Camera Poses
-        public static final Translation3d frontCamTranslation = new Translation3d();
-        public static final Translation3d backCamTranslation = new Translation3d();
-        public static final Rotation3d frontCamRotation = new Rotation3d();
-        public static final Rotation3d backCamRotation = new Rotation3d();
-        public static final Transform3d frontCamTransform = new Transform3d(frontCamTranslation, frontCamRotation);
-        public static final Transform3d backCamTransform = new Transform3d(backCamTranslation, backCamRotation);
+        public static final Translation3d camTranslation = new Translation3d();
+        public static final Rotation3d camRotation = new Rotation3d();
+        public static final Transform3d camTransform = new Transform3d(camTranslation, camRotation);
     }
 }

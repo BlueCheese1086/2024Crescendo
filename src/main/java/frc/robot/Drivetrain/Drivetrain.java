@@ -105,8 +105,7 @@ public class Drivetrain extends SubsystemBase {
         }
         
         // Updating the pose estimator
-        poseEstimator.addVisionMeasurement(vision.getFrontPose(), Timer.getFPGATimestamp());
-        poseEstimator.addVisionMeasurement(vision.getBackPose(), Timer.getFPGATimestamp());
+        poseEstimator.addVisionMeasurement(vision.getPose(), Timer.getFPGATimestamp());
         poseEstimator.update(getAngle(), positions);
 
         Dynamic.robotPose = poseEstimator.getEstimatedPosition();

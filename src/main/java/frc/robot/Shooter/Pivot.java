@@ -1,6 +1,10 @@
 package frc.robot.Shooter;
 
+import java.util.List;
 import java.util.Objects;
+
+import org.photonvision.PhotonUtils;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -11,8 +15,12 @@ import com.revrobotics.SparkMaxAlternateEncoder.Type;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.VisionConstants;
+import frc.robot.Vision.Vision;
 
 public class Pivot extends SubsystemBase {
     // Motor controllers
@@ -23,6 +31,10 @@ public class Pivot extends SubsystemBase {
 
     // PID Controllers
     private SparkPIDController alignPID;
+
+    // This subsystem relies on the vision subsystem to aim.
+    private Vision vision;
+
 
     private static Pivot instance;
 
@@ -49,6 +61,9 @@ public class Pivot extends SubsystemBase {
     }
 
     public Pivot() {
+        // Getting an instance of the Vision subsystem.
+        vision = Vision.getInstance();
+
         // Resetting the settings of the sparkmaxes
         align.restoreFactoryDefaults();
 
@@ -81,6 +96,39 @@ public class Pivot extends SubsystemBase {
 
     public Rotation2d getAngle() {
         return new Rotation2d(alignEncoder.getPosition());
+    }
+
+    public Rotation2d calculateAngle() {
+        // Getting the targets from the vision system
+        List<PhotonTrackedTarget> targets = vision.getTargets();
+
+        // Checking the alliance so we don't align to the wrong apriltag.
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue) {
+            for (PhotonTrackedTarget target : targets) {
+                // Checking the ID of the apriltag.
+                if (target.getFiducialId() != 7) {
+                    break;
+                }
+
+                // Getting the necessary angle while accounting for the camera's offset.
+                Rotation2d angle = Rotation2d.fromDegrees(target.getPitch());
+                return angle.plus(VisionConstants.camRotation.toRotation2d());
+            }
+        } else if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+            for (PhotonTrackedTarget target : targets) {
+                // Checking the ID of the apriltag.
+                if (target.getFiducialId() != 4) {
+                    break;
+                }
+
+                // Getting the necessary angle while accounting for the camera's offset.
+                Rotation2d angle = Rotation2d.fromDegrees(target.getPitch());
+                return angle.plus(VisionConstants.camRotation.toRotation2d());
+            }
+        }
+
+        // No allaince?  Weirdo...
+        return new Rotation2d();
     }
 
     /**

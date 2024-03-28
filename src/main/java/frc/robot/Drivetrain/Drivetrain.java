@@ -1,6 +1,9 @@
 package frc.robot.Drivetrain;
 
 import java.util.Objects;
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 
@@ -104,8 +107,15 @@ public class Drivetrain extends SubsystemBase {
             positions[i] = modules[i].getPosition();
         }
         
+        // Getting the estimated pose from the vision system
+        Optional<EstimatedRobotPose> estimatedPose = vision.getEstimatedPose(poseEstimator.getEstimatedPosition());
+
+        // If there is a pose from the vision system, then this adds it to the current pose estimator
+        if (estimatedPose.isPresent()) {
+            poseEstimator.addVisionMeasurement(estimatedPose.get().estimatedPose.toPose2d(), Timer.getFPGATimestamp());
+        }
+
         // Updating the pose estimator
-        poseEstimator.addVisionMeasurement(vision.getPose(), Timer.getFPGATimestamp());
         poseEstimator.update(getAngle(), positions);
 
         Dynamic.robotPose = poseEstimator.getEstimatedPosition();

@@ -41,15 +41,14 @@ public class RobotContainer {
         // "A" runs the launcher in reverse to collect notes.
         // "Left Bumper" runs the flywheel on the launcher.
         // "Right Bumper" runs the feed wheel on the launcher.
-        // xbox.button(3).whileTrue(new RunFlywheel(launcher, -1));
-        // xbox.leftBumper().whileTrue(new RunFlywheel(launcher, 1));
-        // xbox.rightBumper().whileTrue(new RunFeed(launcher, 1));
+        xbox.a().whileTrue(new RunFlywheel(launcher, -1));
+        xbox.leftBumper().whileTrue(new RunFlywheel(launcher, 1));
+        xbox.rightBumper().whileTrue(new RunFeed(launcher, 1));        
+
         xbox.button(3).and(xbox.button(5)).whileTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         xbox.button(2).and(xbox.button(5)).whileTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         xbox.button(4).and(xbox.button(5)).whileTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward));
         xbox.button(1).and(xbox.button(5)).whileTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-        
     }
 
     /**
@@ -69,6 +68,6 @@ public class RobotContainer {
      * @return The command to run in Teleop mode.
      */
     public Command getTeleopCommand() {
-        return new ArcadeDrive(drivetrain, () -> -xbox.getLeftY(), () -> xbox.getRawAxis(2));
+        return new ArcadeDrive(drivetrain, () -> -xbox.getLeftY(), () -> xbox.getRightX());
     }
 }

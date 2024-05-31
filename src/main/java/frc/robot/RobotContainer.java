@@ -20,11 +20,9 @@ import frc.robot.Shooter.Shooter;
 import frc.robot.Shooter.Pivot;
 import frc.robot.Tower.Commands.*;
 import frc.robot.Tower.Tower;
-import frc.robot.Vision.Vision;
 
 public class RobotContainer {
     // Creating the subsystems
-    Vision vision = Vision.getInstance();
     Drivetrain drivetrain = Drivetrain.getInstance();
     Shooter shooter = Shooter.getInstance();
     Pivot pivot = Pivot.getInstance();

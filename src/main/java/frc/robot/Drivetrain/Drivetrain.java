@@ -1,9 +1,6 @@
 package frc.robot.Drivetrain;
 
 import java.util.Objects;
-import java.util.Optional;
-
-import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 
@@ -15,11 +12,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Dynamic;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Vision.Vision;
 
 public class Drivetrain extends SubsystemBase {
     // Swerve Modules
@@ -51,7 +46,6 @@ public class Drivetrain extends SubsystemBase {
 
     // Odometry/Pose Estimation
     private SwerveDrivePoseEstimator poseEstimator;
-    private Vision vision;
 
     // A common instance of the drivetrain subsystem.
     private static Drivetrain instance;
@@ -81,9 +75,6 @@ public class Drivetrain extends SubsystemBase {
 
         // Initializing the pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(kinematics, getAngle(), positions, new Pose2d());
-
-        // Getting an instance of the Vision subsystem.
-        vision = Vision.getInstance();
     }
 
     /**
@@ -107,14 +98,6 @@ public class Drivetrain extends SubsystemBase {
             positions[i] = modules[i].getPosition();
         }
         
-        // Getting the estimated pose from the vision system
-        Optional<EstimatedRobotPose> estimatedPose = vision.getEstimatedPose(poseEstimator.getEstimatedPosition());
-
-        // If there is a pose from the vision system, then this adds it to the current pose estimator
-        if (estimatedPose.isPresent()) {
-            poseEstimator.addVisionMeasurement(estimatedPose.get().estimatedPose.toPose2d(), Timer.getFPGATimestamp());
-        }
-
         // Updating the pose estimator
         poseEstimator.update(getAngle(), positions);
 

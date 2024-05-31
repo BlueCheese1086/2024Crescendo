@@ -132,11 +132,4 @@ public class Constants {
         public static final int lTowerID = 31;
         public static final int rTowerID = 32;
     }
-
-    public class VisionConstants {
-        // Camera Poses
-        public static final Translation3d camTranslation = new Translation3d();
-        public static final Rotation3d camRotation = new Rotation3d();
-        public static final Transform3d camTransform = new Transform3d(camTranslation, camRotation);
-    }
 }

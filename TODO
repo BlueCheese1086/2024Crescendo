@@ -1,6 +1,4 @@
 Things to do:
-    Get Alex to help me write the Vision class
-    Get Luke to help me write the LED class.
     Figure out the calculation for what angle I should shoot at based off of the angle of the apriltag
     Use getInstance methods in the RobotContainer.java file when instantiating the subsystems.
 
@@ -8,3 +6,66 @@ To do with Rookies:
     Have them implement the getInstance method for the shooter subsystem.
     Have them fix the references in SetShooterAngle.java
     Show them how ryan wants the states implemented.
+
+Math Stuff: (all angles are in degrees)
+PhotonVision gives me 6 things.
+1. Target -- The visible targets in order of clarity.
+2. Fiducial ID -- The ID of the apriltag.
+3. X -- How far away the apriltag is on the x axis (meters)
+4. Y -- How far away the apriltag is on the y axis (meters)
+5. Z angle -- The difference in yaw of the apriltag and the camera (degrees) (0 means that you are facing the apriltag)
+6. Ambiguity -- Unknown
+
+```
+// Creating the camera
+PhotonCamera camera = new PhotonCamera(String cameraName);
+
+// Getting the result from the camera
+var result = camera.getLatestResult();
+
+if (result.hasTargets()) {
+  // Getting the targets the camera sees
+  var targets = result.targets;
+
+  // Getting the best result from the camera
+  var bestTarget = result.getBestTarget();
+
+  
+  double yaw = bestTarget.getYaw();
+  double pitch = bestTarget.getPitch();
+  Pose2d camToTarget = bestTarget.getBestCameraToTarget();
+
+}
+
+```
+
+if limelight is at 0 deg, then the tY is the angle of the limelight to the apriltag.
+Figure out the side lengths based off of the angles.
+
+  c
+  |\
+  | \
+  |  \
+A |   \ B
+  |    \
+  |     \
+  |______\
+ b    C   a
+
+A/sin(a) = B/sin(b) = C/sin(c)
+
+I get the "a" angle from the limelight if the pitch is 0
+I get the length of side "A" from the given values of how high off the ground the apriltag is.
+Angle "b" is always 90
+Angle "c" is then 90-"a"
+Side "B" = A * sin(b) / sin(a)
+Side "C" = A * sin(c) / sin(a)
+
+Side "B" is the distance the note needs to travel.
+Side "C" is the lateral distance from the robot to the speaker
+Limelight may be at 45 deg pitch, so "a" will be tY + 45
+Note: Change the location of point a to be in the center of the robot.
+That way, I am calculating the angle for the robot, not the camera.
+Shooter is 10 inches off the ground.
+
+We are using photonvision

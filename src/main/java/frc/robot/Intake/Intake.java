@@ -24,6 +24,23 @@ public class Intake {
     // A common instance of the intake subsystem.
     private static Intake instance;
 
+    /**
+     * The different states of the intake.
+     * 
+     * OPEN is where the intake is down and the robot can run the intake.
+     * CLOSED is where the intake is up and the robot cannot run the intake.
+     */
+    public enum States {
+        OPEN(Rotation2d.fromDegrees(0)),
+        CLOSED(Rotation2d.fromDegrees(90));
+
+        public final Rotation2d value;
+
+        States(Rotation2d angle){
+            this.value = angle;
+        }
+    }
+
     public Intake() {
         // Initializing motors
         rollerMotor = new CANSparkMax(IntakeConstants.rollerID, MotorType.kBrushless);

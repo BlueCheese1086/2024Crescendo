@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Intake.Intake;
 
 public class SetIntakeSpeed extends Command {
-    private Intake intake;
+    private Intake intake = Intake.getInstance();
     private double speed;
 
     /**
@@ -16,7 +16,6 @@ public class SetIntakeSpeed extends Command {
      * @param speed The percent speed of the rollers.
      */
     public SetIntakeSpeed(double speed) {
-        this.intake = Intake.getInstance();
         this.speed = speed;
     }
 

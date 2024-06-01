@@ -4,9 +4,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.Intake.Intake;
+import frc.robot.Intake.Intake.States;
 
 public class SetIntakeAngle extends Command {
-    private Intake intake;
+    private Intake intake = Intake.getInstance();
     private Rotation2d angle;
 
     /**
@@ -14,11 +15,10 @@ public class SetIntakeAngle extends Command {
      * <p>
      * This command sets the angle of the intake to a set angle.
      * 
-     * @param angle The angle of the intake.
+     * @param state An enum for the state of the intake.
      */
-    public SetIntakeAngle(Rotation2d angle) {
-        this.intake = Intake.getInstance();
-        this.angle = angle;
+    public SetIntakeAngle(States state) {
+        this.angle = state.value;
     }
 
     /** Runs every 20 ms while the command is scheduled. */

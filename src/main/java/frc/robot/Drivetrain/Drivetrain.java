@@ -1,7 +1,5 @@
 package frc.robot.Drivetrain;
 
-import java.util.Objects;
-
 import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -86,7 +84,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public static Drivetrain getInstance() {
         // If the instance hasn't been initialized, then initialize it.
-        if (Objects.isNull(instance)) instance = new Drivetrain();
+        if (instance == null) instance = new Drivetrain();
 
         return instance;
     }

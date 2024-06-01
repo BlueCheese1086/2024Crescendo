@@ -1,7 +1,5 @@
 package frc.robot.Shooter;
 
-import java.util.Objects;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -67,7 +65,7 @@ public class Shooter {
      */
     public static Shooter getInstance() {
         // If the instance hasn't been initialized, then initialize it.
-        if (Objects.isNull(instance)) instance = new Shooter();
+        if (instance == null) instance = new Shooter();
 
         return instance;
     }

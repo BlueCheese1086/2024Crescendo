@@ -1,7 +1,5 @@
 package frc.robot.Intake;
 
-import java.util.Objects;
-
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -56,7 +54,7 @@ public class Intake {
      */
     public static Intake getInstance() {
         // If the instance hasn't been initialized, then initialize it.
-        if (Objects.isNull(instance)) instance = new Intake();
+        if (instance == null) instance = new Intake();
 
         return instance;
     }

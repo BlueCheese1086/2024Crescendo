@@ -1,3 +1,29 @@
+Things to ask:
+    Do we need the Tower subsystem to be closed loop or is open loop OK?
+
+Write Climb subsystem
+Write Shooter subsystem
+Write Drivetrain subsystem
+Write Intake subsystem
+
+Functions:
+    Move left -- Left Joystick left
+    Move right -- Left Joystick right
+    Move up -- Left Joystick up
+    Move down -- Left Joystick down
+    Turn left -- Right Joystick left
+    Turn right -- Right Joystick right
+    Intake down -- D-pad down
+    Intake up -- D-pad up
+    Intake run -- X
+    Intake reverse -- Y
+    Climb up -- Left Bumper
+    Climb down -- Left Trigger
+    Shooter up -- Right Bumper
+    Shooter down -- Right Trigger
+    Shooter run -- A
+    Shooter reverse -- B
+
 Things to do:
     Figure out the calculation for what angle I should shoot at based off of the angle of the apriltag
     Use getInstance methods in the RobotContainer.java file when instantiating the subsystems.

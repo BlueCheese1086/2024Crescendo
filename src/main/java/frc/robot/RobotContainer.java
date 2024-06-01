@@ -12,14 +12,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.Drivetrain.Commands.*;
+import frc.robot.Climb.Climb;
+import frc.robot.Climb.Commands.*;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.Intake.Commands.*;
 import frc.robot.Intake.Intake;
 import frc.robot.Shooter.Commands.*;
 import frc.robot.Shooter.Shooter;
 import frc.robot.Shooter.Pivot;
-import frc.robot.Tower.Commands.*;
-import frc.robot.Tower.Tower;
 
 public class RobotContainer {
     // Creating the subsystems
@@ -27,7 +27,7 @@ public class RobotContainer {
     Shooter shooter = Shooter.getInstance();
     Pivot pivot = Pivot.getInstance();
     Intake intake = Intake.getInstance();
-    Tower tower = Tower.getInstance();
+    Climb tower = Climb.getInstance();
 
     // Creating the controllers
     CommandXboxController driveController = new CommandXboxController(0);
@@ -57,8 +57,8 @@ public class RobotContainer {
         operatorController.y().toggleOnTrue(new SetLauncherSpeed(1));
         operatorController.leftBumper().whileTrue(new SetShooterAngle(pivot.getAngle(), 1));
         operatorController.leftTrigger().whileTrue(new SetShooterAngle(pivot.getAngle(), -1));
-        operatorController.rightBumper().whileTrue(new SetTowerSpeed(1));
-        operatorController.rightTrigger().whileTrue(new SetTowerSpeed(-1));
+        operatorController.rightBumper().whileTrue(new SetClimbSpeed(1));
+        operatorController.rightTrigger().whileTrue(new SetClimbSpeed(-1));
         operatorController.back().whileTrue(new SetIntakeSpeed(-1));
         operatorController.povUp().onTrue(new SetIntakeAngle(Rotation2d.fromDegrees(90)));
         operatorController.povDown().onTrue(new SetIntakeAngle(new Rotation2d()));

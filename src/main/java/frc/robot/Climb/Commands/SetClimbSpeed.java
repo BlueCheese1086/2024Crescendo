@@ -1,10 +1,10 @@
-package frc.robot.Tower.Commands;
+package frc.robot.Climb.Commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Tower.Tower;
+import frc.robot.Climb.Climb;
 
-public class SetTowerSpeed extends Command {
-    private Tower tower;
+public class SetClimbSpeed extends Command {
+    private Climb climb;
     private double speed;
 
     /**
@@ -14,20 +14,20 @@ public class SetTowerSpeed extends Command {
      * 
      * @param speed The percent speed to run the tower at.
      */
-    public SetTowerSpeed(double speed) {
-        this.tower = Tower.getInstance();
+    public SetClimbSpeed(double speed) {
+        this.climb = Climb.getInstance();
         this.speed = speed;
     }
 
     /** This function runs every 20 ms while the command is scheduled. */
     @Override
     public void execute() {
-        tower.setSpeed(speed);
+        climb.setSpeed(speed);
     }
 
     /** This function runs once when the command ends. */
     @Override
     public void end(boolean interrupted) {
-        tower.setSpeed(0);
+        climb.setSpeed(0);
     }
 }

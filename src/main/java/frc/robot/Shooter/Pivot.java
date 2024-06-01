@@ -1,7 +1,5 @@
 package frc.robot.Shooter;
 
-import java.util.Objects;
-
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -24,8 +22,10 @@ public class Pivot extends SubsystemBase {
     // PID Controllers
     private SparkPIDController alignPID;
 
+    // A common instance of the Pivot class
     private static Pivot instance;
 
+    // Preset positions for the shooter
     public static class Positions {
         public Rotation2d ORIGIN = new Rotation2d(0);
         public Rotation2d SPEAKER = new Rotation2d(5 / 9 * Math.PI);
@@ -40,31 +40,33 @@ public class Pivot extends SubsystemBase {
         PREMTIVE_HOMING
     }
 
-    //states
+    /**
+     * Gets an instance of the pivot class that can be used anywhere.
+     * If no instance has been created, one is instantiated and assigned to the instance variable.
+     * 
+     * @return An instance of the Pivot class.
+     */
     public static Pivot getInstance() {
         // If the instance hasn't been initialized, then initialize it.
-        if (Objects.isNull(instance)) instance = new Pivot();
+        if (instance == null) instance = new Pivot();
 
         return instance;
     }
 
     public Pivot() {
-        // Resetting the settings of the sparkmaxes
+        // Resetting the settings of the sparkmax
         align.restoreFactoryDefaults();
 
-        // Setting the idle mode of the sparkmaxes
+        // Setting the idle mode of the sparkmax
         align.setIdleMode(IdleMode.kCoast);
 
-        // Saving the settings of the sparkmaxes
-        align.burnFlash();
-
-        // Configuring the align encoder
+        // Getting the align motor's encoder
         alignEncoder = align.getAlternateEncoder(Type.kQuadrature, 8192);
 
         // Setting the conversion factors for the align encoder
         alignEncoder.setPositionConversionFactor(ShooterConstants.alignPosConversionFactor);
 
-        // Configuring the align PID
+        // Getting the align motor's PID
         alignPID = align.getPIDController();
 
         // Setting PIDFF values
@@ -72,6 +74,9 @@ public class Pivot extends SubsystemBase {
         alignPID.setI(ShooterConstants.kI);
         alignPID.setD(ShooterConstants.kD);
         alignPID.setFF(ShooterConstants.kFF);
+
+        // Saving the settings of the sparkmax
+        align.burnFlash();
     }
 
     /** Resets the encoder of the align motor. */

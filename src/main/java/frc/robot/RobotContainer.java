@@ -30,8 +30,7 @@ public class RobotContainer {
     Climb tower = Climb.getInstance();
 
     // Creating the controllers
-    CommandXboxController driveController = new CommandXboxController(0);
-    CommandXboxController operatorController = new CommandXboxController(1);
+    CommandXboxController joystick = new CommandXboxController(1);
 
     public RobotContainer() {
         configureBindings();
@@ -48,20 +47,22 @@ public class RobotContainer {
             Right Bumper: Moves the tower up.
             Right Trigger: Moves the tower down.
             Back: Running the intake in reverse.
-            POV Up: Stowing the intake.
-            POV Down: Extending the intake.
+            D-Pad Up: Stowing the intake.
+            D-Pad Down: Extending the intake.
+            Left Joystick: Move up/down/left/right respectively
+            Right Joystick: Turn left/right respectively
         */
-        operatorController.a().whileTrue(new SetFeedSpeed(1));
-        operatorController.b().whileTrue(new SetIntakeSpeed(1));
-        operatorController.x().whileTrue(new SetLauncherSpeed(-1));
-        operatorController.y().toggleOnTrue(new SetLauncherSpeed(1));
-        operatorController.leftBumper().whileTrue(new SetShooterAngle(pivot.getAngle(), 1));
-        operatorController.leftTrigger().whileTrue(new SetShooterAngle(pivot.getAngle(), -1));
-        operatorController.rightBumper().whileTrue(new SetClimbSpeed(1));
-        operatorController.rightTrigger().whileTrue(new SetClimbSpeed(-1));
-        operatorController.back().whileTrue(new SetIntakeSpeed(-1));
-        operatorController.povUp().onTrue(new SetIntakeAngle(Rotation2d.fromDegrees(90)));
-        operatorController.povDown().onTrue(new SetIntakeAngle(new Rotation2d()));
+        joystick.a().whileTrue(new SetFeedSpeed(1));
+        joystick.b().whileTrue(new SetIntakeSpeed(1));
+        joystick.x().whileTrue(new SetLauncherSpeed(-1));
+        joystick.y().toggleOnTrue(new SetLauncherSpeed(1));
+        joystick.leftBumper().whileTrue(new SetShooterAngle(pivot.getAngle(), 1));
+        joystick.leftTrigger().whileTrue(new SetShooterAngle(pivot.getAngle(), -1));
+        joystick.rightBumper().whileTrue(new SetClimbSpeed(1));
+        joystick.rightTrigger().whileTrue(new SetClimbSpeed(-1));
+        joystick.back().whileTrue(new SetIntakeSpeed(-1));
+        joystick.povUp().onTrue(new SetIntakeAngle(Intake.States.CLOSED));
+        joystick.povDown().onTrue(new SetIntakeAngle(Intake.States.OPEN));
     }
 
     public Command getAutonomousCommand() {
@@ -70,9 +71,9 @@ public class RobotContainer {
 
     public Command getTeleopCommand() {
         return new SwerveDrive(
-            () -> MathUtil.applyDeadband(driveController.getLeftX(), 0.2),
-            () -> MathUtil.applyDeadband(driveController.getLeftY(), 0.2),
-            () -> MathUtil.applyDeadband(driveController.getRightX(), 0.2)
+            () -> MathUtil.applyDeadband(joystick.getLeftX(), 0.2),
+            () -> MathUtil.applyDeadband(joystick.getLeftY(), 0.2),
+            () -> MathUtil.applyDeadband(joystick.getRightX(), 0.2)
         );
     }
 }

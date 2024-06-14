@@ -99,6 +99,9 @@ public class Pivot extends SubsystemBase {
      * @param angle The angle to go to as a Rotation2d.
      */
     public void setAngle(Rotation2d angle) {
+        if (angle.getDegrees() > 75) return;
+        if (angle.getDegrees() < 0) return;
+
         alignPID.setReference(angle.getRadians(), ControlType.kPosition);
     }
 }

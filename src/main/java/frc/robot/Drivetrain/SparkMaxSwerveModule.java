@@ -39,6 +39,14 @@ public class SparkMaxSwerveModule extends SubsystemBase {
         drive = new CANSparkMax(driveID, MotorType.kBrushless);
         turn = new CANSparkMax(turnID, MotorType.kBrushless);
 
+        // Resetting motor configs
+        drive.restoreFactoryDefaults();
+        turn.restoreFactoryDefaults();
+
+        // Inverting the motors
+        drive.setInverted(true);
+        turn.setInverted(false);
+
         // Setting the neutral mode for the motors
         drive.setIdleMode(IdleMode.kBrake);
         turn.setIdleMode(IdleMode.kBrake);
@@ -46,6 +54,8 @@ public class SparkMaxSwerveModule extends SubsystemBase {
         // Getting encoders for the motors
         driveEncoder = drive.getEncoder();
         turnEncoder = turn.getEncoder();
+
+        driveEncoder.setPosition(0);
 
         // Setting conversion values for the encoders
         driveEncoder.setPositionConversionFactor(DriveConstants.drivePosConversionFactor);
@@ -70,10 +80,14 @@ public class SparkMaxSwerveModule extends SubsystemBase {
 
         // Initializing the cancoder
         cancoder = new AnalogEncoder(cancoderID);
+        this.offset = offset;
         
         // Saving the configs for each motor
         drive.burnFlash();
         turn.burnFlash();
+
+        // Setting the initial position of the turn encoder
+        initializeEncoder();
     }
 
     // For some reason, this doesn't always work when used in the constructor.
@@ -97,11 +111,14 @@ public class SparkMaxSwerveModule extends SubsystemBase {
      * @return The angle of the swerve module as a Rotation2d.
      */
     public Rotation2d getAngle() {
-        // Getting Rotations
+        // Getting radians
         double radians = turnEncoder.getPosition();
 
-        // Converting Rotations to Rotation2d
-        return Rotation2d.fromRotations(radians);
+        // Putting the radians into the range of 0 to 2pi
+        radians %= 2 * Math.PI;
+
+        // Converting radians to Rotation2d
+        return new Rotation2d(radians);
     }
 
     /**

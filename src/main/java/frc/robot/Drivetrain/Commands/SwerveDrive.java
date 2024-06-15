@@ -11,26 +11,24 @@ public class SwerveDrive extends Command {
     private Drivetrain drivetrain;
     private Supplier<Double> xTransSupplier;
     private Supplier<Double> yTransSupplier;
-    private Supplier<Double> xRotSupplier;
+    private Supplier<Double> zRotSupplier;
 
-    public SwerveDrive(Supplier<Double> xTransSupplier, Supplier<Double> yTransSupplier, Supplier<Double> xRotSupplier) {
+    public SwerveDrive(Supplier<Double> xTransSupplier, Supplier<Double> yTransSupplier, Supplier<Double> zRotSupplier) {
         this.drivetrain = Drivetrain.getInstance();
         this.xTransSupplier = xTransSupplier;
         this.yTransSupplier = yTransSupplier;
-        this.xRotSupplier = xRotSupplier;
+        this.zRotSupplier = zRotSupplier;
     }
 
     @Override
-    public void initialize() {
-        super.initialize();
-    }
+    public void initialize() {}
 
     @Override
     public void execute() {
         ChassisSpeeds speeds = ChassisSpeeds.fromRobotRelativeSpeeds(
             xTransSupplier.get() * DriveConstants.maxDriveSpeed, 
             yTransSupplier.get() * DriveConstants.maxDriveSpeed, 
-            xRotSupplier.get() * DriveConstants.maxTurnSpeed, 
+            zRotSupplier.get() * DriveConstants.maxTurnSpeed, 
             drivetrain.getAngle()
         );
 
@@ -44,6 +42,6 @@ public class SwerveDrive extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        super.end(interrupted);
+        drivetrain.makeX();
     }
 }

@@ -1,8 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -44,13 +41,13 @@ public class Constants {
         public static final Translation2d brTranslation = new Translation2d( DriveConstants.width / 2, -DriveConstants.length / 2);
 
         // Max Speeds
-        public static final int maxDriveSpeed = 1; // Meters / Second
-        public static final int maxTurnSpeed  = 1; // Radians / Second
+        public static final double maxDriveSpeed = 0.3; // Meters / Second
+        public static final double maxTurnSpeed  = 0.5; // Radians / Second
 
         // Robot Measurements
-        public static final double width = Units.inchesToMeters(20); // Meters
-        public static final double length = Units.inchesToMeters(20); // Meters
-        public static final double wheelRadius = Units.inchesToMeters(4); // Meters
+        public static final double width = Units.inchesToMeters(33); // Meters
+        public static final double length = Units.inchesToMeters(33); // Meters
+        public static final double wheelRadius = Units.inchesToMeters(2); // Meters
         public static final double wheelCircumference = 2 * Math.PI * wheelRadius; // Meters
         public static final double driveRatio = 6.75; // Gear Ratio
         public static final double turnRatio = 150/7; // Gear Ratio

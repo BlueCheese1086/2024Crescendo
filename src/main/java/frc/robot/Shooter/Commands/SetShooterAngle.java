@@ -40,6 +40,8 @@ public class SetShooterAngle extends Command {
     /** This function runs every 20 ms that this command is scheduled/. */
     @Override
     public void execute() {
+        if (angle.getDegrees() + rate > 75 || angle.getDegrees() + rate < 0) return;
+
         pivot.setAngle(angle.plus(Rotation2d.fromDegrees(rate)));
     }
 

@@ -25,7 +25,7 @@ public class RobotContainer {
     // Creating the subsystems
     Drivetrain drivetrain = Drivetrain.getInstance();
     Shooter shooter = Shooter.getInstance();
-    Pivot pivot = Pivot.getInstance();
+    // Pivot pivot = Pivot.getInstance();
     Intake intake = Intake.getInstance();
     Climb tower = Climb.getInstance();
 
@@ -56,8 +56,8 @@ public class RobotContainer {
         joystick.b().whileTrue(new SetIntakeSpeed(1));
         joystick.x().whileTrue(new SetLauncherSpeed(-1));
         joystick.y().toggleOnTrue(new SetLauncherSpeed(1));
-        joystick.leftBumper().whileTrue(new SetShooterAngle(new Rotation2d()/*pivot.getAngle()*/, 1));
-        joystick.leftTrigger().whileTrue(new SetShooterAngle(new Rotation2d()/*pivot.getAngle()*/, -1));
+        // joystick.leftBumper().whileTrue(new SetShooterAngle(new Rotation2d()/*pivot.getAngle()*/, 1));
+        // joystick.leftTrigger().whileTrue(new SetShooterAngle(new Rotation2d()/*pivot.getAngle()*/, -1));
         joystick.rightBumper().whileTrue(new SetClimbSpeed(1));
         joystick.rightTrigger().whileTrue(new SetClimbSpeed(-1));
         joystick.back().whileTrue(new SetIntakeSpeed(-1));

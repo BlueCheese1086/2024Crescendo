@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -55,8 +56,8 @@ public class RobotContainer {
         joystick.b().whileTrue(new SetIntakeSpeed(1));
         joystick.x().whileTrue(new SetLauncherSpeed(-1));
         joystick.y().toggleOnTrue(new SetLauncherSpeed(1));
-        joystick.leftBumper().whileTrue(new SetShooterAngle(pivot.getAngle(), 1));
-        joystick.leftTrigger().whileTrue(new SetShooterAngle(pivot.getAngle(), -1));
+        joystick.leftBumper().whileTrue(new SetShooterAngle(new Rotation2d()/*pivot.getAngle()*/, 1));
+        joystick.leftTrigger().whileTrue(new SetShooterAngle(new Rotation2d()/*pivot.getAngle()*/, -1));
         joystick.rightBumper().whileTrue(new SetClimbSpeed(1));
         joystick.rightTrigger().whileTrue(new SetClimbSpeed(-1));
         joystick.back().whileTrue(new SetIntakeSpeed(-1));

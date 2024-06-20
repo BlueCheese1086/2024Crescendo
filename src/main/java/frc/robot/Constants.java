@@ -83,8 +83,8 @@ public class Constants {
 
     public class IntakeConstants {
         // Motor IDs
-        public static final int rollerID = 11;
-        public static final int accessID = 12;
+        public static final int accessID = 11;
+        public static final int rollerID = 12;
 
         // Access PID Values
         public static final double accessP = 0.1;
@@ -101,10 +101,10 @@ public class Constants {
 
     public class ShooterConstants {
         // Motor IDs
-        public static final int lShooterID = 21;
-        public static final int rShooterID = 22;
-        public static final int feedRollerID = 23;
-        public static final int alignID = 24;
+        public static final int feedRollerID = 21;
+        public static final int alignID = 22;
+        public static final int lShooterID = 23;
+        public static final int rShooterID = 24;
 
         // Robot Measurements
         public static final double alignGearRatio = 4.5;
@@ -127,6 +127,5 @@ public class Constants {
     public class TowerConstants {
         // Motor IDs
         public static final int lTowerID = 31;
-        public static final int rTowerID = 32;
     }
 }

@@ -22,10 +22,10 @@ public class Constants {
         public static final int brTurnID  = 8;
 
         // Sensor IDs
-        public static final int flCancoderID = 1;
-        public static final int frCancoderID = 2;
-        public static final int blCancoderID = 3;
-        public static final int brCancoderID = 4;
+        public static final int flCancoderID = 0;
+        public static final int frCancoderID = 1;
+        public static final int blCancoderID = 2;
+        public static final int brCancoderID = 3;
         public static final int gyroID       = 0;
 
         // Encoder offsets

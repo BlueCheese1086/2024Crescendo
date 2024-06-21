@@ -87,16 +87,17 @@ public class Constants {
         public static final int rollerID = 12;
 
         // Access PID Values
-        public static final double accessP = 0.1;
+        public static final double accessP = 3.5;
         public static final double accessI = 0;
         public static final double accessD = 0;
-        public static final double accessFF = 0;
+        public static final double accessFF = 0.5;
 
         // Intake Specs
         public static final double accessGearRatio = 24.0 / 11.0;
 
         // Conversion factors
-        public static final double anglePosConversionFactor = 2.0 * Math.PI / accessGearRatio;
+        public static final double anglePosConversionFactor = 2.0 * Math.PI / 54.55;
+        public static final double absPosConversionFactor = 2.0 * Math.PI / ((48.0 / 44.0) * (48.0 / 24.0));
     }
 
     public class ShooterConstants {

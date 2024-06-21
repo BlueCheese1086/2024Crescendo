@@ -10,7 +10,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Drivetrain.Commands.*;
 import frc.robot.Climb.Climb;
 import frc.robot.Climb.Commands.*;
@@ -27,7 +27,7 @@ public class RobotContainer {
     Shooter shooter = Shooter.getInstance();
     // Pivot pivot = Pivot.getInstance();
     Intake intake = Intake.getInstance();
-    Climb tower = Climb.getInstance();
+    // Climb tower = Climb.getInstance();
 
     // Creating the controllers
     CommandXboxController joystick = new CommandXboxController(1);
@@ -58,15 +58,15 @@ public class RobotContainer {
         joystick.y().toggleOnTrue(new SetLauncherSpeed(1));
         // joystick.leftBumper().whileTrue(new SetShooterAngle(new Rotation2d()/*pivot.getAngle()*/, 1));
         // joystick.leftTrigger().whileTrue(new SetShooterAngle(new Rotation2d()/*pivot.getAngle()*/, -1));
-        joystick.rightBumper().whileTrue(new SetClimbSpeed(1));
-        joystick.rightTrigger().whileTrue(new SetClimbSpeed(-1));
+        // joystick.rightBumper().whileTrue(new SetClimbSpeed(1));
+        // joystick.rightTrigger().whileTrue(new SetClimbSpeed(-1));
         joystick.back().whileTrue(new SetIntakeSpeed(-1));
-        joystick.povUp().onTrue(new SetIntakeAngle(Intake.States.CLOSED));
-        joystick.povDown().onTrue(new SetIntakeAngle(Intake.States.OPEN));
+        joystick.povUp().whileTrue(new SetIntakeAngle(Intake.States.CLOSED));
+        joystick.povDown().whileTrue(new SetIntakeAngle(Intake.States.OPEN));
     }
 
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("V3-Auto");
+        return new PrintCommand("No auto lol");// PathPlannerAuto("V3-Auto");
     }
 
     public Command getTeleopCommand() {

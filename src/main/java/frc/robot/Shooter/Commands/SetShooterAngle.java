@@ -47,7 +47,5 @@ public class SetShooterAngle extends Command {
 
     /** This function runs once when the command ends. */
     @Override
-    public void end(boolean interrupted) {
-        pivot.setAngle(angle);
-    }
+    public void end(boolean interrupted) {}
 }

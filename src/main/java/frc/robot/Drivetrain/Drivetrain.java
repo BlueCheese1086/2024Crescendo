@@ -75,20 +75,20 @@ public class Drivetrain extends SubsystemBase {
 
     public Drivetrain() {
         // Initializing the Swerve Modules
-        flModule = new SparkMaxSwerveModule(DriveConstants.flDriveID, DriveConstants.flTurnID,
+        flModule = new SparkMaxSwerveModule("FrontLeft", DriveConstants.flDriveID, DriveConstants.flTurnID,
                 DriveConstants.flCancoderID, DriveConstants.flOffset);
-        frModule = new SparkMaxSwerveModule(DriveConstants.frDriveID, DriveConstants.frTurnID,
+        frModule = new SparkMaxSwerveModule("FrontRight", DriveConstants.frDriveID, DriveConstants.frTurnID,
                 DriveConstants.frCancoderID, DriveConstants.frOffset);
-        blModule = new SparkMaxSwerveModule(DriveConstants.blDriveID, DriveConstants.blTurnID,
+        blModule = new SparkMaxSwerveModule("BackLeft", DriveConstants.blDriveID, DriveConstants.blTurnID,
                 DriveConstants.blCancoderID, DriveConstants.blOffset);
-        brModule = new SparkMaxSwerveModule(DriveConstants.brDriveID, DriveConstants.brTurnID,
+        brModule = new SparkMaxSwerveModule("BackRight", DriveConstants.brDriveID, DriveConstants.brTurnID,
                 DriveConstants.brCancoderID, DriveConstants.brOffset);
 
         // Loading the modules array
         modules = new SparkMaxSwerveModule[] {flModule, frModule, blModule, brModule};
 
         // Initializing the gyro
-        gyro = new Pigeon2(DriveConstants.gyroID);
+        // gyro = new Pigeon2(DriveConstants.gyroID);
 
         // Loading the initial values into the state and position arrays.
         for (int i = 0; i < 4; i++) {
@@ -124,7 +124,8 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public Rotation2d getAngle() {
-        return Rotation2d.fromDegrees(gyro.getYaw());
+        return new Rotation2d();
+        // return Rotation2d.fromDegrees(gyro.getYaw());
     }
 
     public void drive(ChassisSpeeds speeds) {

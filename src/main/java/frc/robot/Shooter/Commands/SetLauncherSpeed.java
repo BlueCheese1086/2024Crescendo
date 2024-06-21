@@ -28,6 +28,6 @@ public class SetLauncherSpeed extends Command {
     /** This function runs once when the command ends. */
     @Override
     public void end(boolean interrupted) {
-        shooter.runLauncher(speed);
+        shooter.runLauncher(0);
     }
 }

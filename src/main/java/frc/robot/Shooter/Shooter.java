@@ -44,6 +44,8 @@ public class Shooter extends SubsystemBase {
 
         // Making the rShooter motor follow the lShooter motor
         rShooter.follow(lShooter, true);
+        feedRoller.setInverted(true);
+        lShooter.setInverted(true);
 
         // Saving the settings of the sparkmaxes
         lShooter.burnFlash();

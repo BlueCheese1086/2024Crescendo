@@ -28,7 +28,7 @@ public class SetFeedSpeed extends Command {
     /** This function runs once when the command ends. */
     @Override
     public void end(boolean interrupted) {
-        shooter.runFeed(speed);
+        shooter.runFeed(0);
     }
 }
 

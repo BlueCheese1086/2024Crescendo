@@ -3,6 +3,7 @@ package frc.robot.Drivetrain;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -11,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.DriveConstants;
@@ -33,8 +35,10 @@ public class SparkMaxSwerveModule extends SubsystemBase {
     // Module Vars
     private SwerveModuleState state;
     private SwerveModulePosition position;
+    private String name;
 
-    public SparkMaxSwerveModule(int driveID, int turnID, int cancoderID, double offset) {
+    public SparkMaxSwerveModule(String name, int driveID, int turnID, int cancoderID, double offset) {
+        this.name = name;
         // Initializing the motors
         drive = new CANSparkMax(driveID, MotorType.kBrushless);
         turn = new CANSparkMax(turnID, MotorType.kBrushless);
@@ -88,6 +92,9 @@ public class SparkMaxSwerveModule extends SubsystemBase {
 
         // Setting the initial position of the turn encoder
         initializeEncoder();
+  
+        this.state = new SwerveModuleState(getVelocity(), getAngle());
+        this.position = new SwerveModulePosition(getDistance(), getAngle());
     }
 
     // For some reason, this doesn't always work when used in the constructor.
@@ -187,10 +194,15 @@ public class SparkMaxSwerveModule extends SubsystemBase {
 
     public void setState(SwerveModuleState state) {
         // Optimizing the SwerveModuleState
-        state = SwerveModuleState.optimize(state, getAngle());
+        SwerveModuleState newState = SwerveModuleState.optimize(state, getAngle());
+
+        SmartDashboard.putNumber(String.format( "/%s/speedMPS", name), state.speedMetersPerSecond);
+        SmartDashboard.putNumber(String.format("/%s/angle", name), state.angle.getDegrees());
+        SmartDashboard.putNumber(String.format("/%s/newSpeedMPS", name), newState.speedMetersPerSecond);
+        SmartDashboard.putNumber(String.format("/%s/newAngle", name), newState.angle.getDegrees());
 
         // Setting the speed and position of each motor
-        drivePID.setReference(state.speedMetersPerSecond, ControlType.kVelocity);
-        turnPID.setReference(getAdjustedAngle(state.angle).getRadians(), ControlType.kPosition);
+        drivePID.setReference(newState.speedMetersPerSecond, ControlType.kVelocity);
+        turnPID.setReference(getAdjustedAngle(newState.angle).getRadians(), ControlType.kPosition);
     }
 }

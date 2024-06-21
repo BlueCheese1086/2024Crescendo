@@ -8,7 +8,7 @@ import frc.robot.Intake.Intake.States;
 
 public class SetIntakeAngle extends Command {
     private Intake intake = Intake.getInstance();
-    private Rotation2d angle;
+    private double angle;
 
     /**
      * Creates a new SetIntakeAngle command.
@@ -24,6 +24,7 @@ public class SetIntakeAngle extends Command {
     /** Runs every 20 ms while the command is scheduled. */
     @Override
     public void execute() {
+        System.out.printf("Setting angle to %s\n", angle);
         intake.setAngle(angle);
     }
 }

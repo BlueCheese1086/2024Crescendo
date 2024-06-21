@@ -1,12 +1,14 @@
 package frc.robot.Intake;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
@@ -17,6 +19,7 @@ public class Intake extends SubsystemBase {
 
     // Access Encoder
     private RelativeEncoder accessEncoder;
+    private AbsoluteEncoder accessABSEncoder;
 
     // Access PIDController
     private SparkPIDController accessPID;
@@ -31,12 +34,12 @@ public class Intake extends SubsystemBase {
      * CLOSED is where the intake is up and the robot cannot run the intake.
      */
     public enum States {
-        OPEN(Rotation2d.fromDegrees(0)),
-        CLOSED(Rotation2d.fromDegrees(90));
+        OPEN(0),
+        CLOSED(1.7);
 
-        public final Rotation2d value;
+        public final double value;
 
-        States(Rotation2d angle){
+        States(double angle){
             this.value = angle;
         }
     }
@@ -48,9 +51,11 @@ public class Intake extends SubsystemBase {
 
         // Initializing encoder
         accessEncoder = accessMotor.getEncoder();
+        accessABSEncoder = accessMotor.getAbsoluteEncoder();
 
         // Setting position conversion factor
         accessEncoder.setPositionConversionFactor(IntakeConstants.anglePosConversionFactor);
+        accessABSEncoder.setPositionConversionFactor(IntakeConstants.absPosConversionFactor);
 
         // Initializing PID controller
         accessPID = accessMotor.getPIDController();
@@ -60,6 +65,8 @@ public class Intake extends SubsystemBase {
         accessPID.setI(IntakeConstants.accessI);
         accessPID.setD(IntakeConstants.accessD);
         accessPID.setFF(IntakeConstants.accessFF);
+
+        accessEncoder.setPosition(accessABSEncoder.getPosition());
     }
 
     /**
@@ -76,6 +83,11 @@ public class Intake extends SubsystemBase {
         return instance;
     }
 
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Encoder Position", accessABSEncoder.getPosition());
+    }
+
     /**
      * Sets the speed of the roller motor.
      * 
@@ -90,9 +102,8 @@ public class Intake extends SubsystemBase {
      * 
      * @param angle The angle that the intake should be set to.
      */
-    public void setAngle(Rotation2d angle) {
-        if (angle.getDegrees() > 90 || angle.getDegrees() < 0) return;
-        
-        accessPID.setReference(angle.getRadians(), ControlType.kPosition);
+    public void setAngle(double angle) {
+        SmartDashboard.putNumber("/Intake/Angle", angle);
+        accessPID.setReference(angle, ControlType.kPosition);
     }
 }

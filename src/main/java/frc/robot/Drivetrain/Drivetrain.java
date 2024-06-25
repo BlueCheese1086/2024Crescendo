@@ -1,6 +1,6 @@
 package frc.robot.Drivetrain;
 
-import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -88,7 +88,7 @@ public class Drivetrain extends SubsystemBase {
         modules = new SwerveModule[] {flModule, frModule, blModule, brModule};
 
         // Initializing the gyro
-        // gyro = new Pigeon2(DriveConstants.gyroID);
+        gyro = new Pigeon2(DriveConstants.gyroID);
 
         // Loading the initial values into the state and position arrays.
         for (int i = 0; i < 4; i++) {
@@ -124,8 +124,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public Rotation2d getAngle() {
-        return new Rotation2d();
-        // return Rotation2d.fromDegrees(gyro.getYaw());
+        return Rotation2d.fromDegrees(gyro.getYaw().getValue());
     }
 
     public void drive(ChassisSpeeds speeds) {

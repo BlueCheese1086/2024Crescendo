@@ -1,54 +1,37 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot;
 
-import edu.wpi.first.math.util.Units;
-
-/** Contains most of the configurations that the robot depends on. */
+/**
+ * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants should be declared
+ * globally (i.e. public static). Do not put anything functional in this class.
+ *
+ * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * constants are needed, to reduce verbosity.
+ */
 public final class Constants {
+    public static class OperatorConstants {
+        public static final int kDriverControllerPort = 0;
+    }
+
     public static class DriveConstants {
-        // CAN IDs for motor controllers
         public static final int frontLeftID = 1;
         public static final int backLeftID = 2;
         public static final int frontRightID = 3;
         public static final int backRightID = 4;
 
-        // IDs for sensors
-        public static final int gyroID = 2;
-
-        // Speeds the robot can move at (MPS)
-        public static final double maxDriveSpeed = 1;//3;
-        public static final double maxTurnSpeed = 1;//3;
-
-        // The threshold of values where the robot will ignore joystick input.
-        public static final double deadband = 0.2;
-
-        // Current (amps) limit for drivetrain motors
-        public static final int currentLimit = 35;
-
-        // Wheel Circumference
-        public static final double wheelCircumference = Units.inchesToMeters(4 * Math.PI);
-
-        // Gear Ratio
-        public static final double gearRatio = 10.71;
-
-        // Kinematics
-        public static final double trackWidth = Units.inchesToMeters(21);
-
-        // Encoder conversion factors (R to M and RPM to MPS)
-        public static final double posConversionFactor = wheelCircumference / gearRatio;
-        public static final double velConversionFactor = wheelCircumference / gearRatio / 60;
+        public static final double maxDriveSpeed = 0.2;
+        public static final double maxTurnSpeed = 0.5;
     }
 
-    public static class LauncherConstants {
-        // CAN IDs for motor controllers
-        public static final int FeederID = 11;
-        public static final int LauncherID = 12;
+    public static class ShooterConstants {
+        public static final int feedID = 11;
+        public static final int launchID = 12;
 
-        // The max speeds for each motor.
-        public static final int feedSpeed = 1;
-        public static final int launchSpeed = 1;
-    }
-
-    public static class AutoConstants {
-        public static final String autoName = "KitbotAuto";
+        public static final double maxFeedSpeed = 1;
+        public static final double maxLaunchSpeed = 1;
     }
 }

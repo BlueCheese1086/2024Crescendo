@@ -1,73 +1,61 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
-
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj.DataLogManager;
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-import frc.robot.Drivetrain.commands.ArcadeDrive;
-import frc.robot.Drivetrain.Drivetrain;
-import frc.robot.Launcher.commands.RunFeed;
-import frc.robot.Launcher.commands.RunFlywheel;
-import frc.robot.Launcher.Launcher;
-
+/**
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * subsystems, commands, and trigger mappings) should be declared here.
+ */
 public class RobotContainer {
-    // Defining the robot's subsystems
-    public final Drivetrain drivetrain = new Drivetrain();
-    private final Launcher launcher = new Launcher();
+  // The robot's subsystems and commands are defined here...
+  private final Drivetrain m_drivetrain = new Drivetrain();
+  private final Shooter shooter = new Shooter();
 
-    // Creating instances of the xbox remotes used for driving the robot.
-    public final CommandXboxController xbox = new CommandXboxController(0);
+  // Replace with CommandPS4Controller or CommandJoystick if needed
+  private final CommandXboxController m_driverController =
+      new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
-    /**
-     * The container for the robot. Contains subsystems, IO devices, and commands.
-     */
-    public RobotContainer() {
-        NamedCommands.registerCommand("RunFeed", new RunFeed(launcher, 1));
-        NamedCommands.registerCommand("RunFlywheel", new RunFlywheel(launcher, 1));
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  public RobotContainer() {
+    // Configure the trigger bindings
+    configureBindings();
+    m_drivetrain.setDefaultCommand(new ArcadeDrive(m_drivetrain, ()-> m_driverController.getLeftY(), ()-> m_driverController.getRightX()));
+  }
 
-        // Configuring the trigger bindings
-        configureBindings();
-    }
+  /**
+   * Use this method to define your trigger->command mappings. Triggers can be created via the
+   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
+   * predicate, or via the named factories in {@link
+   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
+   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
+   * joysticks}.
+   */
+  private void configureBindings() {
+    m_driverController.a().whileTrue(new RunFeed(shooter, 1));
+    m_driverController.b().whileTrue(new RunShooter(shooter, -1)).whileTrue(new RunFeed(shooter, -1));
+    m_driverController.y().toggleOnTrue(new RunShooter(shooter, 1));
+  }
 
-    /** Creates button bindings for the necessary functions. */
-    private void configureBindings() {
-        // Assigning operations to each button.
-        // "A" runs the launcher in reverse to collect notes.
-        // "Left Bumper" runs the flywheel on the launcher.
-        // "Right Bumper" runs the feed wheel on the launcher.
-        xbox.a().whileTrue(new RunFlywheel(launcher, -1));
-        xbox.leftBumper().whileTrue(new RunFlywheel(launcher, 1));
-        xbox.rightBumper().whileTrue(new RunFeed(launcher, 1));        
-
-        xbox.button(3).and(xbox.button(5)).whileTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        xbox.button(2).and(xbox.button(5)).whileTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        xbox.button(4).and(xbox.button(5)).whileTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        xbox.button(1).and(xbox.button(5)).whileTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    }
-
-    /**
-     * Passes the autonomous command to the {@link Robot} class.
-     *
-     * @return The command to run in Autonomous mode.
-     */
-    public Command getAutonomousCommand() {
-        PathPlannerPath path = PathPlannerPath.fromPathFile("90 Deg Rotate");
-        return AutoBuilder.followPath(path);
-        // return new PathPlannerAuto("PID Testing");
-    }
-
-    /**
-     * Passes the teleop command to the {@link Robot} class.
-     *
-     * @return The command to run in Teleop mode.
-     */
-    public Command getTeleopCommand() {
-        return new ArcadeDrive(drivetrain, () -> -xbox.getLeftY(), () -> xbox.getRightX());
-    }
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand() {
+    // An example command will be run in autonomous
+    return new PrintCommand("No auto lol");
+  }
 }

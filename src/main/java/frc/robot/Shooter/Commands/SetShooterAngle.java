@@ -2,10 +2,10 @@ package frc.robot.Shooter.Commands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Shooter.Pivot;
+import frc.robot.Shooter.Shooter;
 
 public class SetShooterAngle extends Command {
-    private Pivot pivot;
+    private Shooter shooter;
     private Rotation2d angle;
     private double rate;
 
@@ -17,7 +17,7 @@ public class SetShooterAngle extends Command {
      * @param angle The angle to set the shooter to.
      */
     public SetShooterAngle(Rotation2d angle) {
-        this.pivot = Pivot.getInstance();
+        this.shooter = Shooter.getInstance();
         this.angle = angle;
     }
 
@@ -32,7 +32,7 @@ public class SetShooterAngle extends Command {
      * @param rate The rate that the shooter should move at.
      */
     public SetShooterAngle(Rotation2d angle, double rate) {
-        this.pivot = Pivot.getInstance();
+        this.shooter = Shooter.getInstance();
         this.angle = angle;
         this.rate = rate / 50;
     }
@@ -42,7 +42,7 @@ public class SetShooterAngle extends Command {
     public void execute() {
         if (angle.getDegrees() + rate > 75 || angle.getDegrees() + rate < 0) return;
 
-        pivot.setAngle(angle.plus(Rotation2d.fromDegrees(rate)));
+        shooter.setAngle(angle.plus(Rotation2d.fromDegrees(rate)));
     }
 
     /** This function runs once when the command ends. */

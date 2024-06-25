@@ -102,10 +102,10 @@ public class Constants {
 
     public class ShooterConstants {
         // Motor IDs
-        public static final int feedRollerID = 21;
-        public static final int alignID = 22;
-        public static final int lShooterID = 23;
-        public static final int rShooterID = 24;
+        public static final int feedID = 21;
+        public static final int pivotID = 22;
+        public static final int lLauncherID = 23;
+        public static final int rLauncherID = 24;
 
         // Robot Measurements
         public static final double alignGearRatio = 4.5;

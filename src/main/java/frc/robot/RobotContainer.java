@@ -19,13 +19,11 @@ import frc.robot.Intake.Commands.*;
 import frc.robot.Intake.Intake;
 import frc.robot.Shooter.Commands.*;
 import frc.robot.Shooter.Shooter;
-import frc.robot.Shooter.Pivot;
 
 public class RobotContainer {
     // Creating the subsystems
     Drivetrain drivetrain = Drivetrain.getInstance();
     Shooter shooter = Shooter.getInstance();
-    // Pivot pivot = Pivot.getInstance();
     Intake intake = Intake.getInstance();
     // Climb tower = Climb.getInstance();
 
@@ -56,8 +54,10 @@ public class RobotContainer {
         joystick.b().whileTrue(new SetIntakeSpeed(1));
         joystick.x().whileTrue(new SetLauncherSpeed(-1));
         joystick.y().toggleOnTrue(new SetLauncherSpeed(1));
-        // joystick.leftBumper().whileTrue(new SetShooterAngle(new Rotation2d()/*pivot.getAngle()*/, 1));
-        // joystick.leftTrigger().whileTrue(new SetShooterAngle(new Rotation2d()/*pivot.getAngle()*/, -1));
+        // No Pivot or Climb subsystems yet.
+        // Climb arm hasn't been attached, and pivot chains are funky.
+        // joystick.leftBumper().whileTrue(new SetShooterAngle(new Rotation2d()/*shooter.getAngle()*/, 1));
+        // joystick.leftTrigger().whileTrue(new SetShooterAngle(new Rotation2d()/*shooter.getAngle()*/, -1));
         // joystick.rightBumper().whileTrue(new SetClimbSpeed(1));
         // joystick.rightTrigger().whileTrue(new SetClimbSpeed(-1));
         joystick.back().whileTrue(new SetIntakeSpeed(-1));

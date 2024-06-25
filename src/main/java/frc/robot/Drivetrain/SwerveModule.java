@@ -1,71 +1,80 @@
 package frc.robot.Drivetrain;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.DriveConstants;
 
-public class TalonFXSwerveModule extends SubsystemBase {
+public class SwerveModule extends SubsystemBase {
     // Motors
-    private TalonFX drive;
+    private CANSparkMax drive;
     private CANSparkMax turn;
 
     // Encoders
+    private RelativeEncoder driveEncoder;
     private RelativeEncoder turnEncoder;
     private AnalogEncoder cancoder;
     private double offset;
 
     // PID Controllers
+    private SparkPIDController drivePID;
     private SparkPIDController turnPID;
 
     // Module Vars
     private SwerveModuleState state;
     private SwerveModulePosition position;
+    private String name;
 
-    // Closed Loop Control
-    private SimpleMotorFeedforward feedForward;
-    private VelocityVoltage driveVolts;
-    private PositionVoltage turnVolts;
-
-    public TalonFXSwerveModule(int driveID, int turnID, int cancoderID, double offset) {
+    public SwerveModule(String name, int driveID, int turnID, int cancoderID, double offset) {
+        this.name = name;
         // Initializing the motors
-        drive = new TalonFX(driveID);
+        drive = new CANSparkMax(driveID, MotorType.kBrushless);
         turn = new CANSparkMax(turnID, MotorType.kBrushless);
 
-        // Creating the config objects for each motor
-        TalonFXConfiguration driveConfig = new TalonFXConfiguration();
-        TalonFXConfiguration turnConfig = new TalonFXConfiguration();
+        // Resetting motor configs
+        drive.restoreFactoryDefaults();
+        turn.restoreFactoryDefaults();
+
+        // Inverting the motors
+        drive.setInverted(true);
+        turn.setInverted(false);
 
         // Setting the neutral mode for the motors
-        driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        drive.setIdleMode(IdleMode.kBrake);
+        turn.setIdleMode(IdleMode.kBrake);
 
-        // Getting the turn encoder
+        // Getting encoders for the motors
+        driveEncoder = drive.getEncoder();
         turnEncoder = turn.getEncoder();
 
-        // Getting the turn PIDController
+        driveEncoder.setPosition(0);
+
+        // Setting conversion values for the encoders
+        driveEncoder.setPositionConversionFactor(DriveConstants.drivePosConversionFactor);
+        driveEncoder.setVelocityConversionFactor(DriveConstants.driveVelConversionFactor);
+        turnEncoder.setPositionConversionFactor(DriveConstants.turnPosConversionFactor);
+        turnEncoder.setVelocityConversionFactor(DriveConstants.turnVelConversionFactor);
+
+        // Getting PID Controllers for the motors
+        drivePID = drive.getPIDController();
         turnPID = turn.getPIDController();
 
         // Setting PID values for each motor
-        driveConfig.Slot0.kP = DriveConstants.driveP;
-        driveConfig.Slot0.kI = DriveConstants.driveI;
-        driveConfig.Slot0.kD = DriveConstants.driveD;
+        drivePID.setP(DriveConstants.driveP);
+        drivePID.setI(DriveConstants.driveI);
+        drivePID.setD(DriveConstants.driveD);
+        drivePID.setFF(DriveConstants.driveFF);
 
         turnPID.setP(DriveConstants.turnP);
         turnPID.setI(DriveConstants.turnI);
@@ -74,15 +83,17 @@ public class TalonFXSwerveModule extends SubsystemBase {
 
         // Initializing the cancoder
         cancoder = new AnalogEncoder(cancoderID);
+        this.offset = offset;
         
-        // Initializing Closed-loop Control vars
-        feedForward = new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA);
-        driveVolts = new VelocityVoltage(0).withSlot(0);
-        turnVolts = new PositionVoltage(0).withSlot(0);
-
         // Saving the configs for each motor
-        drive.getConfigurator().apply(driveConfig);
+        drive.burnFlash();
         turn.burnFlash();
+
+        // Setting the initial position of the turn encoder
+        initializeEncoder();
+  
+        this.state = new SwerveModuleState(getVelocity(), getAngle());
+        this.position = new SwerveModulePosition(getDistance(), getAngle());
     }
 
     // For some reason, this doesn't always work when used in the constructor.
@@ -101,29 +112,19 @@ public class TalonFXSwerveModule extends SubsystemBase {
     }
 
     /**
-     * Gets the acceleration of the swerve module.
-     * 
-     * @return The acceleration of the swerve module as a double.
-     */
-    public double getAcceleration() {
-        // Gettings Rotations/Second^2
-        double rps2 = drive.getAcceleration().getValue();
-        
-        // Converting Rotations/Second^2 to Meters/Second^2
-        return rps2 * DriveConstants.driveRatio * DriveConstants.wheelCircumference;
-    }
-
-    /**
      * Gets the angle of the serve module.
      * 
      * @return The angle of the swerve module as a Rotation2d.
      */
     public Rotation2d getAngle() {
-        // Getting Rotations
-        double rotations = turnEncoder.getPosition() - offset;
+        // Getting radians
+        double radians = turnEncoder.getPosition();
 
-        // Converting Rotations to Rotation2d
-        return Rotation2d.fromRotations(rotations);
+        // Putting the radians into the range of 0 to 2pi
+        radians %= 2 * Math.PI;
+
+        // Converting radians to Rotation2d
+        return new Rotation2d(radians);
     }
 
     /**
@@ -133,7 +134,7 @@ public class TalonFXSwerveModule extends SubsystemBase {
      */
     public double getDistance() {
         // Getting rotations
-        double rotations = drive.getPosition().getValue();
+        double rotations = driveEncoder.getPosition();
 
         // Converting Rotations to Meters
         return rotations * DriveConstants.driveRatio * DriveConstants.wheelCircumference;
@@ -164,7 +165,7 @@ public class TalonFXSwerveModule extends SubsystemBase {
      */
     public double getVelocity() {
         // Getting Rotations/Second
-        double rps = drive.getVelocity().getValue();
+        double rps = driveEncoder.getVelocity();
 
         // Converting r/s to m/s
         return rps * DriveConstants.driveRatio * DriveConstants.wheelCircumference;
@@ -179,9 +180,11 @@ public class TalonFXSwerveModule extends SubsystemBase {
     public Rotation2d getAdjustedAngle(Rotation2d targetAngle) {
         Rotation2d theta = getAngle().minus(targetAngle);
 
-        if (theta.getRadians() >= Math.PI) {
+        while (theta.getRadians() >= Math.PI) {
             theta.minus(new Rotation2d(2.0 * Math.PI));
-        } if (theta.getRadians() <= -Math.PI) {
+        }
+        
+        while (theta.getRadians() <= -Math.PI) {
             theta.plus(new Rotation2d(2.0 * Math.PI));
         }
 
@@ -190,18 +193,15 @@ public class TalonFXSwerveModule extends SubsystemBase {
 
     public void setState(SwerveModuleState state) {
         // Optimizing the SwerveModuleState
-        state = SwerveModuleState.optimize(state, getAngle());
+        SwerveModuleState newState = SwerveModuleState.optimize(state, getAngle());
 
-        // Updating speed and feedforward
-        driveVolts.Velocity = state.speedMetersPerSecond / 2;
-        driveVolts.FeedForward = feedForward.calculate(getVelocity(), getAcceleration());
-
-        // Updating position and feedforward
-        turnVolts.Position = getAdjustedAngle(state.angle).getRotations();
-        turnVolts.FeedForward = feedForward.calculate(getVelocity(), getAcceleration());
+        SmartDashboard.putNumber(String.format( "/%s/speedMPS", name), state.speedMetersPerSecond);
+        SmartDashboard.putNumber(String.format("/%s/angle", name), state.angle.getDegrees());
+        SmartDashboard.putNumber(String.format("/%s/newSpeedMPS", name), newState.speedMetersPerSecond);
+        SmartDashboard.putNumber(String.format("/%s/newAngle", name), newState.angle.getDegrees());
 
         // Setting the speed and position of each motor
-        drive.setControl(driveVolts);
-        turnPID.setReference(getAdjustedAngle(state.angle).getRadians(), ControlType.kPosition);
+        drivePID.setReference(newState.speedMetersPerSecond, ControlType.kVelocity);
+        turnPID.setReference(getAdjustedAngle(newState.angle).getRadians(), ControlType.kPosition);
     }
 }

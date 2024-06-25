@@ -16,10 +16,10 @@ import frc.robot.Constants.DriveConstants;
 
 public class Drivetrain extends SubsystemBase {
     // Swerve Modules
-    private SparkMaxSwerveModule flModule;
-    private SparkMaxSwerveModule frModule;
-    private SparkMaxSwerveModule blModule;
-    private SparkMaxSwerveModule brModule;
+    private SwerveModule flModule;
+    private SwerveModule frModule;
+    private SwerveModule blModule;
+    private SwerveModule brModule;
 
     // Sensors
     private Pigeon2 gyro;
@@ -39,7 +39,7 @@ public class Drivetrain extends SubsystemBase {
     private SwerveDriveKinematics kinematics;
 
     // Swerve Module Vars
-    private SparkMaxSwerveModule[] modules;
+    private SwerveModule[] modules;
     private SwerveModulePosition[] positions = new SwerveModulePosition[4];
     private SwerveModuleState[] states = new SwerveModuleState[4];
     private SwerveModuleState[] xStates = {
@@ -75,17 +75,17 @@ public class Drivetrain extends SubsystemBase {
 
     public Drivetrain() {
         // Initializing the Swerve Modules
-        flModule = new SparkMaxSwerveModule("FrontLeft", DriveConstants.flDriveID, DriveConstants.flTurnID,
+        flModule = new SwerveModule("FrontLeft", DriveConstants.flDriveID, DriveConstants.flTurnID,
                 DriveConstants.flCancoderID, DriveConstants.flOffset);
-        frModule = new SparkMaxSwerveModule("FrontRight", DriveConstants.frDriveID, DriveConstants.frTurnID,
+        frModule = new SwerveModule("FrontRight", DriveConstants.frDriveID, DriveConstants.frTurnID,
                 DriveConstants.frCancoderID, DriveConstants.frOffset);
-        blModule = new SparkMaxSwerveModule("BackLeft", DriveConstants.blDriveID, DriveConstants.blTurnID,
+        blModule = new SwerveModule("BackLeft", DriveConstants.blDriveID, DriveConstants.blTurnID,
                 DriveConstants.blCancoderID, DriveConstants.blOffset);
-        brModule = new SparkMaxSwerveModule("BackRight", DriveConstants.brDriveID, DriveConstants.brTurnID,
+        brModule = new SwerveModule("BackRight", DriveConstants.brDriveID, DriveConstants.brTurnID,
                 DriveConstants.brCancoderID, DriveConstants.brOffset);
 
         // Loading the modules array
-        modules = new SparkMaxSwerveModule[] {flModule, frModule, blModule, brModule};
+        modules = new SwerveModule[] {flModule, frModule, blModule, brModule};
 
         // Initializing the gyro
         // gyro = new Pigeon2(DriveConstants.gyroID);

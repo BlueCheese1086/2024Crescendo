@@ -51,10 +51,8 @@ public class RobotContainer {
         joystick.b().whileTrue(new SetIntakeSpeed(1));
         joystick.x().whileTrue(new SetLauncherSpeed(-1));
         joystick.y().toggleOnTrue(new SetLauncherSpeed(1));
-        // No Pivot or Climb subsystems yet.
-        // Climb arm hasn't been attached, and pivot chains are funky.
-        joystick.leftBumper().whileTrue(new SetShooterAngle(shooter.getAngle(), 1));
-        joystick.leftTrigger().whileTrue(new SetShooterAngle(shooter.getAngle(), -1));
+        joystick.leftBumper().whileTrue(new SetShooterAngle(1));
+        joystick.leftTrigger().whileTrue(new SetShooterAngle(-1));
         joystick.rightBumper().whileTrue(new SetClimbSpeed(1));
         joystick.rightTrigger().whileTrue(new SetClimbSpeed(-0.5));
         joystick.back().whileTrue(new SetIntakeSpeed(-0.5));

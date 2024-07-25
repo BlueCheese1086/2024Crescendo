@@ -31,17 +31,15 @@ public class SetShooterAngle extends Command {
      * @param angle The initial angle of the shooter.
      * @param rate The rate that the shooter should move at.
      */
-    public SetShooterAngle(Rotation2d angle, double rate) {
+    public SetShooterAngle(double rate) {
         this.shooter = Shooter.getInstance();
-        this.angle = angle;
-        this.rate = rate / 50;
+        this.angle = shooter.getAngle();
+        this.rate = rate / 50.0;
     }
 
     /** This function runs every 20 ms that this command is scheduled/. */
     @Override
     public void execute() {
-        if (angle.getDegrees() + rate > 75 || angle.getDegrees() + rate < 0) return;
-
         shooter.setAngle(angle.plus(Rotation2d.fromDegrees(rate)));
     }
 

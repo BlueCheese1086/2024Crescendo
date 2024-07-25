@@ -121,6 +121,8 @@ public class Drivetrain extends SubsystemBase {
         field.setRobotPose(odometry.getPoseMeters());
 
         SmartDashboard.putData("Field", field);
+
+        SmartDashboard.putNumber("Gyro", gyro.getAngle());
     }
 
     public Rotation2d getAngle() {

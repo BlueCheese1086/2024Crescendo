@@ -6,10 +6,12 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkMaxAlternateEncoder.Type;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.ShooterConstants;
@@ -29,7 +31,7 @@ public class Shooter extends SubsystemBase {
     private CANSparkMax pivot = new CANSparkMax(ShooterConstants.pivotID, MotorType.kBrushless);
 
     // Encoders
-    private RelativeEncoder pivotEncoder;
+    private SparkAbsoluteEncoder pivotEncoder;
     private AbsoluteEncoder absoluteEncoder;
 
     // PID Controllers
@@ -72,7 +74,7 @@ public class Shooter extends SubsystemBase {
         pivot.setInverted(false);
 
         // Getting the align motor's encoder
-        pivotEncoder = pivot.getAlternateEncoder(Type.kQuadrature, 8192);
+        pivotEncoder = pivot.getAbsoluteEncoder(com.revrobotics.SparkAbsoluteEncoder.Type.kDutyCycle);
 
         // Setting the conversion factors for the align encoder
         pivotEncoder.setPositionConversionFactor(ShooterConstants.alignPosConversionFactor);
@@ -102,6 +104,11 @@ public class Shooter extends SubsystemBase {
         return new Rotation2d(pivotEncoder.getPosition());
     }
 
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Pivot Angle", pivotEncoder.getPosition());
+    }
+
     /**
      * Sets the speeds of the left and right shooter motors.
      * 
@@ -126,8 +133,8 @@ public class Shooter extends SubsystemBase {
      * @param angle The angle to go to as a Rotation2d.
      */
     public void setAngle(Rotation2d angle) {
-        if (angle.getDegrees() > 75) return;
-        if (angle.getDegrees() < 0) return;
+        // if (angle.getDegrees() > 75) return;
+        // if (angle.getDegrees() < 0) return;
 
         pivotController.setReference(angle.getRadians(), ControlType.kPosition);
     }

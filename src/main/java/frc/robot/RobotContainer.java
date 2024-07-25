@@ -9,20 +9,20 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Drivetrain.Commands.*;
-import frc.robot.Climb.Climb;
-import frc.robot.Climb.Commands.*;
 import frc.robot.Drivetrain.Drivetrain;
+import frc.robot.Climb.Commands.*;
+import frc.robot.Climb.Climb;
 import frc.robot.Intake.Commands.*;
 import frc.robot.Intake.Intake;
 import frc.robot.Shooter.Commands.*;
 import frc.robot.Shooter.Shooter;
 
 public class RobotContainer {
-    // Creating the subsystems
+    // Initializing the subsystems
     Drivetrain drivetrain = Drivetrain.getInstance();
     Shooter shooter = Shooter.getInstance();
     Intake intake = Intake.getInstance();
-    // Climb tower = Climb.getInstance();
+    Climb tower = Climb.getInstance();
 
     // Creating the controllers
     CommandXboxController joystick = new CommandXboxController(0);

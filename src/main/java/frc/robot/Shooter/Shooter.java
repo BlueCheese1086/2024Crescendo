@@ -3,11 +3,8 @@ package frc.robot.Shooter;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder;
-import com.revrobotics.SparkMaxAlternateEncoder.Type;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -32,7 +29,6 @@ public class Shooter extends SubsystemBase {
 
     // Encoders
     private SparkAbsoluteEncoder pivotEncoder;
-    private AbsoluteEncoder absoluteEncoder;
 
     // PID Controllers
     private SparkPIDController pivotController;

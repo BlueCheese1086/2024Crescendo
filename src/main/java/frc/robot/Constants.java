@@ -22,10 +22,10 @@ public class Constants {
         public static final int brTurnID  = 8;
 
         // Sensor IDs
-        public static final int flCancoderID = 0;
-        public static final int frCancoderID = 1;
-        public static final int blCancoderID = 2;
-        public static final int brCancoderID = 3;
+        public static final int flCancoderID = 2;
+        public static final int frCancoderID = 3;
+        public static final int blCancoderID = 1;
+        public static final int brCancoderID = 0;
         public static final int gyroID       = 0;
 
         // Encoder offsets
@@ -41,8 +41,8 @@ public class Constants {
         public static final Translation2d brTranslation = new Translation2d( DriveConstants.width / 2, -DriveConstants.length / 2);
 
         // Max Speeds
-        public static final double maxDriveSpeed = 0.3; // Meters / Second
-        public static final double maxTurnSpeed  = 0.5; // Radians / Second
+        public static final double maxDriveSpeed = 1; // Meters / Second
+        public static final double maxTurnSpeed  = 2; // Radians / Second
 
         // Robot Measurements
         public static final double width = Units.inchesToMeters(33); // Meters
@@ -56,29 +56,19 @@ public class Constants {
         public static final double driveP = 0.01;
         public static final double driveI = 0;
         public static final double driveD = 0;
-        public static final double driveFF = 0;
+        public static final double driveFF = 0.2;
 
         // Turn PID Values
-        public static final double turnP = 0.01;
+        public static final double turnP = 1.5;
         public static final double turnI = 0;
         public static final double turnD = 0;
         public static final double turnFF = 0;
 
-        // FeedForward Values
-        public static final double kS = 0.00; // give the dt a minimal voltage until it moves.  That voltage value is kS.
-        public static final double kV = 2.54;
-        public static final double kA = 0.22;
-
-        // Drivetrain Specs
-        public static final double wheelCircumpherence = Units.inchesToMeters(4.0 * Math.PI);
-        public static final double driveGearRatio = 5.14;
-        public static final double turnGearRatio = 12.8;
-
         // Conversion factors
-        public static final double drivePosConversionFactor = wheelCircumpherence / driveGearRatio;
-        public static final double driveVelConversionFactor = wheelCircumpherence / driveGearRatio / 60.0;
-        public static final double turnPosConversionFactor = 2.0 * Math.PI / turnGearRatio;
-        public static final double turnVelConversionFactor = 2.0 * Math.PI / turnGearRatio / 60.0;
+        public static final double drivePosConversionFactor = 2.0 * Math.PI * wheelRadius / driveRatio;
+        public static final double driveVelConversionFactor = 2.0 * Math.PI * wheelRadius / driveRatio / 60.0;
+        public static final double turnPosConversionFactor  = 2.0 * Math.PI / turnRatio;
+        public static final double turnVelConversionFactor  = 2.0 * Math.PI / turnRatio / 60.0;
     }
 
     public class IntakeConstants {
@@ -122,7 +112,7 @@ public class Constants {
         public static final double maxAlignSpeed = 0.5; // Duty Cycle
 
         // Conversion factors
-        public static final double alignPosConversionFactor = 2 * Math.PI / alignGearRatio;
+        public static final double alignPosConversionFactor = 2 * Math.PI;
     }
 
     public class TowerConstants {

@@ -3,6 +3,11 @@ package frc.robot.Drivetrain;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -18,17 +23,15 @@ import frc.robot.Constants.DriveConstants;
 
 public class SwerveModule extends SubsystemBase {
     // Motors
-    private CANSparkMax drive;
+    private TalonFX drive;
     private CANSparkMax turn;
 
     // Encoders
-    private RelativeEncoder driveEncoder;
     private RelativeEncoder turnEncoder;
     private AnalogEncoder cancoder;
     private double offset;
 
-    // PID Controllers
-    private SparkPIDController drivePID;
+    // PID Controller
     private SparkPIDController turnPID;
 
     // Module Vars
@@ -37,45 +40,43 @@ public class SwerveModule extends SubsystemBase {
     private String name;
 
     public SwerveModule(String name, int driveID, int turnID, int cancoderID, double offset) {
+        // Saving the name of the sparkmax
         this.name = name;
+
         // Initializing the motors
-        drive = new CANSparkMax(driveID, MotorType.kBrushless);
+        drive = new TalonFX(driveID);
         turn = new CANSparkMax(turnID, MotorType.kBrushless);
 
         // Resetting motor configs
-        drive.restoreFactoryDefaults();
         turn.restoreFactoryDefaults();
+
+        // Getting drive config
+        TalonFXConfigurator driveConfigurator = drive.getConfigurator();
+        TalonFXConfiguration driveConfig = new TalonFXConfiguration();
 
         // Inverting the motors
         drive.setInverted(true);
         turn.setInverted(false);
 
-        // Setting the neutral mode for the motors
-        drive.setIdleMode(IdleMode.kBrake);
+        // Setting the neutral mode for the 
+        driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         turn.setIdleMode(IdleMode.kBrake);
 
-        // Getting encoders for the motors
-        driveEncoder = drive.getEncoder();
+        // Getting encoders for the motor
         turnEncoder = turn.getEncoder();
 
-        driveEncoder.setPosition(0);
-
         // Setting conversion values for the encoders
-        driveEncoder.setPositionConversionFactor(DriveConstants.drivePosConversionFactor);
-        driveEncoder.setVelocityConversionFactor(DriveConstants.driveVelConversionFactor);
         turnEncoder.setPositionConversionFactor(DriveConstants.turnPosConversionFactor);
         turnEncoder.setVelocityConversionFactor(DriveConstants.turnVelConversionFactor);
 
-        // Getting PID Controllers for the motors
-        drivePID = drive.getPIDController();
+        // Getting PID Controllers for the motor
         turnPID = turn.getPIDController();
 
         // Setting PID values for each motor
-        drivePID.setP(DriveConstants.driveP);
-        drivePID.setI(DriveConstants.driveI);
-        drivePID.setD(DriveConstants.driveD);
-        drivePID.setFF(DriveConstants.driveFF);
-
+        driveConfig.Slot0.kP = DriveConstants.driveP;
+        driveConfig.Slot0.kI = DriveConstants.driveI;
+        driveConfig.Slot0.kD = DriveConstants.driveD;
+        driveConfig.Slot0.kS = DriveConstants.driveFF;
         turnPID.setP(DriveConstants.turnP);
         turnPID.setI(DriveConstants.turnI);
         turnPID.setD(DriveConstants.turnD);
@@ -86,7 +87,7 @@ public class SwerveModule extends SubsystemBase {
         this.offset = offset;
         
         // Saving the configs for each motor
-        drive.burnFlash();
+        driveConfigurator.apply(driveConfig);
         turn.burnFlash();
 
         // Setting the initial position of the turn encoder
@@ -134,10 +135,10 @@ public class SwerveModule extends SubsystemBase {
      */
     public double getDistance() {
         // Getting rotations
-        double rotations = driveEncoder.getPosition();
+        double rotations = drive.getRotorPosition().getValueAsDouble();
 
         // Converting Rotations to Meters
-        return rotations * DriveConstants.driveRatio * DriveConstants.wheelCircumference;
+        return rotations * DriveConstants.drivePosConversionFactor;
     }
 
     /**
@@ -165,10 +166,10 @@ public class SwerveModule extends SubsystemBase {
      */
     public double getVelocity() {
         // Getting Rotations/Second
-        double rps = driveEncoder.getVelocity();
+        double rps = drive.getRotorVelocity().getValueAsDouble();
 
         // Converting r/s to m/s
-        return rps * DriveConstants.driveRatio * DriveConstants.wheelCircumference;
+        return rps * DriveConstants.driveVelConversionFactor;
     }
 
     /**
@@ -201,7 +202,7 @@ public class SwerveModule extends SubsystemBase {
         SmartDashboard.putNumber(String.format("/%s/newAngle", name), newState.angle.getDegrees());
 
         // Setting the speed and position of each motor
-        drivePID.setReference(newState.speedMetersPerSecond, ControlType.kVelocity);
+        drive.setControl(new VelocityDutyCycle(newState.speedMetersPerSecond / DriveConstants.drivePosConversionFactor));
         turnPID.setReference(getAdjustedAngle(newState.angle).getRadians(), ControlType.kPosition);
     }
 }

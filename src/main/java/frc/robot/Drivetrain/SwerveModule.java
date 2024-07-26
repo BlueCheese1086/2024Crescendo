@@ -77,6 +77,7 @@ public class SwerveModule extends SubsystemBase {
         driveConfig.Slot0.kI = DriveConstants.driveI;
         driveConfig.Slot0.kD = DriveConstants.driveD;
         driveConfig.Slot0.kS = DriveConstants.driveFF;
+
         turnPID.setP(DriveConstants.turnP);
         turnPID.setI(DriveConstants.turnI);
         turnPID.setD(DriveConstants.turnD);

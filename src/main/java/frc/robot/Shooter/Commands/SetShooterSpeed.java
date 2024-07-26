@@ -4,21 +4,24 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Shooter.Shooter;
 
-public class SetShooterAngle extends Command {
+public class SetShooterSpeed extends Command {
     private Shooter shooter;
     private Rotation2d angle;
     private double rate;
 
     /**
-     * Creates a new SetShooterAngle command.
+     * Temporary Constructor, only exists until we work out vision.
      * <p>
-     * This command sets the angle of the shooter to a set angle.
+     * Creates a new SetShooterSpeed command.
+     * <p>
+     * This command moves the shooter at a rate in deg/s.
      * 
-     * @param angle The angle to set the shooter to.
+     * @param rate The rate that the shooter should move at.
      */
-    public SetShooterAngle(Rotation2d angle) {
+    public SetShooterSpeed(double rate) {
         this.shooter = Shooter.getInstance();
-        this.angle = angle;
+        this.angle = shooter.getAngle();
+        this.rate = rate / 50.0;
     }
 
     /** This function runs every 20 ms that this command is scheduled/. */

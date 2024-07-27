@@ -34,8 +34,8 @@ public class Intake extends SubsystemBase {
      * CLOSED is where the intake is up and the robot cannot run the intake.
      */
     public enum States {
-        DOWN(1.9),
-        UP(0.1);
+        DOWN(1.568),
+        UP(3.514);
 
         public final double value;
 

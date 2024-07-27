@@ -29,10 +29,10 @@ public class Constants {
         public static final int gyroID       = 0;
 
         // Encoder offsets
-        public static final double flOffset = 0;
-        public static final double frOffset = 0;
-        public static final double blOffset = 0;
-        public static final double brOffset = 0;
+        public static final double flOffset = -1.5833;
+        public static final double frOffset =  5.7871;
+        public static final double blOffset =  1.1045;
+        public static final double brOffset =  0.0766;
 
         // Kinematics
         public static final Translation2d flTranslation = new Translation2d(-DriveConstants.width / 2,  DriveConstants.length / 2);
@@ -41,8 +41,8 @@ public class Constants {
         public static final Translation2d brTranslation = new Translation2d( DriveConstants.width / 2, -DriveConstants.length / 2);
 
         // Max Speeds
-        public static final double maxDriveSpeed = 1; // Meters / Second
-        public static final double maxTurnSpeed  = 2; // Radians / Second
+        public static final double maxDriveSpeed = Units.feetToMeters(15); // Meters / Second
+        public static final double maxTurnSpeed  = 2 * Math.PI; // Radians / Second
 
         // Robot Measurements
         public static final double width = Units.inchesToMeters(33); // Meters

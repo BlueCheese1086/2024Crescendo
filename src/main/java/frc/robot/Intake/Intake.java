@@ -1,6 +1,7 @@
 package frc.robot.Intake;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -33,8 +34,8 @@ public class Intake extends SubsystemBase {
      * CLOSED is where the intake is up and the robot cannot run the intake.
      */
     public enum States {
-        OPEN(0),
-        CLOSED(1.7);
+        DOWN(1.9),
+        UP(0.1);
 
         public final double value;
 
@@ -48,13 +49,21 @@ public class Intake extends SubsystemBase {
         rollerMotor = new CANSparkMax(IntakeConstants.rollerID, MotorType.kBrushless);
         accessMotor = new CANSparkMax(IntakeConstants.accessID, MotorType.kBrushless);
 
+        rollerMotor.restoreFactoryDefaults();
+        accessMotor.restoreFactoryDefaults();
+
         // Initializing encoder
         accessEncoder = accessMotor.getEncoder();
-        accessABSEncoder = accessMotor.getAbsoluteEncoder();
+        accessABSEncoder = accessMotor.getAbsoluteEncoder(Type.kDutyCycle);
+
+        accessABSEncoder.setInverted(true);
 
         // Setting position conversion factor
         accessEncoder.setPositionConversionFactor(IntakeConstants.anglePosConversionFactor);
         accessABSEncoder.setPositionConversionFactor(IntakeConstants.absPosConversionFactor);
+
+        accessEncoder.setPosition(accessABSEncoder.getPosition());
+        if (accessEncoder.getPosition() > 2.7) accessEncoder.setPosition(0);
 
         // Initializing PID controller
         accessPID = accessMotor.getPIDController();
@@ -65,7 +74,10 @@ public class Intake extends SubsystemBase {
         accessPID.setD(IntakeConstants.accessD);
         accessPID.setFF(IntakeConstants.accessFF);
 
-        accessEncoder.setPosition(accessABSEncoder.getPosition());
+        accessPID.setFeedbackDevice(accessEncoder);
+
+        rollerMotor.burnFlash();
+        accessMotor.burnFlash();
     }
 
     /**
@@ -84,7 +96,8 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Encoder Position", accessABSEncoder.getPosition());
+        SmartDashboard.putNumber("/Intake/ABS_Encoder_Pos", accessABSEncoder.getPosition());
+        SmartDashboard.putNumber("/Intake/REL_Encoder_Pos", accessEncoder.getPosition());
     }
 
     /**
@@ -102,7 +115,7 @@ public class Intake extends SubsystemBase {
      * @param angle The angle that the intake should be set to.
      */
     public void setAngle(double angle) {
-        SmartDashboard.putNumber("/Intake/Angle", angle);
+        SmartDashboard.putNumber("Intake/angle_setpoint", angle);
         accessPID.setReference(angle, ControlType.kPosition);
     }
 }

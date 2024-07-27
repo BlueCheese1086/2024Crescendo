@@ -56,8 +56,8 @@ public class RobotContainer {
         joystick.rightBumper().whileTrue(new SetClimbSpeed(1));
         joystick.rightTrigger().whileTrue(new SetClimbSpeed(-0.5));
         joystick.back().whileTrue(new SetIntakeSpeed(-0.5));
-        joystick.povUp().whileTrue(new SetIntakeAngle(Intake.States.CLOSED));
-        joystick.povDown().whileTrue(new SetIntakeAngle(Intake.States.OPEN));
+        joystick.povUp().whileTrue(new SetIntakeAngle(Intake.States.UP));
+        joystick.povDown().whileTrue(new SetIntakeAngle(Intake.States.DOWN));
     }
 
     public Command getAutonomousCommand() {

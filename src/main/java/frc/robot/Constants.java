@@ -23,7 +23,7 @@ public final class Constants {
         public static final int frontRightID = 3;
         public static final int backRightID = 4;
 
-        public static final double maxDriveSpeed = 0.2;
+        public static final double maxDriveSpeed = 1;
         public static final double maxTurnSpeed = 0.5;
     }
 

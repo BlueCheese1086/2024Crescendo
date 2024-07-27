@@ -77,10 +77,10 @@ public class Constants {
         public static final int rollerID = 12;
 
         // Access PID Values
-        public static final double accessP = 3.5;
+        public static final double accessP = 0.5;
         public static final double accessI = 0;
         public static final double accessD = 0;
-        public static final double accessFF = 0.5;
+        public static final double accessFF = 0;
 
         // Intake Specs
         public static final double accessGearRatio = 24.0 / 11.0;
@@ -101,7 +101,7 @@ public class Constants {
         public static final double alignGearRatio = 4.5;
 
         // PID Values
-        public static final double kP = 0.0001;
+        public static final double kP = 0.01;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0.001;

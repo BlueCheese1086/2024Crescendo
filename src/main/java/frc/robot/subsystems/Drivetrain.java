@@ -9,11 +9,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.ram;
 import frc.robot.Constants.DriveConstants;
 
 public class Drivetrain extends SubsystemBase {
@@ -57,13 +54,23 @@ public class Drivetrain extends SubsystemBase {
     leftMotor.burnFlash();
 
   }
+
+  @Override
+  public void periodic() {
+      SmartDashboard.putNumber("/Drivetrain/Real_Speed_F/S", 0);
+  }
     
   public void drive(double xSpeed, double zRotate) {
     xSpeed *= DriveConstants.maxDriveSpeed;
     zRotate *= DriveConstants.maxTurnSpeed;
 
-    if (xSpeed < 0.2 && xSpeed > -0.2) xSpeed = 0;
-    if (zRotate < 0.2 && zRotate > -0.2) zRotate = 0;
+    if (xSpeed < 0.1 && xSpeed > -0.1) xSpeed = 0;
+    if (zRotate < 0.1 && zRotate > -0.1) zRotate = 0;
+
+    if (xSpeed  != 0 && xSpeed  > 0) xSpeed  -= 0.1;
+    if (xSpeed  != 0 && xSpeed  < 0) xSpeed  += 0.1;
+    if (zRotate != 0 && zRotate > 0) zRotate -= 0.1;
+    if (zRotate != 0 && zRotate < 0) zRotate += 0.1;
 
     leftMotor.set(xSpeed - zRotate);
     rightMotor.set(xSpeed + zRotate);

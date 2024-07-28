@@ -33,5 +33,7 @@ public final class Constants {
 
         public static final double maxFeedSpeed = 1;
         public static final double maxLaunchSpeed = 1;
+
+        public static final double maxRPM = 5676;
     }
 }

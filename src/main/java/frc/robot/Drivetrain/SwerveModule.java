@@ -29,7 +29,6 @@ public class SwerveModule extends SubsystemBase {
     // Encoders
     private RelativeEncoder turnEncoder;
     private AnalogEncoder cancoder;
-    private double offset;
 
     // PID Controller
     private SparkPIDController turnPID;
@@ -65,10 +64,6 @@ public class SwerveModule extends SubsystemBase {
         // Getting encoders for the motor
         turnEncoder = turn.getEncoder();
 
-        // Setting conversion values for the encoders
-        turnEncoder.setPositionConversionFactor(DriveConstants.turnPosConversionFactor);
-        turnEncoder.setVelocityConversionFactor(DriveConstants.turnVelConversionFactor);
-
         // Getting PID Controllers for the motor
         turnPID = turn.getPIDController();
 
@@ -85,32 +80,35 @@ public class SwerveModule extends SubsystemBase {
 
         // Initializing the cancoder
         cancoder = new AnalogEncoder(cancoderID);
-        this.offset = offset;
+        cancoder.setPositionOffset(offset);
         
+        turnEncoder.setPosition(cancoder.get() * 2 * Math.PI);
+
+        // Setting conversion values for the encoders
+        turnEncoder.setVelocityConversionFactor(DriveConstants.turnVelConversionFactor);
+        turnEncoder.setPositionConversionFactor(DriveConstants.turnPosConversionFactor);
+
         // Saving the configs for each motor
         driveConfigurator.apply(driveConfig);
         turn.burnFlash();
-
-        // Setting the initial position of the turn encoder
-        initializeEncoder();
   
         this.state = new SwerveModuleState(getVelocity(), getAngle());
         this.position = new SwerveModulePosition(getDistance(), getAngle());
     }
 
-    // For some reason, this doesn't always work when used in the constructor.
-    /**
-     * This function sets the position of the turn encoder to the position of the absolute encoder, allowing the turnEncoder
-     * to be more accurate when starting out.
-     */
-    public void initializeEncoder() {
-        turnEncoder.setPosition((cancoder.getAbsolutePosition() - offset) * 2 * Math.PI);
-    }
-
     /** Runs every tick that the subsystem exists. */
     public void periodic() {
+        // Uncomment to find cancoder offsets
+        // setState(new SwerveModuleState(0, new Rotation2d()));
         this.state = new SwerveModuleState(getVelocity(), getAngle());
         this.position = new SwerveModulePosition(getDistance(), getAngle());
+        SmartDashboard.putNumber(String.format("/%s/Analog_Encoder_Pos", name), cancoder.get());
+        SmartDashboard.putNumber(String.format("/%s/offset", name), cancoder.getPositionOffset());
+
+        double rotations = getAngle().getRotations();
+        while (rotations < 0) rotations++;
+        rotations -= (int) rotations;
+        SmartDashboard.putNumber(String.format("/%s/Relative_Encoder_Pos", name), rotations);
     }
 
     /**
@@ -121,9 +119,6 @@ public class SwerveModule extends SubsystemBase {
     public Rotation2d getAngle() {
         // Getting radians
         double radians = turnEncoder.getPosition();
-
-        // Putting the radians into the range of 0 to 2pi
-        radians %= 2 * Math.PI;
 
         // Converting radians to Rotation2d
         return new Rotation2d(radians);

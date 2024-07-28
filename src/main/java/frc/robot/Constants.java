@@ -22,17 +22,17 @@ public class Constants {
         public static final int brTurnID  = 8;
 
         // Sensor IDs
-        public static final int flCancoderID = 2;
-        public static final int frCancoderID = 3;
-        public static final int blCancoderID = 1;
-        public static final int brCancoderID = 0;
-        public static final int gyroID       = 0;
+        public static final int flCancoderID =  2;
+        public static final int frCancoderID =  3;
+        public static final int blCancoderID =  1;
+        public static final int brCancoderID =  0;
+        public static final int gyroID       = 10;
 
         // Encoder offsets
-        public static final double flOffset = -1.5833;
-        public static final double frOffset =  5.7871;
-        public static final double blOffset =  1.1045;
-        public static final double brOffset =  0.0766;
+        public static final double flOffset = 0.249; // Rotations
+        public static final double frOffset = 0.419; // Rotations
+        public static final double blOffset = 0.674; // Rotations
+        public static final double brOffset = 0.515; // Rotations
 
         // Kinematics
         public static final Translation2d flTranslation = new Translation2d(-DriveConstants.width / 2,  DriveConstants.length / 2);
@@ -41,8 +41,8 @@ public class Constants {
         public static final Translation2d brTranslation = new Translation2d( DriveConstants.width / 2, -DriveConstants.length / 2);
 
         // Max Speeds
-        public static final double maxDriveSpeed = Units.feetToMeters(15); // Meters / Second
-        public static final double maxTurnSpeed  = 2 * Math.PI; // Radians / Second
+        public static final double maxDriveSpeed = Units.feetToMeters(3); // Meters / Second
+        public static final double maxTurnSpeed  = Math.PI; // Radians / Second
 
         // Robot Measurements
         public static final double width = Units.inchesToMeters(33); // Meters
@@ -50,7 +50,7 @@ public class Constants {
         public static final double wheelRadius = Units.inchesToMeters(2); // Meters
         public static final double wheelCircumference = 2 * Math.PI * wheelRadius; // Meters
         public static final double driveRatio = 6.75; // Gear Ratio
-        public static final double turnRatio = 150/7; // Gear Ratio
+        public static final double turnRatio = 12.8; // Gear Ratio
 
         // Drive PID Values
         public static final double driveP = 0.01;
@@ -59,7 +59,7 @@ public class Constants {
         public static final double driveFF = 0.2;
 
         // Turn PID Values
-        public static final double turnP = 1.5;
+        public static final double turnP = 0.5;
         public static final double turnI = 0;
         public static final double turnD = 0;
         public static final double turnFF = 0;

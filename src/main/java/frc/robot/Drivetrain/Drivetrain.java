@@ -97,10 +97,10 @@ public class Drivetrain extends SubsystemBase {
 
         // Initializing the kinematics
         kinematics = new SwerveDriveKinematics(
-            new Translation2d(-DriveConstants.width / 2, DriveConstants.length / 2), // FL Swerve module
-            new Translation2d(DriveConstants.width / 2, DriveConstants.length / 2), // FR Swerve module
-            new Translation2d(-DriveConstants.width / 2, -DriveConstants.length / 2), // BL Swerve module
-            new Translation2d(DriveConstants.width / 2, -DriveConstants.length / 2) // BR Swerve module
+            new Translation2d( DriveConstants.width / 2,  DriveConstants.length / 2), // FL Swerve module
+            new Translation2d( DriveConstants.width / 2, -DriveConstants.length / 2), // FR Swerve module
+            new Translation2d(-DriveConstants.width / 2,  DriveConstants.length / 2), // BL Swerve module
+            new Translation2d(-DriveConstants.width / 2, -DriveConstants.length / 2)  // BR Swerve module
         );
 
         // Initializing the pose estimator

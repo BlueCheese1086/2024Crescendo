@@ -6,11 +6,14 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.revrobotics.CANSparkBase.ControlType;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.ShooterConstants;
 
 public class Intake extends SubsystemBase {
     // Motor
@@ -23,6 +26,7 @@ public class Intake extends SubsystemBase {
 
     // Access PIDController
     private SparkPIDController accessPID;
+    private ArmFeedforward accessFeedforward;
 
     // A common instance of the intake subsystem.
     private static Intake instance;
@@ -72,7 +76,9 @@ public class Intake extends SubsystemBase {
         accessPID.setP(IntakeConstants.accessP);
         accessPID.setI(IntakeConstants.accessI);
         accessPID.setD(IntakeConstants.accessD);
-        accessPID.setFF(IntakeConstants.accessFF);
+
+        // Getting Feedforward
+        accessFeedforward = new ArmFeedforward(ShooterConstants.kS, ShooterConstants.kG, ShooterConstants.kV, ShooterConstants.kA);
 
         accessPID.setFeedbackDevice(accessEncoder);
 
@@ -116,6 +122,6 @@ public class Intake extends SubsystemBase {
      */
     public void setAngle(double angle) {
         SmartDashboard.putNumber("Intake/angle_setpoint", angle);
-        accessPID.setReference(angle, ControlType.kPosition);
+        accessPID.setReference(angle, ControlType.kPosition, 9, accessFeedforward.calculate(angle, accessEncoder.getVelocity()), ArbFFUnits.kVoltage);
     }
 }

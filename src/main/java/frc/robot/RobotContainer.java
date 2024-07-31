@@ -24,14 +24,14 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController driver = new CommandXboxController(0);
+  private final CommandXboxController operator = new CommandXboxController(1);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
-    m_drivetrain.setDefaultCommand(new ArcadeDrive(m_drivetrain, ()-> m_driverController.getLeftY(), ()-> m_driverController.getRightX()));
+    m_drivetrain.setDefaultCommand(new ArcadeDrive(m_drivetrain, ()-> driver.getLeftY(), ()-> driver.getRightX()));
   }
 
   /**
@@ -44,9 +44,9 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_driverController.a().whileTrue(new RunFeed(shooter, 1));
-    m_driverController.b().whileTrue(new RunShooter(shooter, -1)).whileTrue(new RunFeed(shooter, -1));
-    m_driverController.y().toggleOnTrue(new RunShooter(shooter, 1));
+    operator.a().whileTrue(new RunFeed(shooter, 1));
+    operator.b().whileTrue(new RunShooter(shooter, -1)).whileTrue(new RunFeed(shooter, -1));
+    operator.y().toggleOnTrue(new RunShooter(shooter, 1));
   }
 
   /**

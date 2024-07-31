@@ -69,7 +69,7 @@ public class Shooter extends SubsystemBase {
         lLauncher.setInverted(true);
         rLauncher.follow(lLauncher, true);
         feed.setInverted(true);
-        pivot.setInverted(false);
+        pivot.setInverted(true);
 
         // Getting the align motor's encoder
         pivotEncoder = pivot.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);

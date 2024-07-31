@@ -4,6 +4,9 @@ import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.estimator.PoseEstimator;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -41,6 +44,7 @@ public class Drivetrain extends SubsystemBase {
 
     // Odometry/Pose Estimation
     private Field2d field = new Field2d();
+    private SwerveDrivePoseEstimator poseEstimator;
     private SwerveDriveOdometry odometry;
 
     // A common instance of the drivetrain subsystem.
@@ -95,6 +99,8 @@ public class Drivetrain extends SubsystemBase {
 
         // Initializing the pose estimator
         odometry = new SwerveDriveOdometry(kinematics, getAngle(), positions);
+        poseEstimator = new SwerveDrivePoseEstimator(kinematics, getAngle(), positions, new Pose2d());
+        
     }
 
     @Override
@@ -106,7 +112,8 @@ public class Drivetrain extends SubsystemBase {
         }
 
         // Updating the pose estimator
-        odometry.update(getAngle(), positions);
+        poseEstimator.update(getAngle(), positions);
+        poseEstimator.addVisionMeasurement(new Pose2d(), 0);
 
         field.setRobotPose(odometry.getPoseMeters());
 
@@ -117,6 +124,10 @@ public class Drivetrain extends SubsystemBase {
 
     public Rotation2d getAngle() {
         return Rotation2d.fromDegrees(gyro.getAngle());
+    }
+
+    public void setAngle(Rotation2d angle) {
+        gyro.setYaw(angle.getDegrees());
     }
 
     public void drive(ChassisSpeeds speeds) {

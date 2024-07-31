@@ -60,6 +60,7 @@ public class RobotContainer {
         joystick.povUp().whileTrue(new SetIntakeAngle(Intake.States.UP));
         joystick.povDown().whileTrue(new SetIntakeAngle(Intake.States.DOWN));
         joystick.povLeft().onTrue(new PlayMusic("jingle_bells.chrp"));
+        joystick.povRight().whileTrue(new ResetGyro());
     }
 
     public Command getAutonomousCommand() {

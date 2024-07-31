@@ -58,8 +58,8 @@ public class SwerveModule extends SubsystemBase {
         turn.setInverted(false);
 
         // Setting the neutral mode for the 
-        driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        turn.setIdleMode(IdleMode.kBrake);
+        driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        turn.setIdleMode(IdleMode.kCoast);
 
         // Getting encoders for the motor
         turnEncoder = turn.getEncoder();
@@ -82,7 +82,8 @@ public class SwerveModule extends SubsystemBase {
         cancoder = new AnalogEncoder(cancoderID);
         cancoder.setPositionOffset(offset);
         
-        turnEncoder.setPosition(cancoder.get() * 2 * Math.PI);
+        turnEncoder.setPosition(0);
+        // turnEncoder.setPosition(cancoder.get());
 
         // Setting conversion values for the encoders
         turnEncoder.setVelocityConversionFactor(DriveConstants.turnVelConversionFactor);

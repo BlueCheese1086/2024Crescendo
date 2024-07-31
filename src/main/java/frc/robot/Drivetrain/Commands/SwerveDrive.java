@@ -27,12 +27,16 @@ public class SwerveDrive extends Command {
     public void execute() {
         ChassisSpeeds speeds = ChassisSpeeds.fromRobotRelativeSpeeds(
             xTransSupplier.get() * DriveConstants.maxDriveSpeed, 
-            yTransSupplier.get() * DriveConstants.maxDriveSpeed, 
+            -yTransSupplier.get() * DriveConstants.maxDriveSpeed, 
             zRotSupplier.get() * DriveConstants.maxTurnSpeed, 
             drivetrain.getAngle()
         );
 
-        drivetrain.drive(speeds);
+        if (speeds.vxMetersPerSecond == 0 && speeds.vyMetersPerSecond == 0 && speeds.omegaRadiansPerSecond == 0) {
+            drivetrain.makeX();
+        } else {
+            drivetrain.drive(speeds);
+        }
     }
 
     @Override
@@ -41,7 +45,5 @@ public class SwerveDrive extends Command {
     }
 
     @Override
-    public void end(boolean interrupted) {
-        drivetrain.makeX();
-    }
+    public void end(boolean interrupted) {}
 }

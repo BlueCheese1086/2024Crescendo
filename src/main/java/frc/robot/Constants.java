@@ -80,7 +80,10 @@ public class Constants {
         public static final double accessP = 0.5;
         public static final double accessI = 0;
         public static final double accessD = 0;
-        public static final double accessFF = 0;
+        public static final double accessS = 0;
+        public static final double accessG = 0.5;
+        public static final double accessV = 1.06;
+        public static final double accessA = 0.02;
 
         // Intake Specs
         public static final double accessGearRatio = 24.0 / 11.0;
@@ -101,10 +104,13 @@ public class Constants {
         public static final double alignGearRatio = 4.5;
 
         // PID Values
-        public static final double kP = 0.01;
+        public static final double kP = 0;
         public static final double kI = 0;
         public static final double kD = 0;
-        public static final double kFF = 0.001;
+        public static final double kS = 0.1;
+        public static final double kG = 1.51;
+        public static final double kV = 0.94;
+        public static final double kA = 0.03;
 
         // Max speeds
         public static final double maxShootSpeed = 1;   // Duty Cycle
@@ -112,7 +118,7 @@ public class Constants {
         public static final double maxAlignSpeed = 0.5; // Duty Cycle
 
         // Conversion factors
-        public static final double alignPosConversionFactor = 2 * Math.PI;
+        public static final double alignPosConversionFactor = 2 * Math.PI / (33/34);
     }
 
     public class TowerConstants {

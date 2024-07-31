@@ -25,7 +25,7 @@ public class SwerveDrive extends Command {
 
     @Override
     public void execute() {
-        ChassisSpeeds speeds = ChassisSpeeds.fromRobotRelativeSpeeds(
+        ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
             xTransSupplier.get() * DriveConstants.maxDriveSpeed, 
             -yTransSupplier.get() * DriveConstants.maxDriveSpeed, 
             zRotSupplier.get() * DriveConstants.maxTurnSpeed, 

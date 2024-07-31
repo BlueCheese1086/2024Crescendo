@@ -14,6 +14,6 @@ public class PlayMusic extends Command {
 
     @Override
     public void initialize() {
-        drivetrain.playMusic(filepath);
+        drivetrain.playSong(filepath);
     }
 }

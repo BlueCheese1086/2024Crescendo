@@ -43,8 +43,8 @@ public class Drivetrain extends SubsystemBase {
     private SwerveModulePosition[] positions = new SwerveModulePosition[4];
     private SwerveModuleState[] states = new SwerveModuleState[4];
     private SwerveModuleState[] xStates = {
-        new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)),
         new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)),
+        new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)),
         new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)),
         new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)),
     };
@@ -126,7 +126,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public Rotation2d getAngle() {
-        return Rotation2d.fromDegrees(gyro.getYaw().getValue());
+        return Rotation2d.fromDegrees(gyro.getAngle());
     }
 
     public void drive(ChassisSpeeds speeds) {

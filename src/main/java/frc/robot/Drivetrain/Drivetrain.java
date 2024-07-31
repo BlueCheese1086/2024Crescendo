@@ -25,17 +25,6 @@ public class Drivetrain extends SubsystemBase {
     private Pigeon2 gyro;
 
     // Kinematics
-    /*
-     * Y
-     * 
-     * |
-     * FL | FR
-     * |
-     * X -------------
-     * |
-     * BL | BR
-     * |
-     */
     private SwerveDriveKinematics kinematics;
 
     // Swerve Module Vars

@@ -30,9 +30,9 @@ public class Constants {
 
         // Encoder offsets
         public static final double flOffset = 0.249; // Rotations
-        public static final double frOffset = 0.419; // Rotations
+        public static final double frOffset = 0.420; // Rotations
         public static final double blOffset = 0.674; // Rotations
-        public static final double brOffset = 0.515; // Rotations
+        public static final double brOffset = 0.513; // Rotations
 
         // Kinematics
         public static final Translation2d flTranslation = new Translation2d(-DriveConstants.width / 2,  DriveConstants.length / 2);
@@ -41,7 +41,7 @@ public class Constants {
         public static final Translation2d brTranslation = new Translation2d( DriveConstants.width / 2, -DriveConstants.length / 2);
 
         // Max Speeds
-        public static final double maxDriveSpeed = Units.feetToMeters(3); // Meters / Second
+        public static final double maxDriveSpeed = Units.feetToMeters(20.4); // Meters / Second
         public static final double maxTurnSpeed  = Math.PI; // Radians / Second
 
         // Robot Measurements

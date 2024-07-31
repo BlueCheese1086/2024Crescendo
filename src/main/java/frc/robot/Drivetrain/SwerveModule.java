@@ -23,7 +23,7 @@ import frc.robot.Constants.DriveConstants;
 
 public class SwerveModule extends SubsystemBase {
     // Motors
-    private TalonFX drive;
+    public TalonFX drive;
     private CANSparkMax turn;
 
     // Encoders

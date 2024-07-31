@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Drivetrain.Commands.*;
 import frc.robot.Drivetrain.Drivetrain;
@@ -58,6 +59,7 @@ public class RobotContainer {
         joystick.back().whileTrue(new SetIntakeSpeed(-0.5));
         joystick.povUp().whileTrue(new SetIntakeAngle(Intake.States.UP));
         joystick.povDown().whileTrue(new SetIntakeAngle(Intake.States.DOWN));
+        joystick.povLeft().onTrue(new PlayMusic("jingle_bells.chrp"));
     }
 
     public Command getAutonomousCommand() {

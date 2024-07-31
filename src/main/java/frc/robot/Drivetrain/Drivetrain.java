@@ -1,5 +1,6 @@
 package frc.robot.Drivetrain;
 
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -130,5 +131,17 @@ public class Drivetrain extends SubsystemBase {
         for (int i = 0; i < 4; i++) {
             modules[i].setState(xStates[i]);
         }
+    }
+
+    public void playSong(String filepath) {
+        Orchestra music = new Orchestra();
+
+        music.addInstrument(flModule.drive);
+        music.addInstrument(frModule.drive);
+        music.addInstrument(blModule.drive);
+        music.addInstrument(brModule.drive);
+        music.loadMusic(filepath);
+        
+        music.play();
     }
 }

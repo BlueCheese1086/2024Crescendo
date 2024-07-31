@@ -1,0 +1,194 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.2186814117217974,
+        "y": 6.455173252226847
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.5578118905525558,
+        "y": 6.653973877748326
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.9026396514331485,
+        "y": 6.993104356579084
+      },
+      "prevControl": {
+        "x": 1.8735540604984342,
+        "y": 6.946327738809324
+      },
+      "nextControl": {
+        "x": 3.9016081916434464,
+        "y": 7.038512017497735
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.685548818391084,
+        "y": 7.44
+      },
+      "prevControl": {
+        "x": 6.690430720277131,
+        "y": 7.341308709573385
+      },
+      "nextControl": {
+        "x": 8.680666916505036,
+        "y": 7.538691290426616
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.9026396514331485,
+        "y": 6.993104356579084
+      },
+      "prevControl": {
+        "x": 3.896739288895515,
+        "y": 7.037782991970651
+      },
+      "nextControl": {
+        "x": 1.861859906055994,
+        "y": 6.946327738809324
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.2186814117217974,
+        "y": 6.455173252226847
+      },
+      "prevControl": {
+        "x": 1.6747704731078037,
+        "y": 6.677327210221564
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 3.0,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Drop intake and pick up note",
+      "waypointRelativePos": 1.55,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "IntakeDown"
+              }
+            },
+            {
+              "type": "parallel",
+              "data": {
+                "commands": [
+                  {
+                    "type": "named",
+                    "data": {
+                      "name": "IntakeStart"
+                    }
+                  },
+                  {
+                    "type": "named",
+                    "data": {
+                      "name": "FeedStart"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Put up intake and stop rollers",
+      "waypointRelativePos": 2.55,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "IntakeUp"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "IntakeStop"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "FeedStop"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Put up shooter and launch note",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "ShooterUp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 40.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

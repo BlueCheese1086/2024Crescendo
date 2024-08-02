@@ -14,13 +14,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
 public class Drivetrain extends SubsystemBase {
-    CANSparkMax leftMotor;
-    CANSparkMax leftBackMotor;
-    CANSparkMax rightMotor;
-    CANSparkMax rightBackMotor;
+  CANSparkMax leftMotor;
+  CANSparkMax leftBackMotor;
+  CANSparkMax rightMotor;
+  CANSparkMax rightBackMotor;
 
-    SparkPIDController leftPID;
-    SparkPIDController rightPID;
+  SparkPIDController leftPID;
+  SparkPIDController rightPID;
 
   /** Creates a new ExampleSubsystem. */
   public Drivetrain() {

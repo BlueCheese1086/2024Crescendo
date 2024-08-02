@@ -4,8 +4,11 @@
 
 package frc.robot;
 
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+import frc.robot.Drivetrain.Drivetrain;
+import frc.robot.Drivetrain.Commands.ArcadeDrive;
+import frc.robot.Shooter.Shooter;
+import frc.robot.Shooter.Commands.RunFeed;
+import frc.robot.Shooter.Commands.RunShooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -31,7 +34,6 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
-    m_drivetrain.setDefaultCommand(new ArcadeDrive(m_drivetrain, ()-> driver.getLeftY(), ()-> driver.getRightX()));
   }
 
   /**
@@ -60,6 +62,10 @@ public class RobotContainer {
       Commands.deadline(
         new WaitCommand(2),
         Commands.parallel(
+          Commands.deadline(
+            new WaitCommand(0.2),
+            new RunFeed(shooter, -1)
+          ),
           new RunShooter(shooter, 1),
           Commands.sequence(
             new WaitCommand(1),
@@ -69,10 +75,14 @@ public class RobotContainer {
       ),
       Commands.deadline(
         new WaitCommand(1),
-        new ArcadeDrive(m_drivetrain, () -> -1.0, () -> 0.0)
+        new ArcadeDrive(m_drivetrain, () -> 0.5, () -> 0.0)
       )
     );
 
     return commands;
+  }
+
+  public Command getTeleopCommand() {
+    return new ArcadeDrive(m_drivetrain, ()-> driver.getLeftY(), ()-> driver.getRightX());
   }
 }

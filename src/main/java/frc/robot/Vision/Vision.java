@@ -8,32 +8,40 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.VisionConstants;
 
 public class Vision extends SubsystemBase {
-    private PhotonCamera FLCamera;
-    private PhotonCamera FRCamera;
+    private PhotonCamera flCamera;
+    private PhotonCamera frCamera;
 
-    private Transform3d robotToFLCamera = new Transform3d(new Translation3d(), new Rotation3d());
-    private Transform3d robotToFRCamera = new Transform3d(new Translation3d(), new Rotation3d());
-
-    private PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(), PoseStrategy.CLOSEST_TO_REFERENCE_POSE, robotToFLCamera);
+    private PhotonPoseEstimator flPoseEstimator;
+    private PhotonPoseEstimator frPoseEstimator;
     
     public Vision() {
-        FLCamera = new PhotonCamera("FL_Camera");
-        FRCamera = new PhotonCamera("FR_Camera");
+        // Getting the cameras
+        flCamera = new PhotonCamera("FL_Camera");
+        frCamera = new PhotonCamera("FR_Camera");
+
+        // Creating the pose estimators.
+        flPoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(), PoseStrategy.CLOSEST_TO_REFERENCE_POSE, VisionConstants.flCameraPos);
+        frPoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(), PoseStrategy.CLOSEST_TO_REFERENCE_POSE, VisionConstants.frCameraPos);
+    }
+
+    @Override
+    public void periodic() {
+        // Updating estimated poses
+        flPoseEstimator.update(flCamera.getLatestResult());
+        frPoseEstimator.update(frCamera.getLatestResult());
+
     }
 
     public void getResults() {
-        PhotonPipelineResult result1 = FLCamera.getLatestResult();
-        PhotonPipelineResult result2 = FRCamera.getLatestResult();
+        PhotonPipelineResult result1 = flCamera.getLatestResult();
+        PhotonPipelineResult result2 = frCamera.getLatestResult();
 
         if (result1.hasTargets()) {
             List<PhotonTrackedTarget> targets = result1.targets;

@@ -1,6 +1,9 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
@@ -124,5 +127,10 @@ public class Constants {
     public class TowerConstants {
         // Motor IDs
         public static final int lTowerID = 31;
+    }
+
+    public class VisionConstants {
+        public static final Transform3d flCameraPos = new Transform3d(new Translation3d(), new Rotation3d());
+        public static final Transform3d frCameraPos = new Transform3d(new Translation3d(), new Rotation3d());
     }
 }

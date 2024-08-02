@@ -1,127 +1,142 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.Intake;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.SparkPIDController.ArbFFUnits;
-import com.revrobotics.CANSparkBase.ControlType;
+import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
+
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.ShooterConstants;
+import frc.util.LoggedTunableNumber;
 
 public class Intake extends SubsystemBase {
-    // Motor
-    private CANSparkMax rollerMotor;
-    private CANSparkMax accessMotor;
+  public IntakeIO io;
+  public IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
-    // Access Encoder
-    private RelativeEncoder accessEncoder;
-    private AbsoluteEncoder accessABSEncoder;
+  private ArmFeedforward pivotFF;
+  private SimpleMotorFeedforward rollerFF;
 
-    // Access PIDController
-    private SparkPIDController accessPID;
-    private ArmFeedforward accessFeedforward;
+  private LoggedTunableNumber kPPivot = new LoggedTunableNumber("Intake/kPPivot");
 
-    // A common instance of the intake subsystem.
-    private static Intake instance;
+  private LoggedTunableNumber kPRoller = new LoggedTunableNumber("Intake/kPRoller");
+  private LoggedTunableNumber kSRoller = new LoggedTunableNumber("Intake/kSRoller");
 
-    /**
-     * The different states of the intake.
-     * 
-     * OPEN is where the intake is down and the robot can run the intake.
-     * CLOSED is where the intake is up and the robot cannot run the intake.
-     */
-    public enum States {
-        DOWN(1.568),
-        UP(3.514);
+  /** Creates a new Intake. */
+  public Intake(IntakeIO io) {
+    this.io = io;
 
-        public final double value;
+    switch (Constants.currentMode) {
+      case REAL:
+        kPPivot.initDefault(IntakeConstants.kPPivotReal);
 
-        States(double angle){
-            this.value = angle;
-        }
+        kPRoller.initDefault(IntakeConstants.kPRollerReal);
+        kSRoller.initDefault(IntakeConstants.kSRollerReal);
+        break;
+
+      case SIM:
+        kPPivot.initDefault(IntakeConstants.kPPivotSim);
+
+        kPRoller.initDefault(IntakeConstants.kPRollerSim);
+        kSRoller.initDefault(IntakeConstants.kSRollerSim);
+        break;
+
+      case REPLAY:
+        kPPivot.initDefault(IntakeConstants.kPPivotReplay);
+
+        kPRoller.initDefault(IntakeConstants.kPRollerReplay);
+        kSRoller.initDefault(IntakeConstants.kSRollerReplay);
+        break;
+
+      default:
+        kPPivot.initDefault(0.0);
+
+        kPRoller.initDefault(0.0);
+        kSRoller.initDefault(0.0);
     }
 
-    public Intake() {
-        // Initializing motors
-        rollerMotor = new CANSparkMax(IntakeConstants.rollerID, MotorType.kBrushless);
-        accessMotor = new CANSparkMax(IntakeConstants.accessID, MotorType.kBrushless);
+    io.setPivotPID(kPPivot.getAsDouble(), 0.0, 0.0);
+    pivotFF = new ArmFeedforward(0.0, IntakeConstants.kGPivot, IntakeConstants.kVPivot, IntakeConstants.kAPivot);
 
-        rollerMotor.restoreFactoryDefaults();
-        accessMotor.restoreFactoryDefaults();
 
-        // Initializing encoder
-        accessEncoder = accessMotor.getEncoder();
-        accessABSEncoder = accessMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    io.setRollerPID(kPRoller.getAsDouble(), 0.0, 0.0);
+    rollerFF = new SimpleMotorFeedforward(kSRoller.getAsDouble(), IntakeConstants.kVRoller, IntakeConstants.kARoller);
 
-        accessABSEncoder.setInverted(true);
+    setIntakeUp();
+  }
 
-        // Setting position conversion factor
-        accessEncoder.setPositionConversionFactor(IntakeConstants.anglePosConversionFactor);
-        accessABSEncoder.setPositionConversionFactor(IntakeConstants.absPosConversionFactor);
+  @Override
+  public void periodic() {
+    io.processInputs(inputs);
+    Logger.processInputs("Intake", inputs);
+  }
 
-        accessEncoder.setPosition(accessABSEncoder.getPosition());
-        if (accessEncoder.getPosition() > 2.7) accessEncoder.setPosition(0);
+  public Command setPivotTarget(DoubleSupplier radians) {
+    return this.run(
+        () -> {
+          io.setPivotTarget(radians.getAsDouble(), pivotFF);
+          inputs.pivotTargetPosition = Rotation2d.fromRadians(radians.getAsDouble() + IntakeConstants.simOffset);
+        });
+  }
 
-        // Initializing PID controller
-        accessPID = accessMotor.getPIDController();
+  public Command setRollerRPM(IntSupplier rpm) {
+    return this.run(
+        () -> {
+          io.setRollerRPM(rpm.getAsInt(), rollerFF);
+          inputs.rollerTargetRPM = rpm.getAsInt();
+        });
+  }
 
-        // Setting PID values
-        accessPID.setP(IntakeConstants.accessP);
-        accessPID.setI(IntakeConstants.accessI);
-        accessPID.setD(IntakeConstants.accessD);
+  public Command setRollerVoltage(DoubleSupplier volts) {
+    return this.run(
+        () -> {
+          io.setRollerVoltage(volts.getAsDouble());
+        });
+  }
 
-        // Getting Feedforward
-        accessFeedforward = new ArmFeedforward(ShooterConstants.kS, ShooterConstants.kG, ShooterConstants.kV, ShooterConstants.kA);
+  public Command setIntakeDown(boolean reverse) {
+    return this.run(
+        () -> {
+          io.setPivotTarget(IntakeConstants.down, pivotFF);
+          inputs.pivotTargetPosition = Rotation2d.fromRadians(IntakeConstants.down + IntakeConstants.simOffset);
+          
+          io.setRollerRPM(2000 * (reverse ? -1 : 1), rollerFF);
+          inputs.rollerTargetRPM = 2000 * (reverse ? -1 : 1);
+        });
+  }
 
-        accessPID.setFeedbackDevice(accessEncoder);
+  public Command setIntakeUp() {
+    return this.run(
+        () -> {
+          io.setPivotTarget(IntakeConstants.up, pivotFF);
+          inputs.pivotTargetPosition = Rotation2d.fromRadians(IntakeConstants.up + IntakeConstants.simOffset);
 
-        rollerMotor.burnFlash();
-        accessMotor.burnFlash();
-    }
+          io.setRollerRPM(0, rollerFF);
+          inputs.rollerTargetRPM = 0;
+        });
+  }
 
-    /**
-     * This function gets a common instance of the intake subsystem that anyone can access.
-     * <p>
-     * This allows us to not need to pass around subsystems as parameters, and instead run this function whenever we need the subsystem.
-     * 
-     * @return An instance of the Intake subsystem.
-     */
-    public static Intake getInstance() {
-        // If the instance hasn't been initialized, then initialize it.
-        if (instance == null) instance = new Intake();
+  public double getAngleRadians() {
+    return inputs.pivotPosition.getRadians() + IntakeConstants.simOffset;
+  }
 
-        return instance;
-    }
+  public double getTargetRadians() {
+    return inputs.pivotTargetPosition.getRadians();
+  }
 
-    @Override
-    public void periodic() {
-        SmartDashboard.putNumber("/Intake/ABS_Encoder_Pos", accessABSEncoder.getPosition());
-        SmartDashboard.putNumber("/Intake/REL_Encoder_Pos", accessEncoder.getPosition());
-    }
-
-    /**
-     * Sets the speed of the roller motor.
-     * 
-     * @param speed The percent speed of the roller motor.
-     */
-    public void setSpeed(double speed) {
-        rollerMotor.set(speed);
-    }
-
-    /**
-     * Sets the angle of the access motor.
-     * 
-     * @param angle The angle that the intake should be set to.
-     */
-    public void setAngle(double angle) {
-        SmartDashboard.putNumber("Intake/angle_setpoint", angle);
-        accessPID.setReference(angle, ControlType.kPosition, 9, accessFeedforward.calculate(angle, accessEncoder.getVelocity()), ArbFFUnits.kVoltage);
-    }
+  public Command setPivotVoltage(DoubleSupplier volts) {
+    return this.run(
+        () -> {
+          io.setPivotVoltage(volts.getAsDouble());
+          inputs.pivotAppliedVolts = volts.getAsDouble();
+        });
+  }
 }

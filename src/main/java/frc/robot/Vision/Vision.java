@@ -13,27 +13,31 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Vision extends SubsystemBase {
-    private PhotonCamera FLCamera;
-    private PhotonCamera FRCamera;
+    private PhotonCamera flCamera;
+    private PhotonCamera frCamera;
 
-    private Transform3d robotToFLCamera = new Transform3d(new Translation3d(), new Rotation3d());
-    private Transform3d robotToFRCamera = new Transform3d(new Translation3d(), new Rotation3d());
+    private Transform3d robotToFLCamera = new Transform3d(new Translation3d(Units.inchesToMeters(-12), Units.inchesToMeters(-12), Units.inchesToMeters(10)), new Rotation3d(5.0 / 36.0 * Math.PI, 5.0 / 36.0 * Math.PI, 7.0 / 36.0 * Math.PI));
+    private Transform3d robotToFRCamera = new Transform3d(new Translation3d(Units.inchesToMeters(12), Units.inchesToMeters(-12), Units.inchesToMeters(10)), new Rotation3d(-5.0 / 36.0 * Math.PI, 5.0 / 36.0 * Math.PI, -7.0 / 36.0 * Math.PI));
 
-    private PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(), PoseStrategy.CLOSEST_TO_REFERENCE_POSE, robotToFLCamera);
+    private PhotonPoseEstimator flPoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(), PoseStrategy.CLOSEST_TO_REFERENCE_POSE, robotToFLCamera);
+    private PhotonPoseEstimator frPoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(), PoseStrategy.CLOSEST_TO_REFERENCE_POSE, robotToFRCamera);
     
     public Vision() {
-        FLCamera = new PhotonCamera("FL_Camera");
-        FRCamera = new PhotonCamera("FR_Camera");
+        flCamera = new PhotonCamera("FL_Camera");
+        frCamera = new PhotonCamera("FR_Camera");
     }
 
     public void getResults() {
-        PhotonPipelineResult result1 = FLCamera.getLatestResult();
-        PhotonPipelineResult result2 = FRCamera.getLatestResult();
+        PhotonPipelineResult result1 = flCamera.getLatestResult();
+        PhotonPipelineResult result2 = frCamera.getLatestResult();
+
+        
 
         if (result1.hasTargets()) {
             List<PhotonTrackedTarget> targets = result1.targets;

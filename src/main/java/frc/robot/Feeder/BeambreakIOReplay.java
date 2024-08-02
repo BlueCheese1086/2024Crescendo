@@ -1,6 +1,6 @@
 package frc.robot.Feeder;
 
-import frc.robot.subsystems.feeder.BeambreakIOInputsAutoLogged;
+import frc.robot.Feeder.BeambreakIOInputsAutoLogged;
 
 public class BeambreakIOReplay implements BeambreakIO {
 

@@ -69,7 +69,7 @@ public class RobotContainer {
       ),
       Commands.deadline(
         new WaitCommand(1),
-        new ArcadeDrive(m_drivetrain, () -> 1.0, () -> 0.0)
+        new ArcadeDrive(m_drivetrain, () -> -1.0, () -> 0.0)
       )
     );
 

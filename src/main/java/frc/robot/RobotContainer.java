@@ -8,7 +8,12 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -56,6 +61,23 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new PrintCommand("No auto lol");
+    var commands = Commands.sequence(
+      Commands.deadline(
+        new WaitCommand(2),
+        Commands.parallel(
+          new RunShooter(shooter, 1),
+          Commands.sequence(
+            new WaitCommand(1),
+            new RunFeed(shooter, 1)
+          )
+        )
+      ),
+      Commands.deadline(
+        new WaitCommand(1),
+        new ArcadeDrive(m_drivetrain, () -> 1.0, () -> 0.0)
+      )
+    );
+
+    return commands;
   }
 }

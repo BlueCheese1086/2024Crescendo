@@ -22,15 +22,15 @@ public final class Constants {
         public static final int frontRightID = 3;
         public static final int backRightID = 4;
 
-        // Max speeds
-        public static final double maxDriveSpeed = 1;
-        public static final double maxTurnSpeed = 0.5;
-
         // Robot specs
-        public static final double robotWidth = Units.inchesToMeters(13);
-        public static final double wheelDiameter = Units.inchesToMeters(4);
-        public static final double wheelCircumference = wheelDiameter * Math.PI;
+        public static final double robotWidth = Units.inchesToMeters(13); // Meters
+        public static final double wheelDiameter = Units.inchesToMeters(4); // Meters
+        public static final double wheelCircumference = wheelDiameter * Math.PI; // Meters
         public static final double gearRatio = 8.46;
+
+        // Max speeds
+        public static final double maxDriveSpeed = 3.5; // Meters / Second
+        public static final double maxTurnSpeed = maxDriveSpeed / (robotWidth / 2); // Meters / Second
 
         // Conversion factors
         public static final double posConversionFactor = wheelCircumference / gearRatio;
@@ -53,8 +53,8 @@ public final class Constants {
         public static final int launchID = 12;
 
         // Max speeds
-        public static final double maxFeedSpeed = 5676;
-        public static final double maxLaunchSpeed = 5676;
+        public static final double maxFeedSpeed = 5676; // Rotations / Minute
+        public static final double maxLaunchSpeed = 5676; // Rotations / Minute
 
         // PIDFF values
         public static final double launchP  = 0.0;

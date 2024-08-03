@@ -10,24 +10,23 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Drivetrain.Drivetrain;
 
 /** An example command that uses an example subsystem. */
-public class ArcadeDrive extends Command {
+public class TankDrive extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-    private final Drivetrain drivetrain;
-    private final Supplier<Double> xSpeedSupplier;
-    private final Supplier<Double> zRotateSupplier;
+    private Drivetrain drivetrain;
+    private Supplier<Double> lSpeedSupplier;
+    private Supplier<Double> rSpeedSupplier;
 
     /**
      * Creates a new ExampleCommand.
      *
      * @param subsystem The subsystem used by this command.
      */
-    public ArcadeDrive(Supplier<Double> xSpeedSupplier, Supplier<Double> zRotateSupplier) {
-        this.drivetrain = Drivetrain.getInstance();
-        this.xSpeedSupplier = xSpeedSupplier;
-        this.zRotateSupplier = zRotateSupplier;
-
+    public TankDrive(Drivetrain subsystem, Supplier<Double> lSpeedSupplier, Supplier<Double> rSpeedSupplier) {
+        drivetrain = Drivetrain.getInstance();
+        this.lSpeedSupplier = lSpeedSupplier;
+        this.rSpeedSupplier = rSpeedSupplier;
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(drivetrain);
+        addRequirements(subsystem);
     }
 
     // Called when the command is initially scheduled.
@@ -37,13 +36,13 @@ public class ArcadeDrive extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        drivetrain.arcadeDrive(xSpeedSupplier.get(), zRotateSupplier.get());
+        drivetrain.tankDrive(lSpeedSupplier.get(), rSpeedSupplier.get());
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        drivetrain.arcadeDrive(0, 0);
+        drivetrain.tankDrive(0, 0);
     }
 
     // Returns true when the command should end.

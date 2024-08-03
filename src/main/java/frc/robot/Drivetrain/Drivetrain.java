@@ -51,6 +51,7 @@ public class Drivetrain extends SubsystemBase {
     private Pose2d initPose = new Pose2d();
     private DifferentialDrivePoseEstimator poseEstimator;
 
+    // A common instance of the shooter class so that I don't have to outright initialize it anywhere.
     private static Drivetrain instance;
 
     public static Drivetrain getInstance() {
@@ -107,6 +108,17 @@ public class Drivetrain extends SubsystemBase {
         leftPID = flMotor.getPIDController();
         rightPID = frMotor.getPIDController();
 
+        // Setting PIDFF values
+        leftPID.setP(DriveConstants.leftP);
+        leftPID.setI(DriveConstants.leftI);
+        leftPID.setD(DriveConstants.leftD);
+        leftPID.setFF(DriveConstants.leftFF);
+
+        rightPID.setP(DriveConstants.rightP);
+        rightPID.setI(DriveConstants.rightI);
+        rightPID.setD(DriveConstants.rightD);
+        rightPID.setFF(DriveConstants.rightFF);
+
         // Saving configs
         brMotor.burnFlash();
         blMotor.burnFlash();
@@ -133,12 +145,8 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-
-
-        SmartDashboard.putNumber("/Drivetrain/Left_Actual_MPS", 0);
-        SmartDashboard.putNumber("/Drivetrain/Left_Expected_MPS", 0);
-        SmartDashboard.putNumber("/Drivetrain/Right_Actual_MPS", 0);
-        SmartDashboard.putNumber("/Drivetrain/Right_Expected_MPS", 0);
+        SmartDashboard.putNumber("/Drivetrain/Left_Actual_MPS", getLeftVelocity());
+        SmartDashboard.putNumber("/Drivetrain/Right_Actual_MPS", getRightVelocity());
         SmartDashboard.putNumber("/Drivetrain/Angle", getAngle().getRadians());
     }
 
@@ -211,6 +219,9 @@ public class Drivetrain extends SubsystemBase {
 
     public void closedLoop(ChassisSpeeds speeds) {
         DifferentialDriveWheelSpeeds newSpeeds = kinematics.toWheelSpeeds(speeds);
+
+        SmartDashboard.putNumber("/Drivetrain/Left_Expected_MPS", newSpeeds.leftMetersPerSecond);
+        SmartDashboard.putNumber("/Drivetrain/Right_Expected_MPS", newSpeeds.rightMetersPerSecond);
 
         leftPID.setReference(newSpeeds.leftMetersPerSecond, ControlType.kVelocity);
         rightPID.setReference(newSpeeds.rightMetersPerSecond, ControlType.kVelocity);

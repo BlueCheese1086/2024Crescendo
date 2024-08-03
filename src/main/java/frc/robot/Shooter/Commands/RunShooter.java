@@ -7,8 +7,8 @@ public class RunShooter extends Command {
     private Shooter shooter;
     private double speed;
 
-    public RunShooter(Shooter shooter, double speed) {
-        this.shooter = shooter;
+    public RunShooter(double speed) {
+        this.shooter = Shooter.getInstance();
         this.speed = speed;
     }
 

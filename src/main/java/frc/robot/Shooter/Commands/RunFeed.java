@@ -8,8 +8,8 @@ public class RunFeed extends Command {
     private Shooter shooter;
     private double speed;
 
-    public RunFeed(Shooter shooter, double speed) {
-        this.shooter = shooter;
+    public RunFeed(double speed) {
+        this.shooter = Shooter.getInstance();
         this.speed = speed;
     }
 

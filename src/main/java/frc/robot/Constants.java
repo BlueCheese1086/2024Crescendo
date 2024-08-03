@@ -16,11 +16,13 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
     public static class DriveConstants {
+        // Motor IDs
         public static final int frontLeftID = 1;
         public static final int backLeftID = 2;
         public static final int frontRightID = 3;
         public static final int backRightID = 4;
 
+        // Max speeds
         public static final double maxDriveSpeed = 1;
         public static final double maxTurnSpeed = 0.5;
 
@@ -32,16 +34,36 @@ public final class Constants {
 
         // Conversion factors
         public static final double posConversionFactor = wheelCircumference / gearRatio;
-        public static final double velConversionFactor = posConversionFactor / 60;
+        public static final double velConversionFactor = wheelCircumference / gearRatio / 60;
+
+        // PIDFF values
+        public static final double leftP   = 0.0;
+        public static final double leftI   = 0.0;
+        public static final double leftD   = 0.0;
+        public static final double leftFF  = 0.0;
+        public static final double rightP  = 0.0;
+        public static final double rightI  = 0.0;
+        public static final double rightD  = 0.0;
+        public static final double rightFF = 0.0;
     }
 
     public static class ShooterConstants {
+        // Motor IDs
         public static final int feedID = 11;
         public static final int launchID = 12;
 
-        public static final double maxFeedSpeed = 1;
-        public static final double maxLaunchSpeed = 1;
+        // Max speeds
+        public static final double maxFeedSpeed = 5676;
+        public static final double maxLaunchSpeed = 5676;
 
-        public static final double maxRPM = 5676;
+        // PIDFF values
+        public static final double launchP  = 0.0;
+        public static final double launchI  = 0.0;
+        public static final double launchD  = 0.0;
+        public static final double launchFF = 0.0;
+        public static final double feedP    = 0.0;
+        public static final double feedI    = 0.0;
+        public static final double feedD    = 0.0;
+        public static final double feedFF   = 0.0;
     }
 }

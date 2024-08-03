@@ -3,31 +3,32 @@ package frc.robot.Shooter;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
     // Motors
-    private CANSparkMax launcherMotor;
-    private CANSparkMax feederMotor;
+    private CANSparkMax launchMotor;
+    private CANSparkMax feedMotor;
 
     // Encoders
-    private RelativeEncoder launcherEncoder;
-    private RelativeEncoder feederEncoder;
+    private RelativeEncoder launchEncoder;
+    private RelativeEncoder feedEncoder;
 
     // PID Controllers
-    private SparkPIDController launcherPID;
-    private SparkPIDController feederPID;
+    private SparkPIDController launchPID;
+    private SparkPIDController feedPID;
 
     // Logged Vars
     private double expectedFeedSpeed;
     private double expectedLaunchSpeed;
 
+    // A common instance of the shooter class so that I don't have to outright initialize it anywhere.
     private static Shooter instance;
 
     public static Shooter getInstance() {
@@ -38,58 +39,75 @@ public class Shooter extends SubsystemBase {
 
     public Shooter() {
         // Getting motors
-        launcherMotor = new CANSparkMax(ShooterConstants.launchID, MotorType.kBrushless);
-        feederMotor = new CANSparkMax(ShooterConstants.feedID, MotorType.kBrushless);
+        launchMotor = new CANSparkMax(ShooterConstants.launchID, MotorType.kBrushless);
+        feedMotor = new CANSparkMax(ShooterConstants.feedID, MotorType.kBrushless);
 
         // Resetting motor configs
-        launcherMotor.restoreFactoryDefaults();
-        feederMotor.restoreFactoryDefaults();
+        launchMotor.restoreFactoryDefaults();
+        feedMotor.restoreFactoryDefaults();
 
         // Setting the idle mode of motors
-        launcherMotor.setIdleMode(IdleMode.kCoast);
-        feederMotor.setIdleMode(IdleMode.kCoast);
+        launchMotor.setIdleMode(IdleMode.kCoast);
+        feedMotor.setIdleMode(IdleMode.kCoast);
 
         // Inverting the motors
-        launcherMotor.setInverted(true);
-        feederMotor.setInverted(true);
+        launchMotor.setInverted(true);
+        feedMotor.setInverted(true);
 
         // Getting the encoders
-        launcherEncoder = launcherMotor.getEncoder();
-        feederEncoder = feederMotor.getEncoder();
+        launchEncoder = launchMotor.getEncoder();
+        feedEncoder = feedMotor.getEncoder();
 
         // Getting the PID controllers
-        launcherPID = launcherMotor.getPIDController();
-        feederPID = feederMotor.getPIDController();
+        launchPID = launchMotor.getPIDController();
+        feedPID = feedMotor.getPIDController();
+
+        // Setting PIDFF values
+        launchPID.setP(ShooterConstants.launchP);
+        launchPID.setI(ShooterConstants.launchI);
+        launchPID.setD(ShooterConstants.launchD);
+        launchPID.setFF(ShooterConstants.launchFF);
+
+        launchPID.setP(ShooterConstants.feedP);
+        launchPID.setI(ShooterConstants.feedI);
+        launchPID.setD(ShooterConstants.feedD);
+        launchPID.setFF(ShooterConstants.feedFF);
 
         // Saving motor configs
-        launcherMotor.burnFlash();
-        feederMotor.burnFlash();
+        launchMotor.burnFlash();
+        feedMotor.burnFlash();
     }
 
+    /** This function runs every tick that the class has been initialized. */
     @Override
     public void periodic() {
         SmartDashboard.putNumber("/Shooter/Real_Feed_RPM", getFeedSpeed());
+        SmartDashboard.putNumber("/Shooter/Expected_Feed_RPM", expectedFeedSpeed);
         SmartDashboard.putNumber("/Shooter/Real_Launch_RPM", getLaunchSpeed());
-
-        SmartDashboard.putNumber("/Shooter/Expected_Feed_RPM", expectedFeedSpeed * ShooterConstants.maxRPM);
-        SmartDashboard.putNumber("/Shooter/Expected_Launch_RPM", expectedLaunchSpeed * ShooterConstants.maxRPM);
+        SmartDashboard.putNumber("/Shooter/Expected_Launch_RPM", expectedLaunchSpeed);
     }
 
+    /** Gets the speed of the feed wheel. */
     public double getFeedSpeed() {
-        return feederEncoder.getVelocity();
+        return feedEncoder.getVelocity();
     }
 
+    /** Gets the speed of the launch wheel. */
     public double getLaunchSpeed() {
-        return launcherEncoder.getVelocity();
+        return launchEncoder.getVelocity();
     }
 
+    /** Sets the speed of the feed wheel. */
     public void setFeedSpeed(double speed) {
-        expectedFeedSpeed = speed;
-        feederMotor.set(speed * ShooterConstants.maxFeedSpeed);
+        expectedFeedSpeed = speed * ShooterConstants.maxFeedSpeed;
+        
+        feedPID.setReference(expectedFeedSpeed, ControlType.kVelocity);
     }
 
+    /** Sets the speed of the launch wheel. */
     public void setLaunchSpeed(double speed) {
-        expectedLaunchSpeed = speed;
-        launcherMotor.set(speed * ShooterConstants.maxLaunchSpeed);
+        expectedLaunchSpeed = speed * ShooterConstants.maxLaunchSpeed;
+        
+        launchPID.setReference(expectedLaunchSpeed, ControlType.kVelocity);
     }
 }

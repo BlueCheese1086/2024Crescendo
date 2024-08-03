@@ -23,8 +23,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
     // The robot's subsystems and commands are defined here...
-    private final Drivetrain m_drivetrain = new Drivetrain();
-    private final Shooter shooter = new Shooter();
+    private final Drivetrain drivetrain = Drivetrain.getInstance();
+    private final Shooter shooter = Shooter.getInstance();
 
     // Replace with CommandPS4Controller or CommandJoystick if needed
     private final CommandXboxController driver = new CommandXboxController(0);
@@ -46,9 +46,9 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
-        operator.a().whileTrue(new RunFeed(shooter, 1));
-        operator.b().whileTrue(new RunShooter(shooter, -1)).whileTrue(new RunFeed(shooter, -1));
-        operator.y().toggleOnTrue(new RunShooter(shooter, 1));
+        operator.a().whileTrue(new RunFeed(1));
+        operator.b().whileTrue(new RunShooter(-1)).whileTrue(new RunFeed(-1));
+        operator.y().toggleOnTrue(new RunShooter(1));
     }
 
     /**
@@ -64,18 +64,18 @@ public class RobotContainer {
                 Commands.parallel(
                     Commands.deadline(
                         new WaitCommand(0.2),
-                        new RunFeed(shooter, -1)
+                        new RunFeed(-1)
                     ),
-                    new RunShooter(shooter, 1),
+                    new RunShooter(1),
                     Commands.sequence(
                         new WaitCommand(1),
-                        new RunFeed(shooter, 1)
+                        new RunFeed(1)
                     )
                 )
             ),
             Commands.deadline(
                 new WaitCommand(2),
-                new ArcadeDrive(m_drivetrain, () -> 0.5, () -> 0.0)
+                new ArcadeDrive(() -> 0.5, () -> 0.0)
             )
         );
 
@@ -83,6 +83,6 @@ public class RobotContainer {
     }
 
     public Command getTeleopCommand() {
-        return new ArcadeDrive(m_drivetrain, ()-> driver.getLeftY(), ()-> driver.getRightX());
+        return new ArcadeDrive(()-> driver.getLeftY(), ()-> driver.getRightX());
     }
 }

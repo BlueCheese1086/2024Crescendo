@@ -197,6 +197,8 @@ public class YAGSLConverter {
                 public static double kD = 0;
                 public static double staticFeedForward = 0;
                 public static double integralZone = 0;
+                public static double max = 1;
+                public static double min = -1;
             }
 
             public static class Angle {
@@ -205,6 +207,8 @@ public class YAGSLConverter {
                 public static double kD = 0;
                 public static double staticFeedForward = 0;
                 public static double integralZone = 0;
+                public static double max = 1;
+                public static double min = -1;
             }
         }
 
@@ -442,14 +446,22 @@ public class YAGSLConverter {
             writer.write(String.format("        \"i\": %s,\n", Configs.PIDFPropertiesJson.Drive.kI));
             writer.write(String.format("        \"d\": %s,\n", Configs.PIDFPropertiesJson.Drive.kD));
             writer.write(String.format("        \"f\": %s,\n", Configs.PIDFPropertiesJson.Drive.staticFeedForward));
-            writer.write(String.format("        \"iz\": %s\n", Configs.PIDFPropertiesJson.Drive.integralZone));
+            writer.write(String.format("        \"iz\": %s,\n", Configs.PIDFPropertiesJson.Drive.integralZone));
+            writer.write(String.format("        \"output\": {\n"));
+            writer.write(String.format("            \"max\": %s,\n", Configs.PIDFPropertiesJson.Drive.max));
+            writer.write(String.format("            \"min\": %s\n", Configs.PIDFPropertiesJson.Drive.min));
+            writer.write(String.format("        }\n"));
             writer.write(String.format("    },\n"));
             writer.write(String.format("    \"angle\": {\n"));
             writer.write(String.format("        \"p\": %s,\n", Configs.PIDFPropertiesJson.Angle.kP));
             writer.write(String.format("        \"i\": %s,\n", Configs.PIDFPropertiesJson.Angle.kI));
             writer.write(String.format("        \"d\": %s,\n", Configs.PIDFPropertiesJson.Angle.kD));
             writer.write(String.format("        \"f\": %s,\n", Configs.PIDFPropertiesJson.Angle.staticFeedForward));
-            writer.write(String.format("        \"iz\": %s\n", Configs.PIDFPropertiesJson.Angle.integralZone));
+            writer.write(String.format("        \"iz\": %s,\n", Configs.PIDFPropertiesJson.Angle.integralZone));
+            writer.write(String.format("        \"output\": {\n"));
+            writer.write(String.format("            \"max\": %s,\n", Configs.PIDFPropertiesJson.Angle.max));
+            writer.write(String.format("            \"min\": %s\n", Configs.PIDFPropertiesJson.Angle.min));
+            writer.write(String.format("        }\n"));
             writer.write(String.format("    }\n"));
             writer.write(String.format("}\n"));                    
 

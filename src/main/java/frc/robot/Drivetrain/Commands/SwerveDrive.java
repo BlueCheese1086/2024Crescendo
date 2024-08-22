@@ -35,7 +35,7 @@ public class SwerveDrive extends Command {
         if (speeds.vxMetersPerSecond == 0 && speeds.vyMetersPerSecond == 0 && speeds.omegaRadiansPerSecond == 0) {
             drivetrain.makeX();
         } else {
-            drivetrain.drive(speeds);
+            drivetrain.setSpeeds(speeds);
         }
     }
 

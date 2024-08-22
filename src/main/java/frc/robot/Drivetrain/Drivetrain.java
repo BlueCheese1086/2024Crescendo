@@ -4,7 +4,6 @@ import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Vision.Vision;
+import frc.robot.Vision.VisionResult;
 
 public class Drivetrain extends SubsystemBase {
     // Swerve Modules
@@ -46,6 +47,9 @@ public class Drivetrain extends SubsystemBase {
     private Field2d field = new Field2d();
     private SwerveDrivePoseEstimator poseEstimator;
     private SwerveDriveOdometry odometry;
+
+    // An instance of the Vision class
+    private Vision vision;
 
     // A common instance of the drivetrain subsystem.
     private static Drivetrain instance;
@@ -100,7 +104,9 @@ public class Drivetrain extends SubsystemBase {
         // Initializing the pose estimator
         odometry = new SwerveDriveOdometry(kinematics, getAngle(), positions);
         poseEstimator = new SwerveDrivePoseEstimator(kinematics, getAngle(), positions, new Pose2d());
-        
+
+        // Getting an instance of the Vision system.
+        vision = Vision.getInstance();
     }
 
     @Override
@@ -113,7 +119,11 @@ public class Drivetrain extends SubsystemBase {
 
         // Updating the pose estimator
         poseEstimator.update(getAngle(), positions);
-        poseEstimator.addVisionMeasurement(new Pose2d(), 0);
+        
+        VisionResult flResult = vision.getFLPoseWithTimestamp();
+        VisionResult frResult = vision.getFRPoseWithTimestamp();
+        poseEstimator.addVisionMeasurement(flResult.getPose(), flResult.getTimestamp());
+        poseEstimator.addVisionMeasurement(frResult.getPose(), frResult.getTimestamp());
 
         field.setRobotPose(odometry.getPoseMeters());
 

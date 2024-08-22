@@ -1,21 +1,20 @@
 package frc.robot.Vision;
 
-import java.util.List;
+import java.util.Optional;
 
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Vision extends SubsystemBase {
@@ -28,70 +27,90 @@ public class Vision extends SubsystemBase {
     private PhotonPoseEstimator flPoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(), PoseStrategy.CLOSEST_TO_REFERENCE_POSE, robotToFLCamera);
     private PhotonPoseEstimator frPoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(), PoseStrategy.CLOSEST_TO_REFERENCE_POSE, robotToFRCamera);
     
+    private VisionResult flResult;
+    private VisionResult frResult;
+
+    private static Vision instance;
+
+    public static Vision getInstance() {
+        if (instance == null) {
+            instance = new Vision();
+        }
+
+        return instance;
+    }
+
     public Vision() {
         flCamera = new PhotonCamera("FL_Camera");
         frCamera = new PhotonCamera("FR_Camera");
     }
 
-    public void getResults() {
-        PhotonPipelineResult result1 = flCamera.getLatestResult();
-        PhotonPipelineResult result2 = frCamera.getLatestResult();
+    /**
+     * Updates the pose estimators.
+     */
+    public void periodic() {
+        PhotonPipelineResult newFLResult = flCamera.getLatestResult();
+        Optional<EstimatedRobotPose> newFLPose = flPoseEstimator.update(newFLResult);
+        if (newFLPose.isPresent()) {
+            flResult.setPose(newFLPose.get().estimatedPose.toPose2d());
+            flResult.setTimestamp(newFLResult.getTimestampSeconds());
+        }
 
-        
+        PhotonPipelineResult newFRResult = frCamera.getLatestResult();
+        Optional<EstimatedRobotPose> newFRPose = frPoseEstimator.update(newFRResult);
+        if (newFRPose.isPresent()) {
+            frResult.setPose(newFRPose.get().estimatedPose.toPose2d());
+            frResult.setTimestamp(newFRResult.getTimestampSeconds());
+        }
+    }
 
-        if (result1.hasTargets()) {
-            List<PhotonTrackedTarget> targets = result1.targets;
+    public PhotonPipelineResult getFLPhotonResult() {
+        return flCamera.getLatestResult();
+    }
 
-            for (PhotonTrackedTarget target : targets) {
-                boolean onBlue = DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Blue);
+    public PhotonPipelineResult getFRPhotonResult() {
+        return frCamera.getLatestResult();
+    }
 
-                if (onBlue) {
-                    switch (target.getFiducialId()) {
+    public Pose2d getFLPose() {
+        return flResult.getPose();
+    }
 
-                    }
-                } else {
+    public Pose2d getFRPose() {
+        return frResult.getPose();
+    }
 
-                }
+    public VisionResult getFLPoseWithTimestamp() {
+        return flResult;
+    }
 
-                switch(target.getFiducialId()) {
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        break;
-                    case 4:
-                        break;
-                    case 5:
-                        break;
-                    case 6:
-                        break;
-                    case 7:
-                        break;
-                    case 8:
-                        break;
-                    case 9:
-                        break;
-                    case 10:
-                        break;
-                    case 11:
-                        break;
-                    case 12:
-                        break;
-                    case 13:
-                        break;
-                    case 14:
-                        break;
-                    case 15:
-                        break;
-                    case 16:
-                        break;
-                }
+    public VisionResult getFRPoseWithTimestamp() {
+        return frResult;
+    }
+
+    /**
+     * Checks if the apriltag with the given id is visible.
+     * 
+     * @param id ID of the apriltag to look for.
+     */
+    public boolean isVisible(int id) {
+        // Looping through the visible targets from the front left camera.
+        for (PhotonTrackedTarget target : flCamera.getLatestResult().targets) {
+            // Checking if the IDs match and returning true if they do.
+            if (target.getFiducialId() == id) {
+                return true;
             }
         }
 
-        if (result2.hasTargets()) {
-            List<PhotonTrackedTarget> targets = result2.targets;
+        // Looping through the visible targets from the front right camera.
+        for (PhotonTrackedTarget target : flCamera.getLatestResult().targets) {
+            // Checking if the IDs match and returning true if they do.
+            if (target.getFiducialId() == id) {
+                return true;
+            }
         }
+
+        // ID not found, returning false.
+        return false;
     }
 }

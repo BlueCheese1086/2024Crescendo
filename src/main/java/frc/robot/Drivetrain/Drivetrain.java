@@ -1,40 +1,35 @@
 package frc.robot.Drivetrain;
 
 import com.ctre.phoenix6.Orchestra;
-import com.ctre.phoenix6.hardware.Pigeon2;
-
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.estimator.PoseEstimator;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
+import java.io.File;
+import java.io.IOException;
+import swervelib.SwerveDrive;
+import swervelib.parser.SwerveControllerConfiguration;
+import swervelib.parser.SwerveDriveConfiguration;
+import swervelib.parser.SwerveParser;
+import swervelib.telemetry.SwerveDriveTelemetry;
+import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class Drivetrain extends SubsystemBase {
-    // Swerve Modules
-    private SwerveModule flModule;
-    private SwerveModule frModule;
-    private SwerveModule blModule;
-    private SwerveModule brModule;
+    private SwerveDrive swerveDrive;
 
-    // Sensors
-    private Pigeon2 gyro;
-
-    // Kinematics
-    private SwerveDriveKinematics kinematics;
-
-    // Swerve Module Vars
-    private SwerveModule[] modules;
-    private SwerveModulePosition[] positions = new SwerveModulePosition[4];
-    private SwerveModuleState[] states = new SwerveModuleState[4];
     private SwerveModuleState[] xStates = {
         new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)),
         new SwerveModuleState(0.0, new Rotation2d(-Math.PI / 4.0)),
@@ -42,10 +37,8 @@ public class Drivetrain extends SubsystemBase {
         new SwerveModuleState(0.0, new Rotation2d(Math.PI / 4.0)),
     };
 
-    // Odometry/Pose Estimation
     private Field2d field = new Field2d();
-    private SwerveDrivePoseEstimator poseEstimator;
-    private SwerveDriveOdometry odometry;
+    private AprilTagFieldLayout layout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
 
     // A common instance of the drivetrain subsystem.
     private static Drivetrain instance;
@@ -68,89 +61,84 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public Drivetrain() {
-        // Initializing the Swerve Modules
-        flModule = new SwerveModule("FrontLeft", DriveConstants.flDriveID, DriveConstants.flTurnID,
-                DriveConstants.flCancoderID, DriveConstants.flOffset);
-        frModule = new SwerveModule("FrontRight", DriveConstants.frDriveID, DriveConstants.frTurnID,
-                DriveConstants.frCancoderID, DriveConstants.frOffset);
-        blModule = new SwerveModule("BackLeft", DriveConstants.blDriveID, DriveConstants.blTurnID,
-                DriveConstants.blCancoderID, DriveConstants.blOffset);
-        brModule = new SwerveModule("BackRight", DriveConstants.brDriveID, DriveConstants.brTurnID,
-                DriveConstants.brCancoderID, DriveConstants.brOffset);
+        SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
 
-        // Loading the modules array
-        modules = new SwerveModule[] {flModule, frModule, blModule, brModule};
-
-        // Initializing the gyro
-        gyro = new Pigeon2(DriveConstants.gyroID);
-
-        // Loading the initial values into the state and position arrays.
-        for (int i = 0; i < 4; i++) {
-            positions[i] = modules[i].getPosition();
+        try {
+            swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve")).createSwerveDrive(DriveConstants.maxDriveSpeed);
+        } catch(IOException err) {
+            throw new RuntimeException("Could not find SwerveDrive configs.");
         }
 
-        // Initializing the kinematics
-        kinematics = new SwerveDriveKinematics(
-            new Translation2d( DriveConstants.width / 2,  DriveConstants.length / 2), // FL Swerve module
-            new Translation2d( DriveConstants.width / 2, -DriveConstants.length / 2), // FR Swerve module
-            new Translation2d(-DriveConstants.width / 2,  DriveConstants.length / 2), // BL Swerve module
-            new Translation2d(-DriveConstants.width / 2, -DriveConstants.length / 2)  // BR Swerve module
-        );
+        swerveDrive.setHeadingCorrection(false);
+        swerveDrive.setCosineCompensator(false);
+        setupPathplanner();
+    }
 
-        // Initializing the pose estimator
-        odometry = new SwerveDriveOdometry(kinematics, getAngle(), positions);
-        poseEstimator = new SwerveDrivePoseEstimator(kinematics, getAngle(), positions, new Pose2d());
-        
+    public Drivetrain(SwerveDriveConfiguration driveConfig, SwerveControllerConfiguration controllerConfig) {
+        swerveDrive = new SwerveDrive(driveConfig, controllerConfig, DriveConstants.maxDriveSpeed);
+    }
+
+    public void setupPathplanner() {
+        AutoBuilder.configureHolonomic(
+            this::getPose,
+            this::setPose,
+            this::getSpeeds,
+            this::setSpeeds,
+            new HolonomicPathFollowerConfig(
+                new PIDConstants(DriveConstants.driveP, DriveConstants.driveI, DriveConstants.driveD),
+                new PIDConstants(DriveConstants.turnP, DriveConstants.turnI, DriveConstants.turnD),
+                DriveConstants.maxDriveSpeed,
+                DriveConstants.width / 2,
+                new ReplanningConfig()
+            ),
+            () -> DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() == DriverStation.Alliance.Red : false,
+            this
+        );
     }
 
     @Override
     public void periodic() {
         // Updating the states and positions of the modules
-        for (int i = 0; i < 4; i++) {
-            positions[i] = modules[i].getPosition();
-            states[i] = modules[i].getState();
-        }
-
-        // Updating the pose estimator
-        poseEstimator.update(getAngle(), positions);
-        poseEstimator.addVisionMeasurement(new Pose2d(), 0);
-
-        field.setRobotPose(odometry.getPoseMeters());
+        field.setRobotPose(getPose());
 
         SmartDashboard.putData("Field", field);
-
-        SmartDashboard.putNumber("Gyro", gyro.getAngle());
     }
 
     public Rotation2d getAngle() {
-        return Rotation2d.fromDegrees(gyro.getAngle());
+        return swerveDrive.getYaw();
     }
 
     public void setAngle(Rotation2d angle) {
-        gyro.setYaw(angle.getDegrees());
+        swerveDrive.setGyro(new Rotation3d(0, 0, angle.getRadians()));
     }
 
-    public void drive(ChassisSpeeds speeds) {
-        SwerveModuleState[] desiredStates = kinematics.toSwerveModuleStates(speeds);
+    public Pose2d getPose() {
+        return swerveDrive.getPose();
+    }
 
-        for (int i = 0; i < 4; i++) {
-            modules[i].setState(desiredStates[i]);
-        }
+    public void setPose(Pose2d pose) {
+        swerveDrive.resetOdometry(pose);
+    }
+
+    public ChassisSpeeds getSpeeds() {
+        return swerveDrive.getRobotVelocity();
+    }
+
+    public void setSpeeds(ChassisSpeeds speeds) {
+        swerveDrive.setChassisSpeeds(speeds);
     }
 
     public void makeX() {
-        for (int i = 0; i < 4; i++) {
-            modules[i].setState(xStates[i]);
-        }
+        swerveDrive.setModuleStates(xStates, false);
     }
 
     public void playSong(String filepath) {
         Orchestra music = new Orchestra();
 
-        music.addInstrument(flModule.drive);
-        music.addInstrument(frModule.drive);
-        music.addInstrument(blModule.drive);
-        music.addInstrument(brModule.drive);
+        // music.addInstrument(flModule.drive);
+        // music.addInstrument(frModule.drive);
+        // music.addInstrument(blModule.drive);
+        // music.addInstrument(brModule.drive);
         music.loadMusic(filepath);
         
         music.play();

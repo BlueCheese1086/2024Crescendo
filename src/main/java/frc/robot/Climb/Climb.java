@@ -1,6 +1,7 @@
 package frc.robot.Climb;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -10,6 +11,9 @@ import frc.robot.Constants.TowerConstants;
 public class Climb extends SubsystemBase {
     // Motor
     private CANSparkMax climbMotor;
+
+    // Encoder
+    private RelativeEncoder climbEncoder;
 
     // A common instance of the tower subsystem.
     private static Climb instance;
@@ -38,6 +42,9 @@ public class Climb extends SubsystemBase {
         // Setting the idle modes of the sparkmax
         climbMotor.setIdleMode(IdleMode.kBrake);
 
+        // Getting the climb encoder
+        climbEncoder = climbMotor.getEncoder();
+
         // Saving the settings to the sparkmax
         climbMotor.burnFlash();
     }
@@ -58,5 +65,14 @@ public class Climb extends SubsystemBase {
      */
     public double getSpeed() {
         return climbMotor.get();
+    }
+
+    /**
+     * Gets whether or not the tower has reached its max or min height.
+     * 
+     * @return Whether or not the tower has reached its max or min height.
+     */
+    public boolean atLimits() {
+        return climbMotor.get() != 0 && climbEncoder.getVelocity() < 0.1;
     }
 }

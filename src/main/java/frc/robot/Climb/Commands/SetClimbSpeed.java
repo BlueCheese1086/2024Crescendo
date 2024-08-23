@@ -25,6 +25,16 @@ public class SetClimbSpeed extends Command {
         climb.setSpeed(speed);
     }
 
+    /**
+     * This function runs every 20 ms while the command is scheduled.
+     * 
+     * @return Returns true when the command should end.
+     */
+    @Override
+    public boolean isFinished() {
+        return climb.atLimits();
+    }
+
     /** This function runs once when the command ends. */
     @Override
     public void end(boolean interrupted) {

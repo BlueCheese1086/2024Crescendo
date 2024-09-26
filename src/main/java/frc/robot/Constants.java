@@ -10,6 +10,15 @@ public class Constants {
         public static final int feedID = 1;
     }
 
+    public static class ControllerConstants {
+        // Controller IDs
+        public static final int driverID = 0;
+        public static final int operatorID = 1;
+
+        // Input limits
+        public static final double deadband = 0.2;
+    }
+
     public static class DriveConstants {
         // Motor IDs
         public static final int flDriveID = 1;

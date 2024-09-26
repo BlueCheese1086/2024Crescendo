@@ -67,14 +67,10 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return new PrintCommand("No auto lol");// PathPlannerAuto("V3-Auto");
+        return new PrintCommand("No auto lol");
     }
 
     public Command getTeleopCommand() {
-        return new SwerveDrive(
-            () -> MathUtil.applyDeadband(joystick.getLeftX(), 0.2),
-            () -> MathUtil.applyDeadband(joystick.getLeftY(), 0.2),
-            () -> MathUtil.applyDeadband(joystick.getRightX(), 0.2)
-        );
+        return new SwerveDrive(() -> joystick.getLeftX(), () -> joystick.getLeftY(), () -> joystick.getRightX());
     }
 }

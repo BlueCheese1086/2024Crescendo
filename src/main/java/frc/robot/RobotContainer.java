@@ -17,6 +17,7 @@ import frc.robot.Climb.Climb;
 import frc.robot.Intake.Commands.*;
 import frc.robot.Intake.Intake;
 import frc.robot.Shooter.Commands.*;
+import frc.robot.Vision.Vision;
 import frc.robot.Shooter.Shooter;
 
 public class RobotContainer {
@@ -25,6 +26,7 @@ public class RobotContainer {
     Shooter shooter = Shooter.getInstance();
     Intake intake = Intake.getInstance();
     Climb tower = Climb.getInstance();
+    Vision vision = Vision.getInstance();
 
     // Creating the controllers
     CommandXboxController joystick = new CommandXboxController(0);

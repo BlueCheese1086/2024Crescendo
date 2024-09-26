@@ -25,7 +25,7 @@ public class RobotContainer {
     Drivetrain drivetrain = Drivetrain.getInstance();
     Shooter shooter = Shooter.getInstance();
     Intake intake = Intake.getInstance();
-    Climb tower = Climb.getInstance();
+    Climb climb = Climb.getInstance();
     Vision vision = Vision.getInstance();
 
     // Creating the controllers

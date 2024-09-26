@@ -35,19 +35,19 @@ public class RobotContainer {
 
     private void configureBindings() {
         /*  All operator controls. -- See Controls.png for visual reference.
-            A: Runs the feed
-            B: Runs the intake
+            A: Runs the feed forward
+            B: Runs the intake forward
             X: Runs the launcher in reverse
-            Y: Toggles the launcher
+            Y: Toggles running the launcher
             Left Bumper: Moves the shooter up.
             Left Trigger: Moves the shooter down.
             Right Bumper: Moves the tower up.
             Right Trigger: Moves the tower down.
-            Back: Running the intake in reverse.
-            D-Pad Up: Stowing the intake.
-            D-Pad Down: Extending the intake.
-            Left Joystick: Move up/down/left/right respectively
-            Right Joystick: Turn left/right respectively
+            Back: Runs the intake in reverse.
+            D-Pad Up: Stows the intake.
+            D-Pad Down: Extends the intake.
+            Left Joystick: Move up/down/left/right
+            Right Joystick: Turn left/right
         */
         joystick.a().whileTrue(new SetFeedSpeed(1));
         joystick.b().whileTrue(new SetIntakeSpeed(1));

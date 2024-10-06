@@ -53,6 +53,7 @@ public class SwerveModule extends SubsystemBase {
         // Resetting motor configs
         while (errCode != REVLibError.kOk) {
             errCode = turn.restoreFactoryDefaults();
+            SmartDashboard.putBoolean("/" + name + "/CANSparkMaxesConfigured", false);
         }
         errCode = REVLibError.kUnknown;
 
@@ -130,6 +131,7 @@ public class SwerveModule extends SubsystemBase {
             errCode = turn.burnFlash();
         }
         errCode = REVLibError.kUnknown;
+        SmartDashboard.putBoolean("/" + name + "/CANSparkMaxesConfigured", true);
   
         this.state = new SwerveModuleState(getVelocity(), getAngle());
         this.position = new SwerveModulePosition(getDistance(), getAngle());
@@ -240,7 +242,9 @@ public class SwerveModule extends SubsystemBase {
         drive.setControl(new VelocityDutyCycle(newState.speedMetersPerSecond / DriveConstants.drivePosConversionFactor));
         while (errCode != REVLibError.kOk) {
             errCode = turnPID.setReference(getAdjustedAngle(newState.angle).getRadians(), ControlType.kPosition);
+            SmartDashboard.putBoolean("/" + name + "/Setting_Angle", true);
         }
         errCode = REVLibError.kUnknown;
+        SmartDashboard.putBoolean("/" + name + "/Setting_Angle", false);
     }
 }

@@ -38,10 +38,10 @@ public class Constants {
         public static final int gyroID       = 10;
 
         // Encoder offsets
-        public static final double flOffset = -2.41491 / 2 / Math.PI; // Rotations
-        public static final double frOffset = -1.48709 / 2 / Math.PI; // Rotations
-        public static final double blOffset =  1.08507 / 2 / Math.PI; // Rotations
-        public static final double brOffset =  0.06942 / 2 / Math.PI; // Rotations
+        public static final double flOffset = 0.9187100292744009; // Rotations
+        public static final double frOffset = 0.9187100292744009; // Rotations
+        public static final double blOffset = 0.29197770452236055; // Rotations
+        public static final double brOffset = 0.38797717064449916; // Rotations
 
         // Kinematics
         public static final Translation2d flTranslation = new Translation2d(-DriveConstants.width / 2,  DriveConstants.length / 2);

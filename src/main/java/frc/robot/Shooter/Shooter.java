@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 
@@ -65,30 +66,31 @@ public class Shooter extends SubsystemBase {
 
     public Shooter() {
         // Resetting the settings of the sparkmaxes
-        lLauncher.restoreFactoryDefaults();
-        rLauncher.restoreFactoryDefaults();
-        feed.restoreFactoryDefaults();
-        pivot.restoreFactoryDefaults();
+        while (lLauncher.restoreFactoryDefaults() != REVLibError.kOk) {}
+        while (rLauncher.restoreFactoryDefaults() != REVLibError.kOk) {}
+        while (feed.restoreFactoryDefaults() != REVLibError.kOk) {}
+        while (pivot.restoreFactoryDefaults() != REVLibError.kOk) {}
 
         // Setting the idle mode of the sparkmaxes
-        lLauncher.setIdleMode(IdleMode.kBrake);
-        rLauncher.setIdleMode(IdleMode.kBrake);
-        feed.setIdleMode(IdleMode.kBrake);
-        pivot.setIdleMode(IdleMode.kCoast);
+        while (lLauncher.setIdleMode(IdleMode.kBrake) != REVLibError.kOk) {}
+        while (rLauncher.setIdleMode(IdleMode.kBrake) != REVLibError.kOk) {}
+        while (feed.setIdleMode(IdleMode.kBrake) != REVLibError.kOk) {}
+        while (pivot.setIdleMode(IdleMode.kCoast) != REVLibError.kOk) {}
 
         // Making the rShooter motor follow the lShooter motor
         lLauncher.setInverted(true);
-        rLauncher.follow(lLauncher, true);
         feed.setInverted(true);
         pivot.setInverted(true);
+
+        while (rLauncher.follow(lLauncher, true) != REVLibError.kOk) {}
 
         // Getting the align motor's encoder
         pivotEncoder = pivot.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
 
         // Setting the conversion factors for the align encoder
-        pivotEncoder.setPositionConversionFactor(ShooterConstants.alignPosConversionFactor);
-        pivotEncoder.setInverted(true);
-        pivotEncoder.setZeroOffset(0.5);
+        while (pivotEncoder.setPositionConversionFactor(ShooterConstants.alignPosConversionFactor) != REVLibError.kOk) {}
+        while (pivotEncoder.setInverted(true) != REVLibError.kOk) {}
+        // pivotEncoder.setZeroOffset(0.5);
 
         // Setting the pivot feed forward
         pivotFeedforward = new ArmFeedforward(ShooterConstants.kS, ShooterConstants.kG, ShooterConstants.kV, ShooterConstants.kA);
@@ -97,17 +99,17 @@ public class Shooter extends SubsystemBase {
         pivotController = pivot.getPIDController();
 
         // Setting PIDFF values
-        pivotController.setP(ShooterConstants.kP);
-        pivotController.setI(ShooterConstants.kI);
-        pivotController.setD(ShooterConstants.kD);
+        while (pivotController.setP(ShooterConstants.kP) != REVLibError.kOk) {}
+        while (pivotController.setI(ShooterConstants.kI) != REVLibError.kOk) {}
+        while (pivotController.setD(ShooterConstants.kD) != REVLibError.kOk) {}
 
-        pivotController.setFeedbackDevice(pivotEncoder);
+        while (pivotController.setFeedbackDevice(pivotEncoder) != REVLibError.kOk) {}
 
         // Saving the settings of the sparkmaxes
-        lLauncher.burnFlash();
-        rLauncher.burnFlash();
-        feed.burnFlash();
-        pivot.burnFlash();
+        while (lLauncher.burnFlash() != REVLibError.kOk) {}
+        while (rLauncher.burnFlash() != REVLibError.kOk) {}
+        while (feed.burnFlash() != REVLibError.kOk) {}
+        while (pivot.burnFlash() != REVLibError.kOk) {}
     }
 
     /**
@@ -149,6 +151,6 @@ public class Shooter extends SubsystemBase {
      */
     public void setAngle(Rotation2d angle) {
         SmartDashboard.putNumber("/Shooter/Expected_Pos", angle.getRadians());
-        pivotController.setReference(angle.getRadians(), ControlType.kPosition, 0, pivotFeedforward.calculate(pivotEncoder.getPosition(), pivotEncoder.getVelocity()), ArbFFUnits.kVoltage);
+        while (pivotController.setReference(angle.getRadians(), ControlType.kPosition, 0, pivotFeedforward.calculate(pivotEncoder.getPosition(), pivotEncoder.getVelocity()), ArbFFUnits.kVoltage) != REVLibError.kOk) {}
     }
 }

@@ -39,9 +39,6 @@ public class SwerveModule extends SubsystemBase {
     private SwerveModulePosition position;
     private String name;
 
-    // RevLib Error Code used to make sure sparkmaxes are configured correctly.
-    private REVLibError errCode = REVLibError.kUnknown;
-
     public SwerveModule(String name, int driveID, int turnID, int cancoderID, double offset) {
         // Saving the name of the sparkmax
         this.name = name;
@@ -51,26 +48,21 @@ public class SwerveModule extends SubsystemBase {
         turn = new CANSparkMax(turnID, MotorType.kBrushless);
 
         // Resetting motor configs
-        while (errCode != REVLibError.kOk) {
-            errCode = turn.restoreFactoryDefaults();
+        while (turn.restoreFactoryDefaults() != REVLibError.kOk) {
             SmartDashboard.putBoolean("/" + name + "/CANSparkMaxesConfigured", false);
         }
-        errCode = REVLibError.kUnknown;
 
         // Getting drive config
         TalonFXConfigurator driveConfigurator = drive.getConfigurator();
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
 
         // Inverting the motors
-        drive.setInverted(true);
+        drive.setInverted(name == "FrontLeft" || name == "BackRight");
         turn.setInverted(false);
 
         // Setting the neutral mode for the 
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        while (errCode != REVLibError.kOk) {
-            errCode = turn.setIdleMode(IdleMode.kCoast);
-        }
-        errCode = REVLibError.kUnknown;
+        while (turn.setIdleMode(IdleMode.kCoast) != REVLibError.kOk) {}
 
         // Getting encoders for the motor
         turnEncoder = turn.getEncoder();
@@ -84,53 +76,24 @@ public class SwerveModule extends SubsystemBase {
         driveConfig.Slot0.kD = DriveConstants.driveD;
         driveConfig.Slot0.kS = DriveConstants.driveFF;
 
-        while (errCode != REVLibError.kOk) {
-            errCode = turnPID.setP(DriveConstants.turnP);
-        }
-        errCode = REVLibError.kUnknown;
-
-        while (errCode != REVLibError.kOk) {
-            errCode = turnPID.setI(DriveConstants.turnI);
-        }
-        errCode = REVLibError.kUnknown;
-
-        while (errCode != REVLibError.kOk) {
-            errCode = turnPID.setD(DriveConstants.turnD);
-        }
-        errCode = REVLibError.kUnknown;
-
-        while (errCode != REVLibError.kOk) {
-            errCode = turnPID.setFF(DriveConstants.turnFF);
-        }
-        errCode = REVLibError.kUnknown;
-
+        while (turnPID.setP(DriveConstants.turnP) != REVLibError.kOk) {}
+        while (turnPID.setI(DriveConstants.turnI) != REVLibError.kOk) {}
+        while (turnPID.setD(DriveConstants.turnD) != REVLibError.kOk) {}
+        while (turnPID.setFF(DriveConstants.turnFF) != REVLibError.kOk) {}
         // Initializing the cancoder
         cancoder = new AnalogEncoder(cancoderID);
         cancoder.setPositionOffset(offset);
         
-        while (errCode != REVLibError.kOk) {
-            errCode = turnEncoder.setPosition(0);
-            // errCode = turnEncoder.setPosition(cancoder.get());
-        }
-        errCode = REVLibError.kUnknown;
+        while (turnEncoder.setPosition(0) != REVLibError.kOk) {}
 
         // Setting conversion values for the encoders
-        while (errCode != REVLibError.kOk) {
-            errCode = turnEncoder.setVelocityConversionFactor(DriveConstants.turnVelConversionFactor);
-        }
-        errCode = REVLibError.kUnknown;
+        while (turnEncoder.setVelocityConversionFactor(DriveConstants.turnVelConversionFactor) != REVLibError.kOk) {}
 
-        while (errCode != REVLibError.kOk) {
-            errCode = turnEncoder.setPositionConversionFactor(DriveConstants.turnPosConversionFactor);
-        }
-        errCode = REVLibError.kUnknown;
+        while (turnEncoder.setPositionConversionFactor(DriveConstants.turnPosConversionFactor) != REVLibError.kOk) {}
 
         // Saving the configs for each motor
         driveConfigurator.apply(driveConfig);
-        while (errCode != REVLibError.kOk) {
-            errCode = turn.burnFlash();
-        }
-        errCode = REVLibError.kUnknown;
+        while (turn.burnFlash() != REVLibError.kOk) {}
         SmartDashboard.putBoolean("/" + name + "/CANSparkMaxesConfigured", true);
   
         this.state = new SwerveModuleState(getVelocity(), getAngle());
@@ -240,11 +203,9 @@ public class SwerveModule extends SubsystemBase {
 
         // Setting the speed and position of each motor
         drive.setControl(new VelocityDutyCycle(newState.speedMetersPerSecond / DriveConstants.drivePosConversionFactor));
-        while (errCode != REVLibError.kOk) {
-            errCode = turnPID.setReference(getAdjustedAngle(newState.angle).getRadians(), ControlType.kPosition);
+        while (turnPID.setReference(getAdjustedAngle(newState.angle).getRadians(), ControlType.kPosition) != REVLibError.kOk) {
             SmartDashboard.putBoolean("/" + name + "/Setting_Angle", true);
         }
-        errCode = REVLibError.kUnknown;
         SmartDashboard.putBoolean("/" + name + "/Setting_Angle", false);
     }
 }

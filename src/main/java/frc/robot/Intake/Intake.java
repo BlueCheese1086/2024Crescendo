@@ -102,8 +102,8 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("/Intake/ABS_Encoder_Pos", accessABSEncoder.getPosition());
-        SmartDashboard.putNumber("/Intake/REL_Encoder_Pos", accessEncoder.getPosition());
+        SmartDashboard.putNumber("/Intake/ABS_Encoder_Pos", accessABSEncoder.getPosition() * 180 / Math.PI);
+        SmartDashboard.putNumber("/Intake/REL_Encoder_Pos", accessEncoder.getPosition() * 180 / Math.PI);
     }
 
     /**

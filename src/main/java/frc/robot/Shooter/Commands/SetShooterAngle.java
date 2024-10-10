@@ -3,6 +3,7 @@ package frc.robot.Shooter.Commands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Shooter.Shooter;
+import frc.robot.Shooter.Shooter.Positions;
 
 public class SetShooterAngle extends Command {
     private Shooter shooter;
@@ -16,9 +17,9 @@ public class SetShooterAngle extends Command {
      * 
      * @param angle The angle to set the shooter to.
      */
-    public SetShooterAngle(Rotation2d angle) {
+    public SetShooterAngle(Positions angle) {
         this.shooter = Shooter.getInstance();
-        this.angle = angle;
+        this.angle = angle.value;
     }
 
     /** This function runs every 20 ms that this command is scheduled/. */

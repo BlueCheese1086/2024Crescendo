@@ -16,10 +16,21 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
-    // Preset positions for the shooter
-    public static class Positions {
-        public static Rotation2d DOWN = new Rotation2d(0.05);
-        public static Rotation2d UP = new Rotation2d(0.13);
+    /**
+     * The different positions of the shooter.
+     * 
+     * UP is where the shooter is up.
+     * DOWN is where the shooter is down.
+     */
+    public enum Positions {
+        UP(Rotation2d.fromRadians(0.01)),
+        DOWN(Rotation2d.fromRadians(0.01 + Math.PI / 4));
+
+        public final Rotation2d value;
+
+        Positions(Rotation2d angle){
+            this.value = angle;
+        }
     }
 
     // Motors

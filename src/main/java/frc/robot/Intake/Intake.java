@@ -10,6 +10,7 @@ import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.revrobotics.CANSparkBase.ControlType;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
@@ -38,12 +39,12 @@ public class Intake extends SubsystemBase {
      * CLOSED is where the intake is up and the robot cannot run the intake.
      */
     public enum States {
-        DOWN(1.568),
-        UP(3.514);
+        UP(Rotation2d.fromRadians(0.25)),
+        DOWN(Rotation2d.fromRadians(2.1));
 
-        public final double value;
+        public final Rotation2d value;
 
-        States(double angle){
+        States(Rotation2d angle){
             this.value = angle;
         }
     }
@@ -120,8 +121,8 @@ public class Intake extends SubsystemBase {
      * 
      * @param angle The angle that the intake should be set to.
      */
-    public void setAngle(double angle) {
-        SmartDashboard.putNumber("Intake/angle_setpoint", angle);
-        accessPID.setReference(angle, ControlType.kPosition, 9, accessFeedforward.calculate(angle, accessEncoder.getVelocity()), ArbFFUnits.kVoltage);
+    public void setAngle(Rotation2d angle) {
+        SmartDashboard.putNumber("Intake/angle_setpoint", angle.getDegrees());
+        accessPID.setReference(angle.getRadians(), ControlType.kPosition, 9, accessFeedforward.calculate(angle.getRadians(), accessEncoder.getVelocity()), ArbFFUnits.kVoltage);
     }
 }

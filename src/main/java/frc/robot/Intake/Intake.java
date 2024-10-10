@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
@@ -54,37 +55,37 @@ public class Intake extends SubsystemBase {
         rollerMotor = new CANSparkMax(IntakeConstants.rollerID, MotorType.kBrushless);
         accessMotor = new CANSparkMax(IntakeConstants.accessID, MotorType.kBrushless);
 
-        rollerMotor.restoreFactoryDefaults();
-        accessMotor.restoreFactoryDefaults();
+        while (rollerMotor.restoreFactoryDefaults() != REVLibError.kOk) {}
+        while (accessMotor.restoreFactoryDefaults() != REVLibError.kOk) {}
 
         // Initializing encoder
         accessEncoder = accessMotor.getEncoder();
         accessABSEncoder = accessMotor.getAbsoluteEncoder(Type.kDutyCycle);
 
-        accessABSEncoder.setInverted(true);
+        while (accessABSEncoder.setInverted(true) != REVLibError.kOk) {}
 
         // Setting position conversion factor
-        accessEncoder.setPositionConversionFactor(IntakeConstants.anglePosConversionFactor);
-        accessABSEncoder.setPositionConversionFactor(IntakeConstants.absPosConversionFactor);
+        while (accessEncoder.setPositionConversionFactor(IntakeConstants.anglePosConversionFactor) != REVLibError.kOk) {}
+        while (accessABSEncoder.setPositionConversionFactor(IntakeConstants.absPosConversionFactor) != REVLibError.kOk) {}
 
-        accessEncoder.setPosition(accessABSEncoder.getPosition());
-        if (accessEncoder.getPosition() > 2.7) accessEncoder.setPosition(0);
+        while (accessEncoder.setPosition(accessABSEncoder.getPosition()) != REVLibError.kOk) {}
+        // if (accessEncoder.getPosition() > 2.7) accessEncoder.setPosition(0);
 
         // Initializing PID controller
         accessPID = accessMotor.getPIDController();
 
         // Setting PID values
-        accessPID.setP(IntakeConstants.accessP);
-        accessPID.setI(IntakeConstants.accessI);
-        accessPID.setD(IntakeConstants.accessD);
+        while (accessPID.setP(IntakeConstants.accessP) != REVLibError.kOk) {}
+        while (accessPID.setI(IntakeConstants.accessI) != REVLibError.kOk) {}
+        while (accessPID.setD(IntakeConstants.accessD) != REVLibError.kOk) {}
 
         // Getting Feedforward
         accessFeedforward = new ArmFeedforward(ShooterConstants.kS, ShooterConstants.kG, ShooterConstants.kV, ShooterConstants.kA);
 
-        accessPID.setFeedbackDevice(accessEncoder);
+        while (accessPID.setFeedbackDevice(accessEncoder) != REVLibError.kOk) {}
 
-        rollerMotor.burnFlash();
-        accessMotor.burnFlash();
+        while (rollerMotor.burnFlash() != REVLibError.kOk) {}
+        while (accessMotor.burnFlash() != REVLibError.kOk) {}
     }
 
     /**
@@ -123,6 +124,6 @@ public class Intake extends SubsystemBase {
      */
     public void setAngle(Rotation2d angle) {
         SmartDashboard.putNumber("Intake/angle_setpoint", angle.getDegrees());
-        accessPID.setReference(angle.getRadians(), ControlType.kPosition, 9, accessFeedforward.calculate(angle.getRadians(), accessEncoder.getVelocity()), ArbFFUnits.kVoltage);
+        while (accessPID.setReference(angle.getRadians(), ControlType.kPosition, 9, accessFeedforward.calculate(angle.getRadians(), accessEncoder.getVelocity()), ArbFFUnits.kVoltage) != REVLibError.kOk) {}
     }
 }

@@ -70,19 +70,23 @@ public class Shooter extends SubsystemBase {
         while (rLauncher.restoreFactoryDefaults() != REVLibError.kOk) {}
         while (feed.restoreFactoryDefaults() != REVLibError.kOk) {}
         while (pivot.restoreFactoryDefaults() != REVLibError.kOk) {}
+        System.out.println("Reset factory defaults");
 
         // Setting the idle mode of the sparkmaxes
         while (lLauncher.setIdleMode(IdleMode.kBrake) != REVLibError.kOk) {}
         while (rLauncher.setIdleMode(IdleMode.kBrake) != REVLibError.kOk) {}
         while (feed.setIdleMode(IdleMode.kBrake) != REVLibError.kOk) {}
         while (pivot.setIdleMode(IdleMode.kCoast) != REVLibError.kOk) {}
+        System.out.println("Configured idle modes");
 
         // Making the rShooter motor follow the lShooter motor
         lLauncher.setInverted(true);
         feed.setInverted(true);
         pivot.setInverted(true);
+        System.out.println("Inverted motors");
 
         while (rLauncher.follow(lLauncher, true) != REVLibError.kOk) {}
+        System.out.println("Made rLauncher follow lLauncher");
 
         // Getting the align motor's encoder
         pivotEncoder = pivot.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
@@ -90,6 +94,7 @@ public class Shooter extends SubsystemBase {
         // Setting the conversion factors for the align encoder
         while (pivotEncoder.setPositionConversionFactor(ShooterConstants.alignPosConversionFactor) != REVLibError.kOk) {}
         while (pivotEncoder.setInverted(true) != REVLibError.kOk) {}
+        System.out.println("Configured pivot encoders");
         // pivotEncoder.setZeroOffset(0.5);
 
         // Setting the pivot feed forward
@@ -102,14 +107,17 @@ public class Shooter extends SubsystemBase {
         while (pivotController.setP(ShooterConstants.kP) != REVLibError.kOk) {}
         while (pivotController.setI(ShooterConstants.kI) != REVLibError.kOk) {}
         while (pivotController.setD(ShooterConstants.kD) != REVLibError.kOk) {}
+        System.out.println("Configured PID");
 
         while (pivotController.setFeedbackDevice(pivotEncoder) != REVLibError.kOk) {}
+        System.out.println("Changes pivot PID encoder");
 
         // Saving the settings of the sparkmaxes
         while (lLauncher.burnFlash() != REVLibError.kOk) {}
         while (rLauncher.burnFlash() != REVLibError.kOk) {}
         while (feed.burnFlash() != REVLibError.kOk) {}
         while (pivot.burnFlash() != REVLibError.kOk) {}
+        System.out.println("Saving REV configs");
     }
 
     /**

@@ -155,14 +155,33 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void playSong(String filepath) {
+        // Creating the orchestra object.
         Orchestra music = new Orchestra();
 
+        // Making every motor part of the orchestra
         music.addInstrument(flModule.drive);
         music.addInstrument(frModule.drive);
         music.addInstrument(blModule.drive);
         music.addInstrument(brModule.drive);
+
+        // Letting the driver know that music is playing.
+        SmartDashboard.putBoolean("/PlayingMusic", true);
+
+        // Finding the music
         music.loadMusic(filepath);
-        
+
+        // Playing the music
         music.play();
+
+        // Preventing the robot from moving while music is playing.
+        while (music.isPlaying()) {
+            makeX();
+        }
+
+        // Letting the driver know that music is done playing.
+        SmartDashboard.putBoolean("/PlayingMusic", false);
+        
+        // Ending the orchestra.
+        music.close();
     }
 }

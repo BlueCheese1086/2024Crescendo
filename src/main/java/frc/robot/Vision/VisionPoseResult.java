@@ -6,11 +6,11 @@ import edu.wpi.first.math.geometry.Pose2d;
  * A small class that simply stores a Pose2d and a timestamp in the same place.
  * This allows me to return one object whenever the drivetrain wants to add a vision estimate.
  */
-public class VisionResult {
+public class VisionPoseResult {
     private Pose2d pose;
     private double timestamp;
 
-    public VisionResult(Pose2d pose, double timestamp) {
+    public VisionPoseResult(Pose2d pose, double timestamp) {
         this.pose = pose;
         this.timestamp = timestamp;
     }

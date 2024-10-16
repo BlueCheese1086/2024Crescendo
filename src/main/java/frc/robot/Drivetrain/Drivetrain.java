@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Vision.Vision;
-import frc.robot.Vision.VisionResult;
+import frc.robot.Vision.VisionPoseResult;
 
 public class Drivetrain extends SubsystemBase {
     // Swerve Modules
@@ -55,11 +55,9 @@ public class Drivetrain extends SubsystemBase {
     private static Drivetrain instance;
 
     /**
-     * This function gets a common instance of the drivetrain subsystem that anyone
-     * can access.
+     * This function gets a common instance of the drivetrain subsystem that anyone can access.
      * <p>
-     * This allows us to not need to pass around subsystems as parameters, and
-     * instead run this function whenever we need the subsystem.
+     * This allows us to not need to pass around subsystems as parameters, and instead run this function whenever we need the subsystem.
      * 
      * @return An instance of the Drivetrain subsystem.
      */
@@ -120,8 +118,8 @@ public class Drivetrain extends SubsystemBase {
         // Updating the pose estimator
         poseEstimator.update(getAngle(), positions);
         
-        VisionResult flResult = vision.getFLPoseWithTimestamp();
-        VisionResult frResult = vision.getFRPoseWithTimestamp();
+        VisionPoseResult flResult = vision.getFLPoseWithTimestamp();
+        VisionPoseResult frResult = vision.getFRPoseWithTimestamp();
         poseEstimator.addVisionMeasurement(flResult.getPose(), flResult.getTimestamp());
         poseEstimator.addVisionMeasurement(frResult.getPose(), frResult.getTimestamp());
 

@@ -27,8 +27,8 @@ public class Vision extends SubsystemBase {
     private PhotonPoseEstimator flPoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(), PoseStrategy.CLOSEST_TO_REFERENCE_POSE, robotToFLCamera);
     private PhotonPoseEstimator frPoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(), PoseStrategy.CLOSEST_TO_REFERENCE_POSE, robotToFRCamera);
     
-    private VisionResult flResult;
-    private VisionResult frResult;
+    private VisionPoseResult flResult;
+    private VisionPoseResult frResult;
 
     private static Vision instance;
 
@@ -80,11 +80,11 @@ public class Vision extends SubsystemBase {
         return frResult.getPose();
     }
 
-    public VisionResult getFLPoseWithTimestamp() {
+    public VisionPoseResult getFLPoseWithTimestamp() {
         return flResult;
     }
 
-    public VisionResult getFRPoseWithTimestamp() {
+    public VisionPoseResult getFRPoseWithTimestamp() {
         return frResult;
     }
 

@@ -110,14 +110,14 @@ public class Shooter extends SubsystemBase {
         System.out.println("Configured PID");
 
         while (pivotController.setFeedbackDevice(pivotEncoder) != REVLibError.kOk) {}
-        System.out.println("Changes pivot PID encoder");
+        System.out.println("Changed pivot PID encoder");
 
         // Saving the settings of the sparkmaxes
         while (lLauncher.burnFlash() != REVLibError.kOk) {}
         while (rLauncher.burnFlash() != REVLibError.kOk) {}
         while (feed.burnFlash() != REVLibError.kOk) {}
         while (pivot.burnFlash() != REVLibError.kOk) {}
-        System.out.println("Saving REV configs");
+        System.out.println("Saved REV configs");
     }
 
     /**

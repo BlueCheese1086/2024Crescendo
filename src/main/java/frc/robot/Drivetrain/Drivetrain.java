@@ -2,7 +2,6 @@ package frc.robot.Drivetrain;
 
 import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.hardware.Pigeon2;
-
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,7 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Vision.Vision;
-import frc.robot.Vision.VisionPoseResult;
+import org.photonvision.EstimatedRobotPose;
 
 public class Drivetrain extends SubsystemBase {
     // Swerve Modules
@@ -118,15 +117,15 @@ public class Drivetrain extends SubsystemBase {
         // Updating the pose estimator
         poseEstimator.update(getAngle(), positions);
         
-        VisionPoseResult flResult = vision.getFLPoseWithTimestamp();
-        VisionPoseResult frResult = vision.getFRPoseWithTimestamp();
-        poseEstimator.addVisionMeasurement(flResult.getPose(), flResult.getTimestamp());
-        poseEstimator.addVisionMeasurement(frResult.getPose(), frResult.getTimestamp());
+        EstimatedRobotPose lResult = vision.getLPose();
+        if (lResult != null) poseEstimator.addVisionMeasurement(lResult.estimatedPose.toPose2d(), lResult.timestampSeconds);
+
+        EstimatedRobotPose rResult = vision.getRPose();
+        if (rResult != null) poseEstimator.addVisionMeasurement(rResult.estimatedPose.toPose2d(), rResult.timestampSeconds);
 
         field.setRobotPose(odometry.getPoseMeters());
 
         SmartDashboard.putData("Field", field);
-
         SmartDashboard.putNumber("Gyro", gyro.getAngle());
     }
 

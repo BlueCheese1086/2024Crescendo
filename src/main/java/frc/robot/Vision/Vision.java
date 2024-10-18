@@ -98,18 +98,40 @@ public class Vision extends SubsystemBase {
         }
     }
 
+    /**
+     * Gets the latest result from the left camera.
+     * 
+     * @return The latest {@link PhotonPipelineResult} from the left camera.
+     */
     public PhotonPipelineResult getLPhotonResult() {
         return lCamera.getLatestResult();
     }
 
+    /**
+     * Gets the latest result from the right camera.
+     * 
+     * @return The latest {@link PhotonPipelineResult} from the right camera.
+     */
     public PhotonPipelineResult getRPhotonResult() {
         return rCamera.getLatestResult();
     }
 
+    /**
+     * Gets the estimated robot pose from the left camera.
+     * Please note that the pose will not be up to date when the left camera does not see an apriltag.
+     * 
+     * @return The estimated pose of the robot.
+     */
     public EstimatedRobotPose getLPose() {
         return lPose;
     }
 
+    /**
+     * Gets the estimated robot pose from the right camera.
+     * Please note that the pose will not be up to date when the right camera does not see an apriltag.
+     * 
+     * @return The estimated pose of the robot.
+     */
     public EstimatedRobotPose getRPose() {
         return rPose;
     }
